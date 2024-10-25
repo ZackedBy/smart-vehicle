@@ -17,6 +17,7 @@ double y_volt = 0;
 volatile int button_count = 0;
 const int debounce_time = 50;
 volatile boolean button_pressed = false;
+volatile unsigned long last_button_press_time = 0;
 
 //Motor Variables
 #define Motor_L_dir_pin 7
@@ -29,7 +30,7 @@ const int stationary_x = 511;
 int motor_speed_x = 0;
 const int stationary_y = 519;
 int motor_speed_y = 0;
-const int motor_max_speed = 255;
+const int max_motor_speed = 255;
 
 //Encoder Variables
 #define ENC_A_R 2  
@@ -46,6 +47,7 @@ float distance_travelled = 0;
 //const float target_distance = 30.0;
 
 
+
 //LCD Variables
 #define rs 32
 #define en 30
@@ -59,7 +61,6 @@ const int lcd_interval = 500;
 
 void setup() {
   lcd.begin(20,4);
-  pinMode(led_pin,OUTPUT);
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
@@ -71,8 +72,8 @@ void loop(){
     button_pressed = false;
     travel_distance();
   }
-
-  motor_logic();
+  update_lcd();
+//  motor_logic();
 }
 
 void travel_distance(){
@@ -179,6 +180,11 @@ void joystick_interrupt() {
     last_button_press_time = current_time;
   }
 }
+
+//void joystick_interrupt() {
+//  button_count++;
+//  button_pressed = true;
+//}
 
 void encoder_pulse_R(){
   pulse_count_R++;

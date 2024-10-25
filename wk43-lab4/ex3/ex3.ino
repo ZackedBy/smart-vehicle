@@ -61,6 +61,7 @@ const int lcd_interval = 500;
 //Compass Variables
 const uint8_t CMPS14_address = 0x60;
 byte raw;
+int degree = 0;
 
 void setup() {
   lcd.begin(20,4);
@@ -76,13 +77,14 @@ void loop(){
   Wire.write(1);
   Wire.endTransmission(false);
   Wire.requestFrom(CMPS14_address, 1, true);
-  if (Wire.available >= 1){
+  if (Wire.available() >= 1){
     raw = Wire.read();
     Serial.println(String(raw));
+    degree = map(raw,0,255,0,360);
   }
   
   update_lcd();
-  motor_logic();
+  //motor_logic();
 }
 
 
@@ -94,6 +96,8 @@ void update_lcd(){
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Bearing Value: " + String(raw));
+    lcd.setCursor(0,1);
+    lcd.print("Degrees: " + String(degree));
   }
 }
 
@@ -148,12 +152,8 @@ void move_motor(byte left, byte right, int l_speed, int r_speed){
 
 
 void joystick_interrupt() {
-  unsigned long current_time = millis();
-  if (current_time - last_button_press_time > debounce_time) {
-    button_count++;
-    button_pressed = true;
-    last_button_press_time = current_time;
-  }
+  button_count++;
+  button_pressed = true;
 }
 
 void encoder_pulse_R(){

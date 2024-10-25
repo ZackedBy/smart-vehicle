@@ -9,15 +9,15 @@
 #define joy_x A2
 #define joy_y A1
 #define joy_key 18
-int joy_x_value = 0;
-int joy_y_value = 0;
-double x_volt = 0;
-double y_volt = 0;
+int joy_x_value = 0, joy_y_value = 0;
+double x_volt = 0, y_volt = 0;
+
 //JoyStick Press Variables
 #define led_pin 13
 volatile int button_count = 0;
 const int debounce_time = 50;
 volatile boolean button_pressed = false;
+volatile unsigned long last_button_press_time = 0;
 
 //Motor Variables
 #define Motor_L_dir_pin 7
@@ -26,19 +26,15 @@ volatile boolean button_pressed = false;
 #define Motor_R_pwm_pin 10
 const byte Motor_forward = 1;
 const byte Motor_backward = 0;
-const int stationary_x = 511; 
-int motor_speed_x = 0;
-const int stationary_y = 519;
-int motor_speed_y = 0;
-const int motor_max_speed = 255;
+const int stationary_x = 511, stationary_y = 519, motor_max_speed = 255; 
+int motor_speed_x = 0, motor_speed_y = 0;
 
 //Encoder Variables
 #define ENC_A_R 2  
 #define ENC_A_L 3
 #define ENC_B_R 11
 #define ENC_B_L 12
-volatile int pulse_count_R = 0;
-volatile int pulse_count_L = 0;
+volatile int pulse_count_R = 0, pulse_count_L = 0;
 const float wheel_dia_m = 0.037; //Find actual value
 const float wheel_circ = PI * wheel_dia_m;
 const int pulse_per_revolution = 210; //Find actual value
@@ -61,12 +57,12 @@ const int lcd_interval = 500;
 //Compass Variables
 const uint8_t CMPS14_address = 0x60;
 byte raw;
-int direction_degree = 0;
-int target_degree = 90; //East
-const int degrees_tolerance = 2;
+int direction_degree = 0, target_degree = 180, direction_difference; //90 = East
+const int degrees_tolerance = 3;
 
 void setup() {
   lcd.begin(20,4);
+  delay(1000);
   Wire.begin();
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
@@ -74,15 +70,21 @@ void setup() {
   Serial.begin(9600);
 }
 
-void loop(){
-  compass_logic();  
+void loop(){  
   update_lcd();
-  motor_logic();
-
+  compass_logic();
+  //motor_logic();
+  rotate_vehicle(target_degree);
   if (button_pressed){
     button_pressed = false;
-    rotate_vehicle(direction_degree, target_degree);
+    rotate_vehicle(target_degree);
   }
+}
+void calibrate(){
+  Wire.beginTransmission(CMPS14_address);
+  Wire.write(0x00); // Command register
+  Wire.write(0xF0); // Start calibration command
+  Wire.endTransmission();
 }
 
 void compass_logic() {
@@ -90,40 +92,41 @@ void compass_logic() {
   Wire.write(1);
   Wire.endTransmission(false);
   Wire.requestFrom(CMPS14_address, 1, true);
-  if (Wire.available >= 1){
+  if (Wire.available() >= 1){
     raw = Wire.read();
-    Serial.println(String(raw));
+    //Serial.println(String(raw));
     direction_degree = map(raw, 0, 255, 0, 360);
   }
 }
 
-void rotate_vehicle(int current_direction, int target_direction) {
-
-  int direction_difference = target_direction - current_direction;
-
-  // Normalize heading difference to -180 to 180 range
-  if (direction_difference > 180) direction_difference -= 360;
-  if (direction_difference < -180) direction_difference += 360;
-
+void rotate_vehicle(int target_direction) {
+  
+  direction_difference = 0;
   while (true) {
-    // Check if within tolerance range
+    update_lcd();
+    compass_logic();
+    direction_difference = target_direction - direction_degree;
+
+
+    // Check if within tolerance to stop rotation
     if (abs(direction_difference) <= degrees_tolerance) {
-      move_motor(0, 0, 0, 0);
       break;
     }
 
     // Determine direction to turn
     if (direction_difference > 0) {
       // Turn right
-      move_motor(Motor_forward, Motor_backward, motor_max_speed / 4, motor_max_speed / 4);
+      move_motor(Motor_forward, Motor_backward, motor_max_speed / 2, motor_max_speed / 2);
     } else {
       // Turn left
-      move_motor(Motor_backward, Motor_forward, motor_max_speed / 4, motor_max_speed / 4);
+      move_motor(Motor_backward, Motor_forward, motor_max_speed / 2, motor_max_speed / 2);
     }
 
-    delay(100); // Maybe can remove
+    delay(100); // Optional
   }
+  move_motor(0,0,0,0);
 }
+
 
 String get_direction(int heading) {
   if ((heading >= 338 && heading <= 360) || (heading >= 0 && heading < 23)) {
@@ -156,7 +159,11 @@ void update_lcd(){
     lcd.setCursor(0,0);
     lcd.print("Bearing Value: " + String(raw));
     lcd.setCursor(0,1);
-    lcd.print("Direction: " + get_direction(target_degree));
+    lcd.print("Direction: " + get_direction(direction_degree));
+    lcd.setCursor(0,2);
+    lcd.print("Degrees: " + String(direction_degree));
+    lcd.setCursor(0,3);
+    lcd.print("Diff: " + String(direction_difference));
   }
 }
 
