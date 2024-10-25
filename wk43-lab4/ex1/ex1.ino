@@ -72,7 +72,6 @@ void loop(){
     travel_distance();
   }
 
-  lcd_display();
   motor_logic();
 }
 

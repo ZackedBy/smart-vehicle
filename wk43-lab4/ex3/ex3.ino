@@ -81,7 +81,7 @@ void loop(){
     Serial.println(String(raw));
   }
   
-  lcd_display();
+  update_lcd();
   motor_logic();
 }
 
