@@ -8,14 +8,13 @@
 #define joy_x A2
 #define joy_y A1
 #define joy_key 18
-int joy_x_value = 0;
-int joy_y_value = 0;
-double x_volt = 0;
-double y_volt = 0;
+int joy_x_value = 0, joy_y_value = 0;
+double x_volt = 0, y_volt = 0;
 //JoyStick Press Variables
 #define led_pin 13
 volatile int button_count = 0;
 volatile boolean button_pressed = false;
+
 
 //Motor Variables
 #define Motor_L_dir_pin 7
@@ -24,17 +23,14 @@ volatile boolean button_pressed = false;
 #define Motor_R_pwm_pin 10
 const byte Motor_forward = 1;
 const byte Motor_backward = 0;
-const int stationary_x = 511; 
-int motor_speed_x = 0;
-const int stationary_y = 519;
-int motor_speed_y = 0;
+const int stationary_x = 502, stationary_y = 506; 
+int motor_speed_x = 0, motor_speed_y = 0;
 //Encoder Variables
 #define ENC_A_R 2  
 #define ENC_A_L 3
 #define ENC_B_R 11
 #define ENC_B_L 12
-volatile int pulse_count_R = 0;
-volatile int pulse_count_L = 0;
+volatile int pulse_count_R = 0, pulse_count_L = 0;
 //const float wheel_dia_m = 0.038; //Find actual value
 //const float wheel_circ = PI * wheel_dia_m;
 //const int pulse_per_revolution = 360; //Find actual value
@@ -154,6 +150,7 @@ void joystick_interrupt() {
   pulse_count_L = 0;
   pulse_count_R = 0;
 }
+
 void encoder_pulse_R(){
   pulse_count_R++;
 }
