@@ -2,18 +2,18 @@
 Place to store the weekly exercises
 
 ## Section Links:
-- List of tasks that need focusing on: [To-Do](#to-do].
+- List of tasks that need focusing on: [To-Do](#To-Do].
 - List of all components used in vehicle: [Components](#components).
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
-- [] Fix compass module to be flat on vehicle
-- [] Figure out calibration issue on power up
-- [] Finish exercise 6 of week 43 lab
-- [] Create frontend website 
-- [] Communicate controls from frontend to backend
-- [] Create circuit schematic
-- [] Check if possible to house all components on Arduino Nano
+- [ ] Fix compass module to be flat on vehicle
+- [ ] Figure out calibration issue on power up
+- [ ] Finish exercise 6 of week 43 lab
+- [ ] Create frontend website 
+- [ ] Communicate controls from frontend to backend
+- [ ] Create circuit schematic
+- [ ] Check if possible to house all components on Arduino Nano
 
 
 ## Components
@@ -25,6 +25,7 @@ Place to store the weekly exercises
 - CMPS14 Tilt Compensated Compass Module
 - LIDAR-Lite V3 *
 - ESP32 / ESP8266 *
+*<sub>(find out what module we will use)</sub>
 
 ### Links to buy components:
 - [Arduino Mega 2560 Rev3](https://store.arduino.cc/en-fi/products/arduino-mega-2560-rev3)
