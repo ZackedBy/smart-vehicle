@@ -12,7 +12,7 @@ Place to store the weekly exercises
 - [ ] Finish exercise 6 of week 43 lab
 - [ ] Create frontend website 
 - [ ] Communicate controls from frontend to backend
-- [ ] Create circuit schematic
+- [x] Create circuit schematic for mega
 - [ ] Check if possible to house all components on Arduino Nano
 
 
@@ -42,7 +42,8 @@ Place to store the weekly exercises
 ## Circuits
 
 ### Circuit using Arduino Mega
-TBA
+Current missing motors, ESP, LIDAR:
+[Schematic_Mega](schematics/Schematic_Mega.jpg)
 
 ### Circuit using Arduino Nano
 TBA (if possible)
