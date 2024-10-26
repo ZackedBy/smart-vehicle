@@ -1,0 +1,1 @@
+Use *.drawio files at https://app.diagrams.net/ to quickly edit the schematic
