@@ -25,6 +25,7 @@ Place to store the weekly exercises
 - CMPS14 Tilt Compensated Compass Module
 - LIDAR-Lite V3 *
 - ESP32 / ESP8266 *
+
 *<sub>(find out what module we will use)</sub>
 
 ### Links to buy components:
