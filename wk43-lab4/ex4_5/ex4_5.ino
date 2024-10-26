@@ -24,8 +24,7 @@ volatile unsigned long last_button_press_time = 0;
 #define Motor_R_dir_pin 8
 #define Motor_L_pwm_pin 9
 #define Motor_R_pwm_pin 10
-const byte Motor_forward = 1;
-const byte Motor_backward = 0;
+const byte Motor_forward = 1, Motor_backward = 0;
 const int stationary_x = 511, stationary_y = 519, motor_max_speed = 255; 
 int motor_speed_x = 0, motor_speed_y = 0;
 
@@ -55,10 +54,11 @@ unsigned long prev_millis_lcd = 0;
 const int lcd_interval = 500;
 
 //Compass Variables
-const uint8_t CMPS14_address = 0x60;
+const uint8_t CMPS14_address = 0x60; //can use #define too
 byte raw;
 int direction_degree = 0, target_degree = 180, direction_difference; //90 = East
 const int degrees_tolerance = 3;
+
 
 void setup() {
   lcd.begin(20,4);
@@ -80,12 +80,13 @@ void loop(){
     rotate_vehicle(target_degree);
   }
 }
-void calibrate(){
-  Wire.beginTransmission(CMPS14_address);
-  Wire.write(0x00); // Command register
-  Wire.write(0xF0); // Start calibration command
-  Wire.endTransmission();
-}
+
+//void calibrate(){
+//  Wire.beginTransmission(CMPS14_address);
+//  Wire.write(0x00); // Command register
+//  Wire.write(0xF0); // Start calibration command
+//  Wire.endTransmission();
+//}
 
 void compass_logic() {
   Wire.beginTransmission(CMPS14_address);
@@ -94,7 +95,6 @@ void compass_logic() {
   Wire.requestFrom(CMPS14_address, 1, true);
   if (Wire.available() >= 1){
     raw = Wire.read();
-    //Serial.println(String(raw));
     direction_degree = map(raw, 0, 255, 0, 360);
   }
 }
@@ -107,8 +107,6 @@ void rotate_vehicle(int target_direction) {
     compass_logic();
     direction_difference = target_direction - direction_degree;
 
-
-    // Check if within tolerance to stop rotation
     if (abs(direction_difference) <= degrees_tolerance) {
       break;
     }
