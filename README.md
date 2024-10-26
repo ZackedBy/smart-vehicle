@@ -43,7 +43,7 @@ Place to store the weekly exercises
 
 ### Circuit using Arduino Mega
 Current missing motors, ESP, LIDAR:
-[Schematic_Mega](schematics/Schematic_Mega.jpg)
+![Schematic_Mega](schematics/Schematic_Mega.jpg)
 
 ### Circuit using Arduino Nano
 TBA (if possible)
