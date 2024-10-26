@@ -1,5 +1,5 @@
-# embedded-jit
-Place to store the weekly exercises
+# Smart-Vehicle
+A remote-controlled, Arduino-based smart vehicle designed for flexible navigation. This vehicle can either follow a predetermined route or be manually controlled. It leverages a tilt-compensated compass for directional accuracy, wheel encoders to measure travel distance, and LIDAR for real-time obstacle detection and avoidance. Through these integrated systems, the Smart-Vehicle provides an adaptable, sensor-driven platform suitable for robotics experimentation.
 
 ## Section Links:
 - List of tasks that need focusing on: [To-Do](#to-do).
