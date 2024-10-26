@@ -2,7 +2,7 @@
 Place to store the weekly exercises
 
 ## Section Links:
-- List of tasks that need focusing on: [To-Do](#To-Do].
+- List of tasks that need focusing on: [To-Do](#to-do).
 - List of all components used in vehicle: [Components](#components).
 - Circuit diagrams: [Schematics](#circuits).
 
