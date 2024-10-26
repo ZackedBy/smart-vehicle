@@ -17,7 +17,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 
 
 ## Components
-### If using Arduino Mega
+### **If using _Arduino Mega_**:
 - Arduino Mega 2560 Rev3
 - 20x4 Character LCD 
 - Dual Axis Joystick Module
@@ -29,7 +29,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 
 *<sub>(find out what module we will use)</sub>
 
-### If using Arduino Nano
+### **If using _Arduino Nano_**:
 - Arduino Nano
 - Pololu DRV8835 Dual Motor Driver Shield
 - 2 x Lego NXT Electric Motor
