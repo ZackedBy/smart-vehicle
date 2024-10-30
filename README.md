@@ -7,6 +7,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
+- [ ] Check if adding inductor (coil L) can fix compass on startup
 - [ ] Fix compass module to be flat on vehicle
 - [ ] Figure out calibration issue on power up
 - [ ] Finish exercise 6 of week 43 lab
