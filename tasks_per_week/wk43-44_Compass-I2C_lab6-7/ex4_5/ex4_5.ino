@@ -74,7 +74,7 @@ void loop(){
   update_lcd();
   compass_logic();
   //motor_logic();
-  rotate_vehicle(target_degree);
+  //rotate_vehicle(target_degree);
   if (button_pressed){
     button_pressed = false;
     rotate_vehicle(target_degree);
@@ -101,18 +101,31 @@ void compass_logic() {
 
 void rotate_vehicle(int target_direction) {
   
-  direction_difference = 0;
+  //direction_difference = 0;
   while (true) {
     update_lcd();
     compass_logic();
     direction_difference = target_direction - direction_degree;
+    
+//    if (direction_degree <  target_degree + degrees_tolerance && 
+//      direction_degree >  target_degree - degrees_tolerance) {
+//      break;
+//    }
 
+//    if (direction_difference >= 180) {
+//      direction_difference -= 360;
+//    } else if (direction_difference <= -180) {
+//      direction_difference += 360;
+//    }
+    if (direction_degree == target_direction) {
+      break;
+    }
     if (abs(direction_difference) <= degrees_tolerance) {
       break;
     }
 
     // Determine direction to turn
-    if (direction_difference > 0) {
+    if (direction_degree > target_direction) {
       // Turn right
       move_motor(Motor_forward, Motor_backward, motor_max_speed / 2, motor_max_speed / 2);
     } else {
@@ -120,7 +133,7 @@ void rotate_vehicle(int target_direction) {
       move_motor(Motor_backward, Motor_forward, motor_max_speed / 2, motor_max_speed / 2);
     }
 
-    delay(100); // Optional
+    //delay(100); // Optional
   }
   move_motor(0,0,0,0);
 }
