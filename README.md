@@ -7,6 +7,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
+- [ ] Check if adding inductor (coil L) can fix compass on startup
 - [ ] Fix compass module to be flat on vehicle
 - [ ] Figure out calibration issue on power up
 - [ ] Finish exercise 6 of week 43 lab
@@ -55,7 +56,8 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 ## Circuits
 
 ### Circuit using Arduino Mega
-Current missing motors, ESP, LIDAR:
+Current missing motors, ESP, LIDAR: (Maybe add coil before CMPS14 Vin)
+<sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
 ![Schematic_Mega](schematics/mega/Schematic_Mega.jpg)
 
 ### Circuit using Arduino Nano
