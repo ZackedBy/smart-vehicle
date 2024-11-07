@@ -100,6 +100,7 @@ int compass_logic() {
     
     int corrected_heading = mapped_heading - compass_offset;
 
+    // Only triggered on startup
     if (corrected_heading < 0) {
       corrected_heading += 360;
     } else if (corrected_heading >= 360) {
@@ -108,18 +109,20 @@ int compass_logic() {
 
     return corrected_heading;
   }
-  return 0;
+  //return 0;
 }
 
 // Controls vehicle with serial inputs
+// Available commands: dist, drive; deg, turn
 void get_commands() {
   if (Serial.available() > 0){
     message = Serial.readStringUntil('\n'); 
     int delim = message.indexOf(":");
     
     if (delim > -1) {
-      int value = message.substring(delim + 1);
       String command = message.substring(0, delim).toLowerCase();
+      int value = message.substring(delim + 1);
+      
       if (command.startsWith("dist") 
       || command.startsWith("drive") 
       && value.toInt() != 0){
@@ -127,7 +130,7 @@ void get_commands() {
       } else if (command.startsWith("deg")) {
           rotate_vehicle(value.toInt());
       } else if (command.startsWith("turn")) {
-        String dir = value.toLowerCase();
+        String dir = value.toLowerCase().trim();
         if (dir.startsWith("n")) {
           rotate_vehicle(0);
         } else if (dir.startsWith("e")) {
@@ -139,9 +142,7 @@ void get_commands() {
         } else {
           Serial.println("Invalid direction. Use N, E, S, or W.");
         }
-      }
-      
-      else {
+      } else {
         Serial.println("Command not found: " + message);
       }
     } else {
