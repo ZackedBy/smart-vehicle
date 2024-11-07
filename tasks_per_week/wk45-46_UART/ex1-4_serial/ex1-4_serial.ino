@@ -87,7 +87,7 @@ void loop(){
   }
 }
 
-// Sets starting direction as 0 degree
+// Sets starting direction as 0 degrees and updates degree value if turning
 int compass_logic() {
   Wire.beginTransmission(CMPS14_address);
   Wire.write(1);
@@ -111,20 +111,37 @@ int compass_logic() {
   return 0;
 }
 
-// Controls vehicle with serial input
+// Controls vehicle with serial inputs
 void get_commands() {
   if (Serial.available() > 0){
     message = Serial.readStringUntil('\n'); 
     int delim = message.indexOf(":");
+    
     if (delim > -1) {
-      int value = message.substring(delim + 1).toInt();
-      if (message.toLowerCase().startsWith("dist") 
-      || message.toLowerCase().startsWith("drive") 
-      && value != 0){
-          travel_distance(value, motor_max_speed);
-      } else if (message.toLowerCase().startsWith("deg")) {
-          rotate_vehicle(value);
-      } else {
+      int value = message.substring(delim + 1);
+      String command = message.substring(0, delim).toLowerCase();
+      if (command.startsWith("dist") 
+      || command.startsWith("drive") 
+      && value.toInt() != 0){
+          travel_distance(value.toInt(), motor_max_speed);
+      } else if (command.startsWith("deg")) {
+          rotate_vehicle(value.toInt());
+      } else if (command.startsWith("turn")) {
+        String dir = value.toLowerCase();
+        if (dir.startsWith("n")) {
+          rotate_vehicle(0);
+        } else if (dir.startsWith("e")) {
+          rotate_vehicle(90);
+        } else if (dir.startsWith("s")) {
+          rotate_vehicle(180);
+        } else if (dir.startsWith("w")) {
+          rotate_vehicle(90);
+        } else {
+          Serial.println("Invalid direction. Use N, E, S, or W.");
+        }
+      }
+      
+      else {
         Serial.println("Command not found: " + message);
       }
     } else {
@@ -228,6 +245,14 @@ void move_motor(byte left, byte right, int l_speed, int r_speed){
   analogWrite(Motor_R_pwm_pin, r_speed); 
 }
 
+// Right motor's encoder pulse counter
+void encoder_pulse_R(){
+  pulse_count_R++;
+}
+// Left motor's encoder pulse counter
+void encoder_pulse_L(){
+  pulse_count_L++;
+}
 
 // Trigger function on joystick press
 void joystick_interrupt() {
@@ -237,13 +262,4 @@ void joystick_interrupt() {
     button_pressed = true;
     last_button_press_time = current_time;
   }
-}
-
-// Right motor's encoder pulse counter
-void encoder_pulse_R(){
-  pulse_count_R++;
-}
-// Left motor's encoder pulse counter
-void encoder_pulse_L(){
-  pulse_count_L++;
 }
