@@ -7,14 +7,12 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
-- [ ] Check if adding inductor (coil L) can fix compass on startup
-- [ ] Fix compass module to be flat on vehicle
-- [ ] Figure out calibration issue on power up
-- [ ] Finish exercise 6 of week 43 lab
+- [x] Fix compass module to be flat on vehicle
+- [ ] Figure out calibration issue on power up (almost there 🤏)
 - [ ] Create frontend website 
 - [ ] Communicate controls from frontend to backend
 - [x] Create circuit schematic for mega
-- [ ] Check if possible to house all components on Arduino Nano
+- [ ] Check if possible to house all components on Arduino Nano 📌
 
 
 ## Components
@@ -25,8 +23,9 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Pololu DRV8835 Dual Motor Driver Shield
 - 2 x Lego NXT Electric Motor
 - CMPS14 Tilt Compensated Compass Module
+- ESP32 / ESP8266
 - LIDAR-Lite V3 *
-- ESP32 / ESP8266 *
+
 
 *<sub>(find out what module we will use)</sub>
 
@@ -35,8 +34,8 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Pololu DRV8835 Dual Motor Driver Shield
 - 2 x Lego NXT Electric Motor
 - CMPS14 Tilt Compensated Compass Module
+- ESP32 / ESP8266
 - LIDAR-Lite V3 *
-- ESP32 / ESP8266 *
 
 *<sub>(find out what module we will use)</sub>
 
@@ -48,15 +47,16 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - [Pololu DRV8835 Dual Motor Driver Shield](https://www.pololu.com/product/2511)
 - [Lego NXT Electric Motor](https://www.brickowl.com/catalog/lego-nxt-electric-motor-53787)
 - [CMPS14 Compass Module](https://www.robotshop.com/products/tilt-compensated-magnetic-compass-cmps14)
+- [ESP32](https://www.aliexpress.com/item/1005004476867346.html)
+- [ESP8266](https://www.aliexpress.com/item/32790209784.html) 
 - LIDAR-Lite V3 *
-- ESP32 / ESP8266 *
 
 *<sub>(find out what module we will use first)</sub>
 
 ## Circuits
 
 ### Circuit using Arduino Mega
-Current missing motors, ESP, LIDAR: (Maybe add coil before CMPS14 Vin)
+Current missing motors, ESP, LIDAR:
 <sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
 ![Schematic_Mega](schematics/mega/Schematic_Mega.jpg)
 
