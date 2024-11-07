@@ -56,8 +56,8 @@ const int lcd_interval = 500;
 //Compass Variables
 const uint8_t CMPS14_address = 0x60; //can use #define too
 byte raw;
-int direction_degree = 0, target_degree = 0, direction_difference; //90 = East
-int current_degree = 0;
+int current_degree = 0, target_degree = 0;
+int direction_difference;
 const int degrees_tolerance = 3;
 
 
@@ -75,7 +75,7 @@ void loop(){
   update_lcd();
   current_degree = compass_logic();
   //motor_logic();
-  rotate_vehicle();
+  //rotate_vehicle(90);
   if (button_pressed){
     button_pressed = false;
     trace_track();
@@ -96,30 +96,21 @@ int compass_logic() {
   Wire.requestFrom(CMPS14_address, 1, true);
   if (Wire.available() >= 1){
     raw = Wire.read();
-    direction_degree = map(raw, 0, 255, 0, 360);
-    return direction_degree;
+    return map(raw, 0, 255, 0, 360);
   }
 }
 
 void trace_track() {
-
-    target_degree = 0;
-    rotate_vehicle();
+    rotate_vehicle(0);
     travel_distance(20, int(255/2));
-    target_degree = 110;
     current_degree = compass_logic();
-    delay(1000);
-    rotate_vehicle();
+    rotate_vehicle(110);
     travel_distance(13, int(255/4));
-    target_degree = 220;
     current_degree = compass_logic();
-      delay(1000);
-    rotate_vehicle();
+    rotate_vehicle(50);
     travel_distance(20, int((255/4) * 3));
-    target_degree = 0;
     current_degree = compass_logic();
-      delay(1000);
-    rotate_vehicle();
+    rotate_vehicle(230);
 }
 
 
@@ -137,29 +128,33 @@ void travel_distance(int distance, int max_speed){
   move_motor(0, 0, 0, 0);
 }
 
-void rotate_vehicle() {
+void rotate_vehicle(int target_deg) {
   while (true) {
     update_lcd();
     current_degree = compass_logic();
-    direction_difference = abs(target_degree - current_degree);
-//    if (direction_difference > 180)  {
-//      direction_difference -= 180;
-//    } else {
-//      direction_difference += 180;
-//    }
     
-    if (direction_difference <= degrees_tolerance) {
+    direction_difference = target_deg - current_degree;
+    
+    // Normalize the difference to be within [-180, 180]
+    if (direction_difference > 180) {
+      direction_difference -= 360;
+    } else if (direction_difference < -180) {
+      direction_difference += 360;
+    }
+
+    if (abs(direction_difference) <= degrees_tolerance) {
       break;
     }
-    if (direction_difference < 180) {
-      //Right
-      move_motor(Motor_backward, Motor_forward, motor_max_speed / 2, motor_max_speed / 2);
+
+    if (direction_difference > 0) {
+      // Move CW
+      move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
     } else {
-      //Left
-      move_motor(Motor_forward, Motor_backward, motor_max_speed / 2, motor_max_speed / 2);
+      // Move CCW
+      move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
     }
   }
-  move_motor(0,0,0,0);
+  move_motor(0, 0, 0, 0);
 }
 
 
