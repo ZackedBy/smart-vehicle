@@ -1,1 +1,7 @@
 https://randomnerdtutorials.com/esp8266-web-server-spiffs-nodemcu/
+
+(8266) https://techtutorialsx.com/2018/01/01/esp8266-arduino-asynchronous-http-web-server/
+
+(32) http://dfrobot.blogspot.com/2018/08/esp32-arduino-async-server-tutorial.html
+
+(submit data) https://randomnerdtutorials.com/esp32-esp8266-input-data-html-form/
