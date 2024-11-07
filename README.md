@@ -59,7 +59,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 ### Circuit using Arduino Mega
 Current missing motors, ESP, LIDAR:
 <sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
-![Schematic_Mega](schematics/mega/mega_schematic)
+![Schematic_Mega](schematics/mega/mega_schematic.jpg)
 
 ### Circuit using Arduino Nano
-![Schematic Nano](schematics/nano/nano_schematic)
+![Schematic Nano](schematics/nano/nano_schematic.jpg)
