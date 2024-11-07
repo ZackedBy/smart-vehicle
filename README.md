@@ -56,7 +56,7 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 ## Circuits
 
 ### Circuit using Arduino Mega
-Current missing motors, ESP, LIDAR: (Maybe add coil before CMPS14 Vin)
+Current missing motors, ESP, LIDAR:
 <sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
 ![Schematic_Mega](schematics/mega/Schematic_Mega.jpg)
 
