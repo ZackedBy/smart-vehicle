@@ -47,8 +47,11 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 
 ## Circuits
 
-### Circuit using Arduino Mega
 <sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
+
+**Motor lines may be inaccurate**
+
+### Circuit using Arduino Mega
 ![Schematic_Mega](schematics/mega/mega_schematic.jpg)
 
 ### Circuit using Arduino Nano
