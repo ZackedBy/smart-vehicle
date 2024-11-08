@@ -66,12 +66,18 @@ int compass_offset;
 //Serial Reading
 String message;
 
+//buzzer variables
+#define buzzer 4
+
 void setup() {
   Wire.begin();
   lcd.begin(20,4);
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
+
+  pinMode(buzzer, OUTPUT);
+  
   Serial.begin(9600);
   compass_offset = compass_logic();
 }
@@ -109,7 +115,7 @@ int compass_logic() {
 
     return corrected_heading;
   }
-  //return 0;
+  return 0;
 }
 
 // Controls vehicle with serial inputs
@@ -120,8 +126,10 @@ void get_commands() {
     int delim = message.indexOf(":");
     
     if (delim > -1) {
-      String command = message.substring(0, delim).toLowerCase();
-      int value = message.substring(delim + 1);
+      String command = message.substring(0, delim);
+      command.toLowerCase();
+
+      String value = message.substring(delim + 1);
       
       if (command.startsWith("dist") 
       || command.startsWith("drive") 
@@ -130,15 +138,16 @@ void get_commands() {
       } else if (command.startsWith("deg")) {
           rotate_vehicle(value.toInt());
       } else if (command.startsWith("turn")) {
-        String dir = value.toLowerCase().trim();
-        if (dir.startsWith("n")) {
+        value.toLowerCase();
+        value.trim();
+        if (value.startsWith("n")) {
           rotate_vehicle(0);
-        } else if (dir.startsWith("e")) {
+        } else if (value.startsWith("e")) {
           rotate_vehicle(90);
-        } else if (dir.startsWith("s")) {
+        } else if (value.startsWith("s")) {
           rotate_vehicle(180);
-        } else if (dir.startsWith("w")) {
-          rotate_vehicle(90);
+        } else if (value.startsWith("w")) {
+          rotate_vehicle(270);
         } else {
           Serial.println("Invalid direction. Use N, E, S, or W.");
         }
@@ -156,14 +165,22 @@ void travel_distance(int distance, int max_speed){
   distance_travelled = 0;
   pulse_count_R = 0;
   pulse_count_L = 0;
- 
+
   byte motor_direction = distance > 0 ? 0 : 1;
 
-  while (distance_travelled < distance){
+  
+  while (distance_travelled < abs(distance)){
     distance_travelled = ( (pulse_count_L + pulse_count_R) / 2.0) / pulse_per_cm;
+    if (motor_direction == 1){
+      digitalWrite(buzzer, (int(distance_travelled) % 2 == 0)? HIGH : LOW);
+      move_motor(motor_direction, motor_direction, 50, 50);
+    } else{
+      move_motor(motor_direction, motor_direction, max_speed, max_speed);
+    }
     update_lcd();
-    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+//    move_motor(motor_direction, motor_direction, max_speed, max_speed);
   }
+  digitalWrite(buzzer,LOW);
   move_motor(0, 0, 0, 0);
 }
 
