@@ -67,7 +67,7 @@ int compass_offset;
 String message;
 
 //buzzer variables
-#define buzzer 4
+//#define buzzer 4
 
 void setup() {
   Wire.begin();
@@ -76,7 +76,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
 
-  pinMode(buzzer, OUTPUT);
+  //pinMode(buzzer, OUTPUT);
   
   Serial.begin(9600);
   compass_offset = compass_logic();
@@ -85,7 +85,7 @@ void setup() {
 void loop(){  
   current_degree = compass_logic();
   update_lcd();
-  //rotate_vehicle(0);
+  
   get_commands();
   if (button_pressed){
     button_pressed = false;
@@ -133,24 +133,15 @@ void get_commands() {
       
       if (command.startsWith("dist") 
       || command.startsWith("drive") 
+      || command.startsWith("move")
       && value.toInt() != 0){
           travel_distance(value.toInt(), motor_max_speed);
       } else if (command.startsWith("deg")) {
           rotate_vehicle(value.toInt());
       } else if (command.startsWith("turn")) {
-        value.toLowerCase();
-        value.trim();
-        if (value.startsWith("n")) {
-          rotate_vehicle(0);
-        } else if (value.startsWith("e")) {
-          rotate_vehicle(90);
-        } else if (value.startsWith("s")) {
-          rotate_vehicle(180);
-        } else if (value.startsWith("w")) {
-          rotate_vehicle(270);
-        } else {
-          Serial.println("Invalid direction. Use N, E, S, or W.");
-        }
+        int deg = value.toInt();
+        deg += 180;
+        rotate_vehicle(deg);
       } else {
         Serial.println("Command not found: " + message);
       }
@@ -172,7 +163,7 @@ void travel_distance(int distance, int max_speed){
   while (distance_travelled < abs(distance)){
     distance_travelled = ( (pulse_count_L + pulse_count_R) / 2.0) / pulse_per_cm;
     if (motor_direction == 1){
-      digitalWrite(buzzer, (int(distance_travelled) % 2 == 0)? HIGH : LOW);
+      //digitalWrite(buzzer, (int(distance_travelled) % 2 == 0)? HIGH : LOW);
       move_motor(motor_direction, motor_direction, 50, 50);
     } else{
       move_motor(motor_direction, motor_direction, max_speed, max_speed);
@@ -180,7 +171,7 @@ void travel_distance(int distance, int max_speed){
     update_lcd();
 //    move_motor(motor_direction, motor_direction, max_speed, max_speed);
   }
-  digitalWrite(buzzer,LOW);
+  //digitalWrite(buzzer,LOW);
   move_motor(0, 0, 0, 0);
 }
 
