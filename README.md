@@ -25,10 +25,6 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - 2 x Lego NXT Electric Motor
 - CMPS14 Tilt Compensated Compass Module
 - ESP32 / ESP8266
-- LIDAR-Lite V3 *
-
-
-*<sub>(find out what module we will use)</sub>
 
 ### **If using _Arduino Nano_**:
 - Arduino Nano
@@ -36,9 +32,6 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - 2 x Lego NXT Electric Motor
 - CMPS14 Tilt Compensated Compass Module
 - ESP32 / ESP8266
-- LIDAR-Lite V3 *
-
-*<sub>(find out what module we will use)</sub>
 
 ### Links to buy components:
 - [Arduino Mega 2560 Rev3](https://store.arduino.cc/en-fi/products/arduino-mega-2560-rev3)
@@ -50,14 +43,11 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - [CMPS14 Compass Module](https://www.robotshop.com/products/tilt-compensated-magnetic-compass-cmps14)
 - [ESP32](https://www.aliexpress.com/item/1005004476867346.html)
 - [ESP8266](https://www.aliexpress.com/item/32790209784.html) 
-- LIDAR-Lite V3 *
 
-*<sub>(find out what module we will use first)</sub>
 
 ## Circuits
 
 ### Circuit using Arduino Mega
-Current missing motors, ESP, LIDAR:
 <sub>Instructions on how to edit and files to edit and update schematic are in schematic folder</sub>
 ![Schematic_Mega](schematics/mega/mega_schematic.jpg)
 
