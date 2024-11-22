@@ -72,3 +72,15 @@ html {
   width: 100%;				/* The box for the number will be as wide as the whole screen */
   text-align: center;		/* The number will be in the middle */
 }
+
+#compassControl {
+  width: 300px;
+  height: 300px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin: 20px auto;
+  position: relative;
+  background: radial-gradient(circle, #f8d57e, #f0a550);
+  cursor: pointer;
+}
+
