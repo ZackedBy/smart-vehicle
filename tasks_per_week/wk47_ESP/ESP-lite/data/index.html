@@ -18,43 +18,18 @@
 		<button class="button" onclick="sendCompassValue(0)">|>0|-|_|0;|\|3|\|</button>
 	</div>
 	<h1>Compass Control</h1>
-		<!-- Below is a code row for a slider you can drag left or right. 
-		It lets you choose a number between -360 and 360, with steps of 5. 
-		When you move the slider, it calls the updateCompass() function, 
-		and when you finish pressing and/or moving the mouse button, it calls the sendCompassValue() function.-->
-		<input type="range" min="0" max="360" step="5" id="compassSlider" oninput="updateCompass(this.value)" onchange="sendCompassValue(this.value)" value="180"/>	
-		<div id="compassControl"></div>
-		<div id="compassValue">180°</div>		<!-- This shows the current/last requested compass turning value -->
-<!-- 
-		<svg id="compass" width="200" height="200" style="display: block; margin: auto;">
-			<circle cx="100" cy="100" r="90" fill="lightblue" stroke="black" stroke-width="2"></circle>
-			<line id="indicator" x1="100" y1="100" x2="100" y2="20" stroke="red" stroke-width="3"/> 
-			<polygon id="top" points="80,20 120,20 100,100" fill="transparent" cursor="pointer"></polygon>
-			<polygon id="right" points="180,80 180,120 100,100" fill="transparent" cursor="pointer"></polygon>
-			<polygon id="bottom" points="80,180 120,180 100,100" fill="transparent" cursor="pointer"></polygon>
-			<polygon id="left" points="20,80 20,120 100,100" fill="transparent" cursor="pointer"></polygon>
-		</svg>
+		<div id="compassValue"></div>
+    <div id="compassControl" style="position: relative; width: 200px; height: 200px;">
+        <canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
+        <div id="north" class="compass-label">N</div>
+        <div id="northeast" class="compass-label">NE</div>
+        <div id="east" class="compass-label">E</div>
+        <div id="southeast" class="compass-label">SE</div>
+        <div id="south" class="compass-label">S</div>
+        <div id="southwest" class="compass-label">SW</div>
+        <div id="west" class="compass-label">W</div>
+        <div id="northwest" class="compass-label">NW</div>
+    </div>
 		
-		<script>
-			document.getElementById("top").addEventListener("click", () => updateCompass2(0));
-			document.getElementById("right").addEventListener("click", () => updateCompass2(90));
-			document.getElementById("bottom").addEventListener("click", () => updateCompass2(180));
-			document.getElementById("left").addEventListener("click", () => updateCompass2(270));
-
-			function updateCompass2(degrees) {
-				compassValue.textContent = `${degrees}°`;
-				const centerX = 100;
-				const centerY = 100;
-				const radius = 80;
-
-				const radian = (degrees - 90) * (Math.PI / 180);
-				const x2 = centerX + radius * Math.cos(radian);
-				const y2 = centerY + radius * Math.sin(radian);
-
-				indicator.setAttribute("x2", x2);
-				indicator.setAttribute("y2", y2);
-				sendCompassValue(parseInt(degrees));
-			}
-		</script> -->
 	</body>
 </html>
