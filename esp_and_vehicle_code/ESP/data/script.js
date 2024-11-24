@@ -100,6 +100,16 @@ compassForm.addEventListener("submit", (e) => {
     compassText.style.display = "inline";
     compassForm.style.display = "none";
 });
+// Close the form when clicking outside of it
+document.addEventListener('click', function(e) {
+    const isClickInside = compassForm.contains(e.target) || compassText.contains(e.target);
+    if (!isClickInside && compassForm.style.display === 'inline') {
+        // If clicked outside and the form is visible, submit the form
+        compassForm.requestSubmit(); // Trigger form submission
+    }
+});
+
+
 let isMouseDown = false;
 
 function startInteraction(event) {
