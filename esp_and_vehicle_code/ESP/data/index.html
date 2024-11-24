@@ -8,28 +8,37 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
 </head>
-<body>
-	<h1>Motor Control</h1>
-	<div class="container">	<!-- This is a box that holds the buttons. -->
-		<button class="button" onclick="forwards5()">FORWARDS<br>5cm</button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
-		<button class="button" onclick="forwards20()">FORWARDS<br>20cm</button>
-		<button class="button button2" onclick="backwards5()">BACKWARDS<br>5cm</button>
-		<button class="button button2" onclick="backwards20()">BACKWARDS<br>20cm</button>
-		<button class="button" onclick="sendCompassValue(0)">|>0|-|_|0;|\|3|\|</button>
-	</div>
-	<h1>Compass Control</h1>
-		<div id="compassValue"></div>
-    <div id="compassControl" style="position: relative; width: 200px; height: 200px;">
-        <canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
-        <div id="north" class="compass-label">N</div>
-        <div id="northeast" class="compass-label">NE</div>
-        <div id="east" class="compass-label">E</div>
-        <div id="southeast" class="compass-label">SE</div>
-        <div id="south" class="compass-label">S</div>
-        <div id="southwest" class="compass-label">SW</div>
-        <div id="west" class="compass-label">W</div>
-        <div id="northwest" class="compass-label">NW</div>
-    </div>
+	<body>
+		<h1>Motor Control</h1>
+		<div class="container">	<!-- This is a box that holds the buttons. -->
+			<button class="button" onclick="forwards5()">FORWARDS<br>5cm</button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
+			<button class="button" onclick="forwards20()">FORWARDS<br>20cm</button>
+			<button class="button button2" onclick="backwards5()">BACKWARDS<br>5cm</button>
+			<button class="button button2" onclick="backwards20()">BACKWARDS<br>20cm</button>
+			<button class="button" onclick="sendCompassValue(0)">|>0|-|_|0;|\|3|\|</button>
+		</div>
+
+		<h1>Compass Control</h1>
+		
+		<div id="compassValue" onclick="editCompassValue()">
+			<span id="compassText">0°</span>
+			<form id="compassForm" style="display: none;">
+				<input type="number" id="compassInput" value="0" min="0" max="360" />
+				<button type="submit" style="display: none;">Submit</button>
+			</form>
+		</div>
+		
+		<div id="compassControl" style="position: relative; width: 200px; height: 200px;">
+			<canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
+			<div id="north" class="compass-label">N</div>
+			<div id="northeast" class="compass-label">NE</div>
+			<div id="east" class="compass-label">E</div>
+			<div id="southeast" class="compass-label">SE</div>
+			<div id="south" class="compass-label">S</div>
+			<div id="southwest" class="compass-label">SW</div>
+			<div id="west" class="compass-label">W</div>
+			<div id="northwest" class="compass-label">NW</div>
+		</div>
 		
 	</body>
 </html>

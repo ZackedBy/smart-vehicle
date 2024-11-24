@@ -81,6 +81,15 @@ html {
   background: radial-gradient(circle, #46ff46, #35be35);
   cursor: pointer;
 }
+#compassText {
+  border-radius: 2px;
+  padding: 5px;
+  cursor: pointer;
+}
+#compassText:hover {
+  color: #46ff46;
+  background-color: #555555;
+}
 
 .compass-label {
   position: absolute;

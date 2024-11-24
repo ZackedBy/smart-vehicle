@@ -1,6 +1,9 @@
 const compassControl = document.getElementById("compassControl");
 const compassValue = document.getElementById("compassValue");
-const defaultValue = 0; // Default compass value
+const compassText = document.getElementById("compassText");
+const compassForm = document.getElementById("compassForm");
+const compassInput = document.getElementById("compassInput");
+const defaultValue = 0;
 
 // Set initial compass value
 updateCompass(defaultValue);
@@ -10,7 +13,8 @@ drawLineToCircumference(defaultValue, compassControl.getBoundingClientRect());
 
 // Update the compass display
 function updateCompass(pos) {
-    compassValue.innerText = `${pos}°`; // Update compass value display
+    compassText.innerText = `${pos}°`; // Update compass value display
+    compassInput.value = pos;
 }
 
 // Send the current compass value to the server
@@ -18,8 +22,6 @@ function sendCompassValue(pos) {
     fetch(`/compass?value=${pos}`); // Send the compass value to the server
     console.log("Compass value", pos); // Log the value for debugging
 }
-
-
 
 // Utility to calculate the angle relative to the center
 function calculateAngleFromCenter(clientX, clientY, rect) {
@@ -79,7 +81,25 @@ function finalizeCompassInteraction(event) {
 }
 
 
+// Toggle input field visibility
+function editCompassValue() {
+    compassText.style.display = "none";
+    compassForm.style.display = "inline";
+    compassInput.focus();
+}
 
+// Handle form submission
+compassForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const angle = Math.min(Math.max(parseInt(compassInput.value), 0), 360); // Ensure the value is between 0 and 360
+    updateCompass(angle);
+    drawLineToCircumference(angle, compassControl.getBoundingClientRect());
+    sendCompassValue(angle);
+
+    // Revert back to text view after submission
+    compassText.style.display = "inline";
+    compassForm.style.display = "none";
+});
 let isMouseDown = false;
 
 function startInteraction(event) {
