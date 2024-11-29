@@ -11,11 +11,11 @@
 	<body>
 		<h1>Motor Control</h1>
 		<div class="container">	<!-- This is a box that holds the buttons. -->
-			<button class="button" onclick="forwards5()">FORWARDS<br>5cm</button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
-			<button class="button" onclick="forwards20()">FORWARDS<br>20cm</button>
-			<button class="button button2" onclick="backwards5()">BACKWARDS<br>5cm</button>
-			<button class="button button2" onclick="backwards20()">BACKWARDS<br>20cm</button>
-			<button class="button" onclick="sendCompassValue(0)">|>0|-|_|0;|\|3|\|</button>
+			<button class="button" onclick="forwards()">FORWARDS (cm)<br></button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
+			<input type="number" id="forwardValue" value="5" min="1">
+			<button class="button button2" onclick="backwards()">BACKWARDSc (cm)<br></button>
+			<input type="number" id="backwardsValue" value="5" min="1">
+			<button class="button" onclick="sendCompassValue(0)">FIND NORTH</button>
 		</div>
 
 		<h1>Compass Control</h1>

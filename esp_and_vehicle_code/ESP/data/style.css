@@ -39,6 +39,15 @@ html {
   color: #46ff46;			/* The text will be bright green */
 }
 
+input[type="number"] {
+  font-size: 20px;
+  width:auto;
+  min-width: 20px;
+  padding:2px 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 #compassSlider {
   width: 100%;				/* The slider will stretch across the whole screen */
   height: 15px;				/* The slider will be nice and tall */
