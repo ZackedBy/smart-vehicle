@@ -39,9 +39,7 @@ const float wheel_circ = PI * wheel_dia_m;
 const int pulse_per_revolution = 210; //Find actual value
 const float pulse_per_cm = (float)pulse_per_revolution / (wheel_circ * 100);
 float distance_travelled = 0;
-//const float target_distance = 30.0;
-
-
+  
 //LCD Variables
 #define rs 32
 #define en 30
@@ -162,14 +160,14 @@ void travel_distance(int distance, int max_speed){
   
   while (distance_travelled < abs(distance)){
     distance_travelled = ( (pulse_count_L + pulse_count_R) / 2.0) / pulse_per_cm;
-    if (motor_direction == 1){
-      //digitalWrite(buzzer, (int(distance_travelled) % 2 == 0)? HIGH : LOW);
-      move_motor(motor_direction, motor_direction, 50, 50);
-    } else{
-      move_motor(motor_direction, motor_direction, max_speed, max_speed);
-    }
+//    if (motor_direction == 1){
+//      //digitalWrite(buzzer, (int(distance_travelled) % 2 == 0)? HIGH : LOW);
+//      move_motor(motor_direction, motor_direction, max_speed, max_speed);
+//    } else{
+//      move_motor(motor_direction, motor_direction, max_speed, max_speed);
+//    }
     update_lcd();
-//    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+    move_motor(motor_direction, motor_direction, max_speed, max_speed);
   }
   //digitalWrite(buzzer,LOW);
   move_motor(0, 0, 0, 0);
@@ -234,7 +232,7 @@ void update_lcd(){
     prev_millis_lcd = current_millis_lcd;
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("Command: " + message);
+    lcd.print(message);
     lcd.setCursor(0,1);
     lcd.print("Direction: " + get_direction(current_degree));
     lcd.setCursor(0,2);

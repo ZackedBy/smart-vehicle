@@ -36,15 +36,30 @@ void setup() {
 
 
   // Define custom actions/function calls for specific URLs (ie when a button press from webpage requests a particular URL)
-  server.on("/forwards5", [](){ handleMove(5); });      // When requesting URL "/forwards5", call the handleMove function with parameter 5
-  server.on("/forwards20", [](){ handleMove(20); });    // [](){ handleMove(x); } is a lambda function that contains the code  
-  server.on("/backwards5", [](){ handleMove(-5); });    // to be executed when the route is visited. These lambda functions call
-  server.on("/backwards20", [](){ handleMove(-20); });  // handleMove(x) as soon as it's triggered.
-  server.on("/compass", handleCompass);                 // When requesting URL "/compass", call the handleCompass function
+  server.onNotFound([]() { 
+      String path = server.uri();  // Get the requested URI (e.g., "/forwards9")
+      Serial.println(path);
+      if (path.startsWith("/forwards")) {
+          int moveValue = path.substring(9).toInt();  // Extract the number after "/forwards"
+          handleMove(moveValue);                     // Call handleMove with the positive value
+      } 
+      else if (path.startsWith("/backwards")) {
+          int moveValue = path.substring(10).toInt(); // Extract the number after "/backwards"
+          handleMove(-moveValue);                     // Call handleMove with the negative value
+      } 
+      else if(path.startsWith("/compass")){
+        handleCompass();
+      }
+      else {
+          // Optionally handle invalid routes
+          handleNotFound();
+      }
+  });               
+  // When requesting URL "/compass", call the handleCompass function
 
 
   //  If someone tries to access a URL that does not exist (e.g. due to a typo), call the handleNotFound function
-  server.onNotFound(handleNotFound);
+//  server.onNotFound(handleNotFound);
 
 
   // Start the web server
@@ -72,9 +87,7 @@ void handleMove(int distance) {
 
 // This function handles the compass command (like "/compass?value=30")
 void handleCompass() {
-  if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
-    String valueString = server.arg("value");       // Get the "value" argument from the URL
-    Serial.println("Turn:" + valueString);          // Print the compass value to the serial monitor
-  }
+    String value = server.arg("value");
+    Serial.println("Turn:" + value);
   server.send(200);
 }

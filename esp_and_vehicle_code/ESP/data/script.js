@@ -139,15 +139,18 @@ compassControl.ontouchend = endInteraction;
 compassControl.ontouchmove = moveInteraction;
 
 
+
 // Functions for moving the motor forward and backward with specific distances
 function forwards() { 
     // Use the input field for distance
-    const value = parseInt(document.getElementById("forwardValue").value, 10);
-    move("forwards", value); } 		// Calling move function with separated parameters
+    const value = parseInt(document.getElementById("forwardValue").value);
+    move("forwards", value); 
+} 		// Calling move function with separated parameters
 function backwards() { 
     // Use the input field for distance
-    const value = parseInt(document.getElementById("backwardsValue").value, 10);
-    move("backwards", value); }	// Calling move function with separated parameters
+    const value = parseInt(document.getElementById("backwardsValue").value);
+    move("backwards", value); 
+}	// Calling move function with separated parameters
 
 
 // This is a general-purpose function that can handle different combinations of direction and distance
