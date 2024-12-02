@@ -7,13 +7,12 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
-- [x] Fix compass module to be flat on vehicle
 - [ ] Figure out calibration issue on power up (almost there 🤏)
 - [ ] Edit provided frontend website 
-- [x] Communicate controls from frontend to backend
-- [x] Create circuit schematic for mega
-- [x] Check if possible to house all components on Arduino Nano :100:
-- [ ] Check if can add 3rd interrupt to nano from esp to mimic button press
+- [ ] Figure out motor connections and DRV8835 connections for schematic
+- [ ] Have button press switch modes
+- [ ] Add error handling for turning
+- [ ] Add catch for dynamic ip address switch
 
 
 ## Components
