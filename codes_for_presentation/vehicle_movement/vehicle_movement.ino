@@ -24,7 +24,7 @@ volatile unsigned long last_button_press_time = 0;
 #define Motor_L_pwm_pin 9
 #define Motor_R_pwm_pin 10
 const byte Motor_forward = 0, Motor_backward = 1;
-const int stationary_x = 511, stationary_y = 519, motor_max_speed = 255; 
+const int stationary_x = 502, stationary_y = 506, motor_max_speed = 255; 
 int motor_speed_x = 0, motor_speed_y = 0;
 
 //Encoder Variables
@@ -56,7 +56,7 @@ const uint8_t CMPS14_address = 0x60;
 byte raw;
 int current_degree = 0, target_degree = 0;
 int direction_difference;
-const int degrees_tolerance = 3;
+const int degrees_tolerance = 1;
 int compass_offset;
 
 
@@ -80,7 +80,7 @@ void loop(){
   if (joystick_mode) {
     joystick_movement();
   } else {
-    get_commands();
+    get_serial_commands();
   }
 }
 
@@ -101,14 +101,14 @@ void update_lcd(){
     lcd.print(current_degree);
     
     lcd.setCursor(0,2);
-    lcd.print("P_L:");
+    lcd.print("L:");
     lcd.print(pulse_count_L);
-    lcd.print(",D_L:");
-    lcd.print(dist_L);
-    lcd.print(",P_R:");
+    lcd.print(",");
+    lcd.print(int(dist_L));
+    lcd.print(",R:");
     lcd.print(pulse_count_R);
-    lcd.print(",D_R:");
-    lcd.print(dist_R);
+    lcd.print(",");
+    lcd.print(int(dist_R));
     
     lcd.setCursor(0,3);
     if (joystick_mode) {
@@ -136,7 +136,6 @@ int compass_logic() {
     
     int corrected_heading = mapped_heading - compass_offset;
 
-    // Only triggered on startup
     if (corrected_heading < 0) {
       corrected_heading += 360;
     } else if (corrected_heading >= 360) {
@@ -150,7 +149,7 @@ int compass_logic() {
 
 // Controls vehicle with serial inputs
 // Available commands: dist, drive, move; deg, turn
-void get_commands() {
+void get_serial_commands() {
   if (Serial.available() > 0){
     message = Serial.readStringUntil('\n'); 
     int delim = message.indexOf(":");
@@ -164,7 +163,7 @@ void get_commands() {
       if (command.startsWith("dist") 
       || command.startsWith("drive") 
       || command.startsWith("move")
-      && value != 0){
+      && value != 0) {
           travel_distance(value, motor_max_speed);
       } else if (command.startsWith("deg") || command.startsWith("turn")) {
           rotate_vehicle(value);
@@ -203,13 +202,15 @@ void rotate_vehicle(int target_deg) {
     current_degree = compass_logic();
     
     direction_difference = target_deg - current_degree;
-    
+
+    // Normalise the difference [-180, 180]
     if (direction_difference > 180) {
       direction_difference -= 360;
     } else if (direction_difference < -180) {
       direction_difference += 360;
     }
 
+    // Vehicle has reached the target, break out of loop
     if (abs(direction_difference) <= degrees_tolerance) {
       break;
     }
@@ -222,6 +223,7 @@ void rotate_vehicle(int target_deg) {
       move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
     }
   }
+  // Stop movement
   move_motor(0, 0, 0, 0);
 }
 
@@ -269,21 +271,21 @@ void joystick_movement() {
 
     // Determine movement based on joystick direction
     if (x_in_deadzone && joy_y_value > stationary_y) {                          // Move left
-        move_motor(Motor_forward, Motor_backward, motor_speed_y, motor_speed_y);
-    } else if (x_in_deadzone && joy_y_value < stationary_y) {                   // Move right
         move_motor(Motor_backward, Motor_forward, motor_speed_y, motor_speed_y);
+    } else if (x_in_deadzone && joy_y_value < stationary_y) {                   // Move right
+        move_motor(Motor_forward, Motor_backward, motor_speed_y, motor_speed_y);
     } else if (y_in_deadzone && joy_x_value < stationary_x) {                   // Move forward
         move_motor(Motor_forward, Motor_forward, motor_speed_x, motor_speed_x);
     } else if (y_in_deadzone && joy_x_value > stationary_x) {                   // Move backward
         move_motor(Motor_backward, Motor_backward, motor_speed_x, motor_speed_x);
     } else if (joy_x_value > stationary_x && joy_y_value > stationary_y) {      // Backward-left
-        move_motor(Motor_backward, Motor_backward, motor_speed_x, 0);
-    } else if (joy_x_value > stationary_x && joy_y_value < stationary_y) {      // Backward-right
         move_motor(Motor_backward, Motor_backward, 0, motor_speed_x);
+    } else if (joy_x_value > stationary_x && joy_y_value < stationary_y) {      // Backward-right
+        move_motor(Motor_backward, Motor_backward, motor_speed_x, 0);
     } else if (joy_x_value < stationary_x && joy_y_value > stationary_y) {      // Forward-left
-        move_motor(Motor_forward, Motor_forward, motor_speed_x, 0);
-    } else if (joy_x_value < stationary_x && joy_y_value < stationary_y) {      // Forward-right
         move_motor(Motor_forward, Motor_forward, 0, motor_speed_x);
+    } else if (joy_x_value < stationary_x && joy_y_value < stationary_y) {      // Forward-right
+        move_motor(Motor_forward, Motor_forward, motor_speed_x, 0);
     } else {                                                                    // Stationary (dead zone)
         move_motor(0, 0, 0, 0);
     }
@@ -314,6 +316,7 @@ void encoder_pulse_L(){
 void joystick_interrupt() {
   unsigned long current_time = millis();
   if (current_time - last_button_press_time > debounce_time) {
+    {pulse_count_L = pulse_count_R, dist_L, dist_R = 0;}
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
