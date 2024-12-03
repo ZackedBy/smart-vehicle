@@ -54,7 +54,6 @@ const int lcd_interval = 500;
 //Compass Variables
 const uint8_t CMPS14_address = 0x60;
 byte raw;
-int mapped_heading;
 int current_degree = 0, target_degree = 0;
 int direction_difference;
 const int degrees_tolerance = 1;
@@ -132,7 +131,7 @@ int compass_logic() {
   
   if (Wire.available() >= 1){
     raw = Wire.read();
-    mapped_heading = map(raw, 0, 255, 0, 360);
+    int mapped_heading = map(raw, 0, 255, 0, 360);
     
     int corrected_heading = mapped_heading - compass_offset;
 
@@ -197,6 +196,10 @@ void travel_distance(int distance, int max_speed){
 
 // Rotates the vehicle with shortest path
 void rotate_vehicle(int target_deg) {
+  int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
+  unsigned long last_update = millis(); // Timestamp for the last progress check
+  const unsigned long error_timeout = 50; // Timeout in milliseconds to detect no progress
+  const int degree_threshold = 15;
   while (true) {
     update_lcd();
     current_degree = compass_logic();
@@ -215,6 +218,29 @@ void rotate_vehicle(int target_deg) {
       break;
     }
 
+
+    if (millis() - last_update >= error_timeout) {
+      if (abs(current_degree - degree_monitor) < degree_threshold) {
+        // Blockage detected, reverse the rotation direction
+        degree_monitor = current_degree; // Reset the monitor to current
+        last_update = millis(); // Reset the timer
+
+        if (direction_difference > 0) {
+          // Change to CCW
+          move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
+        } else {
+          // Change to CW
+          move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
+        }
+        continue; // Skip the rest of the loop to avoid duplicate checks
+      } else {
+        // Progress detected, reset the monitor
+        degree_monitor = current_degree;
+        last_update = millis();
+      }
+    }
+
+    
     if (direction_difference > 0) {
       // Move CW
       move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
@@ -226,6 +252,17 @@ void rotate_vehicle(int target_deg) {
   // Stop movement
   move_motor(0, 0, 0, 0);
 }
+
+//void handleTurningError(int degree_monitor, long last_update) {
+//  unsigned
+//    if (direction_difference > 0) {
+//      // Move CW
+//      move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
+//    } else {
+//      // Move CCW
+//      move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
+//    }
+//}
 
 // Converts current direction to cardinal point
 String get_direction(int heading) {
