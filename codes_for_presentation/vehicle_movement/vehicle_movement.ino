@@ -54,6 +54,7 @@ const int lcd_interval = 500;
 //Compass Variables
 const uint8_t CMPS14_address = 0x60;
 byte raw;
+int mapped_heading;
 int current_degree = 0, target_degree = 0;
 int direction_difference;
 const int degrees_tolerance = 1;
@@ -101,13 +102,12 @@ void update_lcd(){
     lcd.print(current_degree);
     
     lcd.setCursor(0,2);
-    lcd.print("L:");
     lcd.print(pulse_count_L);
-    lcd.print(",");
+    lcd.print(", ");
     lcd.print(int(dist_L));
-    lcd.print(",R:");
+    lcd.print("|");
     lcd.print(pulse_count_R);
-    lcd.print(",");
+    lcd.print(", ");
     lcd.print(int(dist_R));
     
     lcd.setCursor(0,3);
@@ -132,7 +132,7 @@ int compass_logic() {
   
   if (Wire.available() >= 1){
     raw = Wire.read();
-    int mapped_heading = map(raw, 0, 255, 0, 360);
+    mapped_heading = map(raw, 0, 255, 0, 360);
     
     int corrected_heading = mapped_heading - compass_offset;
 
@@ -316,7 +316,10 @@ void encoder_pulse_L(){
 void joystick_interrupt() {
   unsigned long current_time = millis();
   if (current_time - last_button_press_time > debounce_time) {
-    {pulse_count_L = pulse_count_R, dist_L, dist_R = 0;}
+    pulse_count_L = 0;
+    pulse_count_R = 0;
+    dist_L = 0;
+    dist_R = 0;
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
