@@ -2,10 +2,15 @@ html {
   font-family: Helvetica;	/* The text will be in a nice, clean font called Helvetica */
   display: flex;			/* We make everything flexible, like stretching playdough */
   justify-content: center;	/* All the stuff inside will be pushed to the left side */
+  align-items: center;
   height: 100vh;			/* The page will be as tall as your whole screen */
   margin: 0;				/* No extra space around the page’s edges */
   text-align: center;		/* All the words inside will be in the middle */
   box-sizing: border-box;	/* We include the border in the size, like wrapping a gift tightly */
+}
+
+h1 {
+  text-decoration: underline;
 }
 
 section {
