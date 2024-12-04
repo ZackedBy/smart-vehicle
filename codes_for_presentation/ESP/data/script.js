@@ -10,6 +10,11 @@ updateCompass(defaultValue);
 sendCompassValue(defaultValue);
 drawLineToCircumference(defaultValue, compassControl.getBoundingClientRect());
 
+function findNorth() {
+    updateCompass(0);
+    sendCompassValue(0);
+    drawLineToCircumference(0, compassControl.getBoundingClientRect());
+}
 
 // Update the compass display
 function updateCompass(pos) {
