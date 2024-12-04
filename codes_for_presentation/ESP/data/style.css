@@ -8,6 +8,14 @@ html {
   box-sizing: border-box;	/* We include the border in the size, like wrapping a gift tightly */
 }
 
+section {
+  background-color: #c9c9c9;
+  padding: 10px;
+  border-radius: 20px;
+  border: 2px solid #555555;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}
+
 .container {
   display: flex;			/* The container inside will also stretch, like playdough */
   flex-wrap: wrap;			/* If there's too much inside, it will wrap onto the next line */
@@ -88,7 +96,6 @@ input[type="number"] {
 
 #compassValue {
   font-size: 1.5em;			/* The font size showing the compass value will be big-ish */
-  margin-top: 10px;			/* Leave some space above the number */
   margin-left: 5px;			/* Leave a tiny bit of space on the left of the number */
   width: 100%;				/* The box for the number will be as wide as the whole screen */
   text-align: center;		/* The number will be in the middle */
@@ -97,7 +104,7 @@ input[type="number"] {
 #compassControl {
   border: 2px solid #000;
   border-radius: 50%;
-  margin: 20px auto 50px auto;
+  margin: 20px auto;
   position: relative;
   background: radial-gradient(circle, #46ff46, #35be35);
   cursor: pointer;
