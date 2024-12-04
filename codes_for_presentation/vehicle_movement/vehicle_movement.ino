@@ -221,6 +221,7 @@ void rotate_vehicle(int target_deg) {
     if (millis() - last_update >= error_timeout) {
       if (abs(current_degree - degree_monitor) < degree_threshold) {
         // Blockage detected
+        //=====================================================================================================CHECK IF NEXT 2 LINES (COMMENTED OUT) ARE NECESSARY!!!!!
 //        degree_monitor = current_degree; // Reset the monitor to current
 //        last_update = millis(); // Reset the time
         message = "Path Blocked. Stop";
