@@ -116,7 +116,6 @@ void update_lcd(){
       lcd.print(", Y: ");
       lcd.print(joy_y_value);
     } else {
-      lcd.print("Cmd: ");
       lcd.print(message);
     }
   }
@@ -222,8 +221,9 @@ void rotate_vehicle(int target_deg) {
     if (millis() - last_update >= error_timeout) {
       if (abs(current_degree - degree_monitor) < degree_threshold) {
         // Blockage detected
-        degree_monitor = current_degree; // Reset the monitor to current
-        last_update = millis(); // Reset the time
+//        degree_monitor = current_degree; // Reset the monitor to current
+//        last_update = millis(); // Reset the time
+        message = "Path Blocked. Stop";
         break; // Break out of loop and stop motor
       } else {
         // Progress detected, reset the monitor
