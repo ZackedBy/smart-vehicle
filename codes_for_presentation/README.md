@@ -27,5 +27,5 @@
 ### **Code Quality:**
 - [x] **Code Cleanup:** All necessary code is combined into one functioning program, unnecessary code is remove, the code is well-organised and descriptive naming is used,
 - [x] **Code Structure and Documentation:** The code is divided into separate functions and key parts of the code are commented,
-- [ ] **Error Handling:** Implemented one of the options or one of similar level. Error is somehow displayed on the LCD.
+- [x] **Error Handling:** Implemented one of the options or one of similar level. Error is somehow displayed on the LCD.
 
