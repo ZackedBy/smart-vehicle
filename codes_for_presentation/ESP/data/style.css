@@ -1,7 +1,7 @@
 html { 
   font-family: Helvetica;	/* The text will be in a nice, clean font called Helvetica */
   display: flex;			/* We make everything flexible, like stretching playdough */
-  justify-content: left;	/* All the stuff inside will be pushed to the left side */
+  justify-content: center;	/* All the stuff inside will be pushed to the left side */
   height: 100vh;			/* The page will be as tall as your whole screen */
   margin: 0;				/* No extra space around the page’s edges */
   text-align: center;		/* All the words inside will be in the middle */
@@ -17,6 +17,12 @@ html {
   margin-top: 20px;			/* Move the container down a little from the top */
 }
 
+.drive-container{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
 .button { 
   user-select: none;		/* You can't accidentally select the button with your mouse */
   background-color: #46ff46;/* The button will be green */
@@ -25,7 +31,7 @@ html {
   padding: 12px 28px;		/* The button will have some space inside, like a pillow */
   font-size: 24px;			/* The words on the button will be big and easy to read */
   cursor: pointer;			/* The mouse pointer will turn into a hand when you hover over it */
-  width: 190px;				/* The button will be a specific width */
+  width: calc(50% - 5px);				/* The button will be a specific width */
   height: 100px;			/* The button will be a certain height, like a big rectangle */
   display: flex;			/* The button will stretch like playdough again */
   align-items: center;		/* The words will be centered inside the button */
@@ -39,9 +45,15 @@ html {
   color: #46ff46;			/* The text will be bright green */
 }
 
+@media (max-width: 300px) {
+  .button {
+    font-size: 18px;
+  }
+}
+
 input[type="number"] {
   font-size: 20px;
-  width:auto;
+  width: calc(50% - 17px);
   min-width: 20px;
   padding:2px 5px;
   border: 1px solid #ccc;
