@@ -10,10 +10,8 @@
 #define joy_y A1
 #define joy_key 18
 int joy_x_value = 0, joy_y_value = 0;
-double x_volt = 0, y_volt = 0;
 
 //JoyStick Press Variables
-#define led_pin 13
 const int debounce_time = 50;
 volatile boolean joystick_mode = true;
 volatile unsigned long last_button_press_time = 0;
@@ -53,12 +51,10 @@ const int lcd_interval = 500;
 
 //Compass Variables
 const uint8_t CMPS14_address = 0x60;
-byte raw;
 int current_degree = 0, target_degree = 0;
 int direction_difference;
 const int degrees_tolerance = 1;
 int compass_offset;
-
 
 //Serial Reading
 String message;
@@ -71,7 +67,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
   
   Serial.begin(9600);
-  compass_offset = compass_logic();
+  compass_offset = compass_logic(); // Get compass reading on start-up
 }
 
 void loop(){  
@@ -129,11 +125,13 @@ int compass_logic() {
   Wire.requestFrom(CMPS14_address, 1, true);
   
   if (Wire.available() >= 1){
-    raw = Wire.read();
+    byte raw = Wire.read();
     int mapped_heading = map(raw, 0, 255, 0, 360);
-    
+
+    // Offset compass reading with initial reading on startup
     int corrected_heading = mapped_heading - compass_offset;
 
+    // Normalise the reading [0, 360]
     if (corrected_heading < 0) {
       corrected_heading += 360;
     } else if (corrected_heading >= 360) {
@@ -155,7 +153,6 @@ void get_serial_commands() {
     if (delim > -1) {
       String command = message.substring(0, delim);
       command.toLowerCase();
-
       int value = message.substring(delim + 1).toInt();
       
       if (command.startsWith("dist") 
@@ -174,16 +171,20 @@ void get_serial_commands() {
   }
 }
 
+// Helper function to reset variables related to distance calculation
+void reset_dist_variables() {
+  pulse_count_R = 0;
+  pulse_count_L = 0;
+  dist_R = 0;
+  dist_L = 0;
+  distance_travelled = 0;
+}
+
 // Drives the vehicle from an input distance and speed
 void travel_distance(int distance, int max_speed){
-  distance_travelled = 0;
-  // Reset all related counters
-  {
-    pulse_count_R = pulse_count_L = dist_R = dist_L = 0;
-  }
-  
+  reset_dist_variables();
   // Flip motor direction depending on value of distance
-  byte motor_direction = distance > 0 ? 0 : 1;
+  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
 
   while (distance_travelled < abs(distance)){
     distance_travelled = (dist_R + dist_L) / 2;
@@ -217,13 +218,9 @@ void rotate_vehicle(int target_deg) {
       break;
     }
 
-
     if (millis() - last_update >= error_timeout) {
       if (abs(current_degree - degree_monitor) < degree_threshold) {
         // Blockage detected
-        //=====================================================================================================CHECK IF NEXT 2 LINES (COMMENTED OUT) ARE NECESSARY!!!!!
-//        degree_monitor = current_degree; // Reset the monitor to current
-//        last_update = millis(); // Reset the time
         message = "Path Blocked. Stop";
         break; // Break out of loop and stop motor
       } else {
@@ -233,7 +230,6 @@ void rotate_vehicle(int target_deg) {
       }
     }
 
-    
     if (direction_difference > 0) {
       // Move CW
       move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
@@ -248,29 +244,13 @@ void rotate_vehicle(int target_deg) {
 
 // Converts current direction to cardinal point
 String get_direction(int heading) {
-  if ((heading >= 338 && heading <= 360) || (heading >= 0 && heading < 23)) {
-    return "N";
-  } else if (heading >= 23 && heading < 68) {
-    return "NE";
-  } else if (heading >= 68 && heading < 113) {
-    return "E";
-  } else if (heading >= 113 && heading < 158) {
-    return "SE";
-  } else if (heading >= 158 && heading < 203) {
-    return "S";
-  } else if (heading >= 203 && heading < 248) {
-    return "SW";
-  } else if (heading >= 248 && heading < 293) {
-    return "W";
-  } else if (heading >= 293 && heading < 338) {
-    return "NW";
-  } else {
-    return "Invalid";
-  }
+    const String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+    return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
 }
 
-//There must be a easier way...
-// Controls motor movement by joystick inputs
+
+////There must be a easier way...
+//// Controls motor movement by joystick inputs
 void joystick_movement() {
     joy_x_value = analogRead(joy_x);
     joy_y_value = analogRead(joy_y);
@@ -335,10 +315,8 @@ void encoder_pulse_L(){
 void joystick_interrupt() {
   unsigned long current_time = millis();
   if (current_time - last_button_press_time > debounce_time) {
-    pulse_count_L = 0;
-    pulse_count_R = 0;
-    dist_L = 0;
-    dist_R = 0;
+    message = "";
+    reset_dist_variables();
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
