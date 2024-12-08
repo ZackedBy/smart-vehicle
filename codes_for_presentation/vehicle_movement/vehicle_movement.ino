@@ -53,7 +53,7 @@ const int lcd_interval = 500;
 const uint8_t CMPS14_address = 0x60;
 int current_degree = 0, target_degree = 0, last_used_degree = 0;
 int direction_difference, compass_offset;
-const int degrees_tolerance = 2;
+const int degree_tolerance = 1;
 String message; //whole message sent from website
 
 void setup() {
@@ -72,9 +72,10 @@ void loop(){
   display_lcd();
   current_degree = compass_logic();
   if (joystick_mode) {
+    last_used_degree = current_degree;
     joystick_movement();
   } else {
-    rotate_vehicle(last_used_degree);
+    rotate_vehicle(last_used_degree); // Self-correct rotation
     get_serial_commands();
   }
 }
@@ -233,12 +234,15 @@ void joystick_movement() {
 }
 
 // Rotates the vehicle with shortest path
+// Slows down as it nears the target
 void rotate_vehicle(int target_deg) {
   last_used_degree = target_deg;
+  
   int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
   unsigned long last_update = millis(); // Timestamp for the last progress check
-  const unsigned long error_timeout = 1000; // Timeout in milliseconds to detect no progress
-  const int degree_threshold = 15;
+  const unsigned long error_timeout = 1500; // Timeout in milliseconds to detect no progress
+  const int degree_threshold = 10;
+  
   while (true) {
     display_lcd();
     current_degree = compass_logic();
@@ -253,10 +257,11 @@ void rotate_vehicle(int target_deg) {
     }
 
     // Vehicle has reached the target, break out of loop
-    if (abs(direction_difference) <= degrees_tolerance) {
+    if (abs(direction_difference) <= degree_tolerance) {
       break;
     }
 
+    // Handles scenario when turning and path is blocked
     if (millis() - last_update >= error_timeout) {
       if (abs(current_degree - degree_monitor) < degree_threshold) {
         // Blockage detected
@@ -270,12 +275,18 @@ void rotate_vehicle(int target_deg) {
       }
     }
 
+    // Reduce rotation speed for last few degrees
+    int rotation_speed = abs(direction_difference) > 5
+      ? motor_max_speed
+      : (int) motor_max_speed / 4;
+
+    // Rotate vehicle with the shortest path
     if (direction_difference > 0) {
       // Move CW
-      move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
+      move_motor(Motor_forward, Motor_backward, rotation_speed, rotation_speed);
     } else {
       // Move CCW
-      move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
+      move_motor(Motor_backward, Motor_forward, rotation_speed, rotation_speed);
     }
   }
   // Stop movement
