@@ -5,18 +5,18 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
-//JoyStick Variables
+// JoyStick Variables
 #define joy_x A2
 #define joy_y A1
 #define joy_key 18
 int joy_x_value = 0, joy_y_value = 0;
 
-//JoyStick Press Variables
+// JoyStick Press Variables
 const int debounce_time = 50;
 volatile boolean joystick_mode = true;
 volatile unsigned long last_button_press_time = 0;
 
-//Motor Variables
+// Motor Variables
 #define Motor_L_dir_pin 7
 #define Motor_R_dir_pin 8
 #define Motor_L_pwm_pin 9
@@ -25,7 +25,7 @@ const byte Motor_forward = 0, Motor_backward = 1;
 const int stationary_x = 502, stationary_y = 506, motor_max_speed = 255; 
 int motor_speed_x = 0, motor_speed_y = 0;
 
-//Encoder Variables
+// Encoder Variables
 #define ENC_A_R 2  
 #define ENC_A_L 3
 #define ENC_B_R 11
@@ -38,7 +38,7 @@ volatile int pulse_count_R = 0, pulse_count_L = 0;
 volatile float dist_L = 0, dist_R = 0; // distance travelled by each motor
 float distance_travelled = 0; // average distance travelled of both motors
   
-//LCD Variables
+// LCD Variables
 #define rs 32
 #define en 30
 #define d4 28
@@ -49,39 +49,40 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 unsigned long prev_millis_lcd = 0;
 const int lcd_interval = 500;
 
-//Compass Variables
+// Compass Variables
 const uint8_t CMPS14_address = 0x60;
-int current_degree = 0, target_degree = 0;
-int direction_difference;
-const int degrees_tolerance = 1;
-int compass_offset;
-
-//Serial Reading
-String message;
+int current_degree = 0, target_degree = 0, last_used_degree = 0;
+int direction_difference, compass_offset;
+const int degrees_tolerance = 2;
+String message; //whole message sent from website
 
 void setup() {
-  Wire.begin();
-  lcd.begin(20,4);
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
   
+  Wire.begin();
+  lcd.begin(20,4);
   Serial.begin(9600);
+  
   compass_offset = compass_logic(); // Get compass reading on start-up
 }
 
 void loop(){  
-  update_lcd();
+  display_lcd();
   current_degree = compass_logic();
   if (joystick_mode) {
     joystick_movement();
   } else {
+    rotate_vehicle(last_used_degree);
     get_serial_commands();
   }
 }
 
-// Refreshes LCD with non-disruptive delay
-void update_lcd(){
+//==================================================================LCD Specific Functions=============================================
+
+// Displays and refreshes LCD with non-disruptive delay
+void display_lcd(){
   unsigned long current_millis_lcd = millis();
   if (current_millis_lcd - prev_millis_lcd >= lcd_interval) {
     prev_millis_lcd = current_millis_lcd;
@@ -116,6 +117,14 @@ void update_lcd(){
     }
   }
 }
+
+// Converts current direction to cardinal point
+String get_direction(int heading) {
+    const String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+    return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
+}
+
+//========================================================================Compass Functions========================================================
 
 // Sets starting direction as 0 degrees and updates degree value if turning
 int compass_logic() {
@@ -171,86 +180,19 @@ void get_serial_commands() {
   }
 }
 
-// Helper function to reset variables related to distance calculation
-void reset_dist_variables() {
-  pulse_count_R = 0;
-  pulse_count_L = 0;
-  dist_R = 0;
-  dist_L = 0;
-  distance_travelled = 0;
+//==================================================================Motor Movement Functions========================================
+
+// Move each motor in certain direction and speed
+void move_motor(byte left, byte right, int l_speed, int r_speed){
+  //Direction
+  digitalWrite(Motor_L_dir_pin, left);
+  digitalWrite(Motor_R_dir_pin, right);
+  //Speed
+  analogWrite(Motor_L_pwm_pin, l_speed); 
+  analogWrite(Motor_R_pwm_pin, r_speed); 
 }
 
-// Drives the vehicle from an input distance and speed
-void travel_distance(int distance, int max_speed){
-  reset_dist_variables();
-  // Flip motor direction depending on value of distance
-  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
-
-  while (distance_travelled < abs(distance)){
-    distance_travelled = (dist_R + dist_L) / 2;
-    update_lcd();
-    move_motor(motor_direction, motor_direction, max_speed, max_speed);
-  }
-  move_motor(0, 0, 0, 0);
-}
-
-// Rotates the vehicle with shortest path
-void rotate_vehicle(int target_deg) {
-  int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
-  unsigned long last_update = millis(); // Timestamp for the last progress check
-  const unsigned long error_timeout = 1000; // Timeout in milliseconds to detect no progress
-  const int degree_threshold = 15;
-  while (true) {
-    update_lcd();
-    current_degree = compass_logic();
-    
-    direction_difference = target_deg - current_degree;
-
-    // Normalise the difference [-180, 180]
-    if (direction_difference > 180) {
-      direction_difference -= 360;
-    } else if (direction_difference < -180) {
-      direction_difference += 360;
-    }
-
-    // Vehicle has reached the target, break out of loop
-    if (abs(direction_difference) <= degrees_tolerance) {
-      break;
-    }
-
-    if (millis() - last_update >= error_timeout) {
-      if (abs(current_degree - degree_monitor) < degree_threshold) {
-        // Blockage detected
-        message = "Path Blocked. Stop";
-        break; // Break out of loop and stop motor
-      } else {
-        // Progress detected, reset the monitor
-        degree_monitor = current_degree;
-        last_update = millis();
-      }
-    }
-
-    if (direction_difference > 0) {
-      // Move CW
-      move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
-    } else {
-      // Move CCW
-      move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
-    }
-  }
-  // Stop movement
-  move_motor(0, 0, 0, 0);
-}
-
-// Converts current direction to cardinal point
-String get_direction(int heading) {
-    const String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
-    return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
-}
-
-
-////There must be a easier way...
-//// Controls motor movement by joystick inputs
+// Controls motor movement by joystick inputs
 void joystick_movement() {
     joy_x_value = analogRead(joy_x);
     joy_y_value = analogRead(joy_y);
@@ -290,15 +232,73 @@ void joystick_movement() {
     }
 }
 
-// Move each motor in certain direction and speed
-void move_motor(byte left, byte right, int l_speed, int r_speed){
-  //Direction
-  digitalWrite(Motor_L_dir_pin, left);
-  digitalWrite(Motor_R_dir_pin, right);
-  //Speed
-  analogWrite(Motor_L_pwm_pin, l_speed); 
-  analogWrite(Motor_R_pwm_pin, r_speed); 
+// Rotates the vehicle with shortest path
+void rotate_vehicle(int target_deg) {
+  last_used_degree = target_deg;
+  int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
+  unsigned long last_update = millis(); // Timestamp for the last progress check
+  const unsigned long error_timeout = 1000; // Timeout in milliseconds to detect no progress
+  const int degree_threshold = 15;
+  while (true) {
+    display_lcd();
+    current_degree = compass_logic();
+    
+    direction_difference = target_deg - current_degree;
+
+    // Normalise the difference [-180, 180]
+    if (direction_difference > 180) {
+      direction_difference -= 360;
+    } else if (direction_difference < -180) {
+      direction_difference += 360;
+    }
+
+    // Vehicle has reached the target, break out of loop
+    if (abs(direction_difference) <= degrees_tolerance) {
+      break;
+    }
+
+    if (millis() - last_update >= error_timeout) {
+      if (abs(current_degree - degree_monitor) < degree_threshold) {
+        // Blockage detected
+        last_used_degree = current_degree;
+        message = "Path Blocked. Stop";
+        break; // Break out of loop and stop motor
+      } else {
+        // Progress detected, reset the monitor
+        degree_monitor = current_degree;
+        last_update = millis();
+      }
+    }
+
+    if (direction_difference > 0) {
+      // Move CW
+      move_motor(Motor_forward, Motor_backward, motor_max_speed, motor_max_speed);
+    } else {
+      // Move CCW
+      move_motor(Motor_backward, Motor_forward, motor_max_speed, motor_max_speed);
+    }
+  }
+  // Stop movement
+  move_motor(0, 0, 0, 0);
 }
+
+
+// Drives the vehicle from an input distance and speed
+void travel_distance(int distance, int max_speed){
+  reset_dist_variables();
+  // Flip motor direction depending on value of distance
+  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
+
+  while (distance_travelled < abs(distance)){
+    distance_travelled = (dist_R + dist_L) / 2;
+    display_lcd();
+    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+  }
+  move_motor(0, 0, 0, 0);
+}
+
+
+//==========================================================Interrupt Functions=============================================
 
 // Right motor's encoder pulse counter
 void encoder_pulse_R(){
@@ -320,4 +320,15 @@ void joystick_interrupt() {
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
+}
+
+//===========================================================Misc./Utility Functions========================================
+
+// Helper function to reset variables related to distance calculation
+void reset_dist_variables() {
+  pulse_count_R = 0;
+  pulse_count_L = 0;
+  dist_R = 0;
+  dist_L = 0;
+  distance_travelled = 0;
 }
