@@ -8,10 +8,10 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 
 ## To-Do
 - [ ] Figure out calibration issue on power up (almost there 🤏)
-- [ ] Edit provided frontend website 
+- [x] Edit provided frontend website 
 - [ ] Figure out motor connections and DRV8835 connections for schematic
-- [ ] Have button press switch modes
-- [ ] Add error handling for turning
+- [x] Have button press switch modes
+- [x] Add error handling for turning
 - [ ] Add catch for dynamic ip address switch
 
 
