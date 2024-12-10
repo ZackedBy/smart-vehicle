@@ -240,7 +240,7 @@ void rotate_vehicle(int target_deg) {
   
   int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
   unsigned long last_update = millis(); // Timestamp for the last progress check
-  const unsigned long error_timeout = 1500; // Timeout in milliseconds to detect no progress
+  const unsigned long error_timeout = 500; // Timeout in milliseconds to detect no progress
   const int degree_threshold = 10;
   
   while (true) {
@@ -269,7 +269,8 @@ void rotate_vehicle(int target_deg) {
         message = "Path Blocked. Stop";
         break; // Break out of loop and stop motor
       } else {
-        // Progress detected, reset the monitor
+        // Progress detected, reset the monitor and message
+        if (message.equals("Path Blocked. Stop")) message = "";
         degree_monitor = current_degree;
         last_update = millis();
       }
