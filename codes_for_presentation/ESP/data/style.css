@@ -3,7 +3,7 @@ html {
   display: flex;			/* We make everything flexible, like stretching playdough */
   justify-content: center;	/* All the stuff inside will be pushed to the left side */
   align-items: center;
-  height: 100vh;			/* The page will be as tall as your whole screen */
+  min-height: 100vh;			/* The page will be as tall as your whole screen */
   margin: 0;				/* No extra space around the page’s edges */
   text-align: center;		/* All the words inside will be in the middle */
   box-sizing: border-box;	/* We include the border in the size, like wrapping a gift tightly */
@@ -23,8 +23,9 @@ section {
 
 .container {
   display: flex;			/* The container inside will also stretch, like playdough */
-  flex-wrap: wrap;			/* If there's too much inside, it will wrap onto the next line */
+  flex-direction: column;
   justify-content: center;	/* Everything inside will be centered */
+  align-items: center;
   gap: 15px;				/* Leave a little space between the buttons */
   max-width: 400px;			/* The container will not get too wide, like a small box */
   margin-top: 20px;			/* Move the container down a little from the top */
