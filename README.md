@@ -7,11 +7,10 @@ A remote-controlled, Arduino-based smart vehicle designed for flexible navigatio
 - Circuit diagrams: [Schematics](#circuits).
 
 ## To-Do
-- [ ] Figure out calibration issue on power up (almost there 🤏)
-- [x] Edit provided frontend website 
+- [ ] Figure out calibration issue (compass) on power up (almost there 🤏)
+- [ ] Calibrate encoder pulses
+- [ ] Check if lidar functions work
 - [ ] Figure out motor connections and DRV8835 connections for schematic
-- [x] Have button press switch modes
-- [x] Add error handling for turning
 - [ ] Add catch for dynamic ip address switch
 
 
