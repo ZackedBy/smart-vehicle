@@ -58,12 +58,13 @@ const int degree_tolerance = 1;
 String message; //whole message sent from website
 
 // LiDAR Variables
-#define lidar_pot A4
+#define lidar_pot A3
 LIDARLite lidar;
 int lidar_dist = 0;       // Average distance after x amount of readings
 //const int readings = 10;  // X amount of readings
 int reading_count = 0;    // Rolling counter for readings
 int lidar_dist_sum = 0;   // Sum of readings over x amount of readings
+int lidar_dist_threshold = 0;
 
 void setup() {
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
@@ -82,19 +83,23 @@ void setup() {
 void loop(){  
   display_lcd();
   current_degree = compass_logic();
-  lidar_dist = get_lidar_distance(10);
+  lidar_dist = get_lidar_distance(20);
+  lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
   
   if (joystick_mode) {
     last_used_degree = current_degree;
     joystick_movement();
   } else {
     rotate_vehicle(last_used_degree); // Self-correct rotation
-    get_serial_commands();
+    //get_serial_commands();
+    //drive_prox_check();
+    follow_path();
+    //cool_fun_drive();
   }
 }
 //==================================================================LiDAR Functions=============================================
 
-// EXERCISE 1
+// TO-DO: Change for loop to boolean and counter
 int get_lidar_distance(int readings) {
   lidar_dist_sum = 0;
   for (int i = 0; i < readings; i++) {
@@ -109,7 +114,7 @@ int get_lidar_distance(int readings) {
 
 // EXERCISE 2
 int measure_box_volume() {
-  int vehicle_length = 120; // Measure vehicle lenght when in lab
+  int vehicle_length = 18; // Measure vehicle lenght when in lab
   int height = 30; 
   int box_length, box_width;
   
@@ -130,23 +135,29 @@ int measure_box_volume() {
 
 // EXERCISE 3
 void drive_prox_check() {
-  int dist_threshold = 20;
-  //int dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
+  //int lidar_dist_threshold = 20;
+  //int lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
   while (true) {
-    dist_lidar = get_lidar_distance(10);
-    byte motor_direction = dist_lidar > dist_threshold ? Motor_forward : Motor_backward;
+    lidar_dist = get_lidar_distance(20);
+    byte motor_direction = lidar_dist > lidar_dist_threshold ? Motor_forward : Motor_backward;
     display_lcd();
-    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
     
-    if (button_pressed) break; //needs dedicated button for loop extraction
+    if (joystick_mode) break; //needs dedicated button for loop extraction
   }
 }
 
 // EXERCISE 5
 void move_to_threshold(int deg, int threshold) {
   rotate_vehicle(deg);
-  while (get_lidar_distance(10) > threshold) {
-    move_motor(Motor_forward, Motor_forward, max_speed, max_speed);
+  while (get_lidar_distance(20) > threshold) {
+    move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
+    current_degree = compass_logic();
+
+    if (abs(current_degree - deg) > 5){
+        rotate_vehicle(deg);
+    }
+    
   }
   move_motor(0, 0, 0, 0);
 }
@@ -156,6 +167,15 @@ void follow_path() {
   move_to_threshold(180, 20);
   move_to_threshold(90, 25);
   move_to_threshold(0, 20);
+  joystick_mode = true;
+}
+
+void cool_fun_drive() {
+  while (get_lidar_distance(20) > 20) {
+    move_motor(0,0,122,122);
+  }
+  move_motor(0,0,0,0);
+  joystick_mode = true;
 }
 //==================================================================LCD Specific Functions=============================================
 
@@ -174,19 +194,31 @@ void display_lcd(){
     lcd.print(get_direction(current_degree));
     lcd.print(", Deg: ");
     lcd.print(current_degree);
+    //lcd.print((float)lidar_dist / ((pulse_count_L + pulse_count_R) / 2));
     
     lcd.setCursor(0,2);
+//    lcd.print(pulse_count_L);
+//    lcd.print(", ");
+//    lcd.print(int(dist_L));
+//    lcd.print("|");
+//    lcd.print(pulse_count_R);
+//    lcd.print(", ");
+//    lcd.print(int(dist_R));
     lcd.print("LiDAR Dist: ");
     lcd.print(lidar_dist);
     
     lcd.setCursor(0,3);
     if (joystick_mode) {
-      lcd.print("X: ");
-      lcd.print(joy_x_value);
-      lcd.print(", Y: ");
-      lcd.print(joy_y_value);
+//      lcd.print("X: ");
+//      lcd.print(joy_x_value);
+//      lcd.print(", Y: ");
+//      lcd.print(joy_y_value);
+      lcd.print("LidPot: ");
+      lcd.print(lidar_dist_threshold);
     } else {
-      lcd.print(message);
+      lcd.print("LiDAR Dist: ");
+      lcd.print(lidar_dist);
+      //lcd.print(message);
     }
   }
 }
@@ -368,7 +400,7 @@ void rotate_vehicle(int target_deg) {
 
 
 // Drives the vehicle from an input distance and speed
-void travel_distance(int distance, int max_speed){
+void travel_distance(int distance, int motor_max_speed){
   reset_dist_variables();
   // Flip motor direction depending on value of distance
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
@@ -376,7 +408,7 @@ void travel_distance(int distance, int max_speed){
   while (distance_travelled < abs(distance)){
     distance_travelled = (dist_R + dist_L) / 2;
     display_lcd();
-    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
   }
   move_motor(0, 0, 0, 0);
 }
