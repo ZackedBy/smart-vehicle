@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Wroom Wroom!</title>  
-	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<title>Wroom Wroom!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="favicon.ico">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
@@ -20,12 +20,13 @@
 				</div>
 
 			</div>
-	
+			<p>LiDAR Distance: <span id="lidar-val">0 cm</span></p>
 		</section>
+
 
 		<section class="container">
 			<h1 style="margin-bottom: 0;">Compass Control</h1>
-			
+
 			<button class="button button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
 			<div id="compassValue" onclick="editCompassValue()">
 				<span id="compassText">0°</span>
@@ -34,7 +35,7 @@
 					<button type="submit" style="display: none;">Submit</button>
 				</form>
 			</div>
-			
+
 			<div id="compassControl" style="position: relative; width: 200px; height: 200px;">
 				<canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
 				<div id="north" class="compass-label">N</div>
@@ -48,6 +49,6 @@
 			</div>
 		</section>
 
-		
+
 	</body>
 </html>

@@ -1,0 +1,103 @@
+Protel Design System Design Rule Check
+PCB File : C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc
+Date     : 04/02/2025
+Time     : 10:48:20
+
+Processing Rule : Clearance Constraint (Gap=0.006mm) (Disabled)(All),(All)
+Rule Violations :0
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
+   Violation between Short-Circuit Constraint: Between Pad CMPS14-1(33.546mm,5.023mm) on Multi-Layer And Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer Location : [X = 164.065mm][Y = 34.385mm]
+   Violation between Short-Circuit Constraint: Between Pad CMPS14-2(33.546mm,7.563mm) on Multi-Layer And Track (31.394mm,7.315mm)(33.298mm,7.315mm) on Top Layer Location : [X = 163.657mm][Y = 36.678mm]
+   Violation between Short-Circuit Constraint: Between Pad CMPS14-2(33.546mm,7.563mm) on Multi-Layer And Track (33.298mm,7.315mm)(33.546mm,7.563mm) on Top Layer Location : [X = 163.8mm][Y = 36.802mm]
+   Violation between Short-Circuit Constraint: Between Pad CMPS14-3(33.546mm,10.103mm) on Multi-Layer And Track (30.956mm,10.103mm)(33.546mm,10.103mm) on Top Layer Location : [X = 163.781mm][Y = 39.465mm]
+   Violation between Short-Circuit Constraint: Between Pad CMPS14-6(33.546mm,17.723mm) on Multi-Layer And Track (33.546mm,17.723mm)(36.443mm,17.723mm) on Top Layer Location : [X = 164.066mm][Y = 47.085mm]
+   Violation between Short-Circuit Constraint: Between Pad LiDAR-1(6.546mm,5.023mm) on Multi-Layer And Track (6.546mm,5.023mm)(11.966mm,5.023mm) on Top Layer Location : [X = 137.065mm][Y = 34.385mm]
+   Violation between Short-Circuit Constraint: Between Pad LiDAR-4(6.546mm,12.643mm) on Multi-Layer And Track (4.293mm,10.39mm)(6.546mm,12.643mm) on Top Layer Location : [X = 136.784mm][Y = 41.865mm]
+   Violation between Short-Circuit Constraint: Between Pad LiDAR-5(6.546mm,15.183mm) on Multi-Layer And Track (4.185mm,15.183mm)(6.546mm,15.183mm) on Top Layer Location : [X = 136.781mm][Y = 44.545mm]
+   Violation between Short-Circuit Constraint: Between Pad LiDAR-6(6.546mm,17.723mm) on Multi-Layer And Track (6.546mm,17.723mm)(11.426mm,17.723mm) on Top Layer Location : [X = 137.066mm][Y = 47.085mm]
+   Violation between Short-Circuit Constraint: Between Pad OUT-1(41.046mm,7.563mm) on Multi-Layer And Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer Location : [X = 171.424mm][Y = 36.775mm]
+   Violation between Short-Circuit Constraint: Between Pad OUT-2(41.046mm,10.103mm) on Multi-Layer And Track (38.868mm,10.103mm)(41.046mm,10.103mm) on Top Layer Location : [X = 171.274mm][Y = 39.465mm]
+   Violation between Short-Circuit Constraint: Between Pad OUT-3(41.046mm,12.643mm) on Multi-Layer And Track (41.046mm,12.643mm)(42.17mm,12.643mm) on Top Layer Location : [X = 171.574mm][Y = 42.005mm]
+   Violation between Short-Circuit Constraint: Between Pad OUT-3(41.046mm,12.643mm) on Multi-Layer And Track (42.17mm,12.643mm)(43.409mm,11.405mm) on Top Layer Location : [X = 172.136mm][Y = 42.005mm]
+   Violation between Short-Circuit Constraint: Between Pad OUT-4(41.046mm,15.183mm) on Multi-Layer And Track (41.046mm,15.183mm)(41.046mm,17.755mm) on Top Layer Location : [X = 171.424mm][Y = 44.695mm]
+   Violation between Short-Circuit Constraint: Between Pad RGB-1(24.546mm,7.523mm) on Multi-Layer And Track (24.546mm,4.283mm)(24.546mm,7.523mm) on Top Layer Location : [X = 154.924mm][Y = 36.735mm]
+   Violation between Short-Circuit Constraint: Between Pad RGB-2(24.546mm,10.063mm) on Multi-Layer And Track (23.139mm,10.058mm)(24.765mm,10.058mm) on Top Layer Location : [X = 154.883mm][Y = 39.421mm]
+   Violation between Short-Circuit Constraint: Between Pad RGB-3(24.546mm,12.603mm) on Multi-Layer And Track (24.546mm,12.603mm)(26.285mm,12.603mm) on Top Layer Location : [X = 155.074mm][Y = 41.965mm]
+   Violation between Short-Circuit Constraint: Between Pad RGB-4(24.546mm,15.143mm) on Multi-Layer And Track (24.546mm,15.143mm)(24.546mm,20.666mm) on Top Layer Location : [X = 154.924mm][Y = 44.655mm]
+   Violation between Short-Circuit Constraint: Between Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer And Via (36.678mm,5.029mm) from Top Layer to Bottom Layer Location : [X = 166.985mm][Y = 34.385mm]
+   Violation between Short-Circuit Constraint: Between Track (36.671mm,5.023mm)(36.678mm,5.029mm) on Top Layer And Via (36.678mm,5.029mm) from Top Layer to Bottom Layer Location : [X = 167.053mm][Y = 34.388mm]
+   Violation between Short-Circuit Constraint: Between Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer And Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer Location : [X = 171.437mm][Y = 34.024mm]
+   Violation between Short-Circuit Constraint: Between Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer And Via (41.046mm,4.674mm) from Top Layer to Bottom Layer Location : [X = 171.437mm][Y = 34.024mm]
+Rule Violations :22
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+   Violation between Un-Routed Net Constraint: Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer Dead Copper - Net Not Assigned.
+   Violation between Un-Routed Net Constraint: Track (36.671mm,5.023mm)(36.678mm,5.029mm) on Top Layer Dead Copper - Net Not Assigned.
+   Violation between Un-Routed Net Constraint: Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer Dead Copper - Net Not Assigned.
+Rule Violations :3
+
+Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=0.006mm) (Max=1mm) (Preferred=0.008mm) (All)
+Rule Violations :0
+
+Processing Rule : Routing Topology Rule(Topology=Shortest) (All)
+Rule Violations :0
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=0.025mm) (Max=2.54mm) (All)
+Rule Violations :0
+
+Processing Rule : Hole To Hole Clearance (Gap=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Minimum Solder Mask Sliver (Gap=0.254mm) (All),(All)
+Rule Violations :0
+
+Processing Rule : Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)
+Rule Violations :0
+
+Processing Rule : Silk to Silk (Clearance=0.254mm) (All),(All)
+   Violation between Silk To Silk Clearance Constraint: (Collision < 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "GND" (20.93mm,9.728mm) on Top Overlay Silk Text to Silk Clearance [0mm]
+   Violation between Silk To Silk Clearance Constraint: (0.15mm < 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "SCL" (21.031mm,12.116mm) on Top Overlay Silk Text to Silk Clearance [0.15mm]
+   Violation between Silk To Silk Clearance Constraint: (Collision < 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "SCL" (8.484mm,12.294mm) on Top Overlay Silk Text to Silk Clearance [0mm]
+   Violation between Silk To Silk Clearance Constraint: (Collision < 0.254mm) Between Arc (8.396mm,5.023mm) on Top Overlay And Text "5V" (8.636mm,4.496mm) on Top Overlay Silk Text to Silk Clearance [0mm]
+   Violation between Silk To Silk Clearance Constraint: (0.24mm < 0.254mm) Between Text "CMPS14" (36.906mm,7.215mm) on Top Overlay And Track (34.916mm,3.628mm)(34.916mm,19.118mm) on Top Overlay Silk Text to Silk Clearance [0.24mm]
+   Violation between Silk To Silk Clearance Constraint: (0.045mm < 0.254mm) Between Text "GND" (20.93mm,9.728mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0.045mm]
+   Violation between Silk To Silk Clearance Constraint: (0.18mm < 0.254mm) Between Text "OUT" (39.294mm,9.297mm) on Top Overlay And Track (39.701mm,6.143mm)(39.701mm,16.603mm) on Top Overlay Silk Text to Silk Clearance [0.18mm]
+   Violation between Silk To Silk Clearance Constraint: (Collision < 0.254mm) Between Text "SCL" (21.031mm,12.116mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0mm]
+   Violation between Silk To Silk Clearance Constraint: (0.206mm < 0.254mm) Between Text "SCL" (29.743mm,7.036mm) on Top Overlay And Track (32.176mm,3.628mm)(32.176mm,19.118mm) on Top Overlay Silk Text to Silk Clearance [0.206mm]
+   Violation between Silk To Silk Clearance Constraint: (0.146mm < 0.254mm) Between Text "SDA" (20.828mm,14.834mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0.146mm]
+   Violation between Silk To Silk Clearance Constraint: (0.181mm < 0.254mm) Between Text "SDA" (42.799mm,9.703mm) on Top Overlay And Track (42.391mm,6.143mm)(42.391mm,16.603mm) on Top Overlay Silk Text to Silk Clearance [0.181mm]
+Rule Violations :11
+
+Processing Rule : Net Antennae (Tolerance=0mm) (All)
+   Violation between Net Antennae: Track (23.139mm,10.058mm)(24.765mm,10.058mm) on Top Layer 
+   Violation between Net Antennae: Track (24.546mm,12.603mm)(26.285mm,12.603mm) on Top Layer 
+   Violation between Net Antennae: Track (24.546mm,15.143mm)(24.546mm,20.666mm) on Top Layer 
+   Violation between Net Antennae: Track (24.546mm,4.283mm)(24.546mm,7.523mm) on Top Layer 
+   Violation between Net Antennae: Track (30.956mm,10.103mm)(33.546mm,10.103mm) on Top Layer 
+   Violation between Net Antennae: Track (33.298mm,7.315mm)(33.546mm,7.563mm) on Top Layer 
+   Violation between Net Antennae: Track (33.546mm,17.723mm)(36.443mm,17.723mm) on Top Layer 
+   Violation between Net Antennae: Track (38.868mm,10.103mm)(41.046mm,10.103mm) on Top Layer 
+   Violation between Net Antennae: Track (4.185mm,15.183mm)(6.546mm,15.183mm) on Top Layer 
+   Violation between Net Antennae: Track (4.293mm,10.39mm)(6.546mm,12.643mm) on Top Layer 
+   Violation between Net Antennae: Track (41.046mm,12.643mm)(42.17mm,12.643mm) on Top Layer 
+   Violation between Net Antennae: Track (41.046mm,15.183mm)(41.046mm,17.755mm) on Top Layer 
+   Violation between Net Antennae: Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer 
+   Violation between Net Antennae: Track (6.546mm,17.723mm)(11.426mm,17.723mm) on Top Layer 
+   Violation between Net Antennae: Track (6.546mm,5.023mm)(11.966mm,5.023mm) on Top Layer 
+   Violation between Net Antennae: Via (36.678mm,5.029mm) from Top Layer to Bottom Layer 
+Rule Violations :16
+
+Processing Rule : Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)
+Rule Violations :0
+
+
+Violations Detected : 52
+Waived Violations : 0
+Time Elapsed        : 00:00:00

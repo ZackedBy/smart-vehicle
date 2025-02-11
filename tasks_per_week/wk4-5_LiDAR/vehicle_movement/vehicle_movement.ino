@@ -55,7 +55,6 @@ const uint8_t CMPS14_address = 0x60;
 int current_degree = 0, target_degree = 0, last_used_degree = 0;
 int direction_difference, compass_offset;
 const int degree_tolerance = 1;
-String message; //whole message sent from website
 
 // LiDAR Variables
 #define lidar_pot A3
@@ -66,6 +65,9 @@ int reading_count = 0;    // Rolling counter for readings
 int lidar_dist_sum = 0;   // Sum of readings over x amount of readings
 int lidar_dist_threshold = 0;
 
+// Website Variables
+String message; //whole message sent from website
+
 void setup() {
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
@@ -74,6 +76,7 @@ void setup() {
   Wire.begin();
   lcd.begin(20,4);
   Serial.begin(9600);
+  Serial3.begin(9600);
   lidar.begin(0, true); 
   lidar.configure(0); //change to 1 for short range, high speed
   
@@ -91,9 +94,10 @@ void loop(){
     joystick_movement();
   } else {
     rotate_vehicle(last_used_degree); // Self-correct rotation
-    //get_serial_commands();
+    get_serial_commands_from_web();
+    /*TO DO: Make seperate func for sending data (lidar + compass) */
     //drive_prox_check();
-    follow_path();
+    //follow_path();
     //cool_fun_drive();
   }
 }
@@ -154,19 +158,19 @@ void move_to_threshold(int deg, int threshold) {
     move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
     current_degree = compass_logic();
 
-    if (abs(current_degree - deg) > 5){
-        rotate_vehicle(deg);
-    }
+//    if (abs(current_degree - deg) > 5){
+//        rotate_vehicle(deg);
+//    }
     
   }
   move_motor(0, 0, 0, 0);
 }
 
 void follow_path() {
-  move_to_threshold(270, 25);
-  move_to_threshold(180, 20);
-  move_to_threshold(90, 25);
-  move_to_threshold(0, 20);
+  move_to_threshold(0, 40);
+  move_to_threshold(270, 125);
+  move_to_threshold(180, 113);
+  move_to_threshold(90, 165);
   joystick_mode = true;
 }
 
@@ -216,9 +220,9 @@ void display_lcd(){
       lcd.print("LidPot: ");
       lcd.print(lidar_dist_threshold);
     } else {
-      lcd.print("LiDAR Dist: ");
-      lcd.print(lidar_dist);
-      //lcd.print(message);
+//      lcd.print("LiDAR Dist: ");
+//      lcd.print(lidar_dist);
+      lcd.print(message);
     }
   }
 }
@@ -259,7 +263,10 @@ int compass_logic() {
 
 // Controls vehicle with serial inputs
 // Available commands: dist, drive, move; deg, turn
-void get_serial_commands() {
+void get_serial_commands_from_web() {
+  
+  Serial3.println("LIDAR:" + String(lidar_dist));
+
   if (Serial.available() > 0){
     message = Serial.readStringUntil('\n'); 
     int delim = message.indexOf(":");
@@ -279,9 +286,10 @@ void get_serial_commands() {
       } else {
         Serial.println("Command not found: " + message);
       }
-    } else {
-      Serial.println("Incorrect command. Try \"dist:\" or \"degree:\".");
     }
+//    else {
+//      Serial.println("Incorrect command. Try \"dist:\" or \"degree:\".");
+//    }
   }
 }
 

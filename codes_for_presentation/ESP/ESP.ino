@@ -2,8 +2,9 @@
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
 
-const char* ssid = "SOURCE";         // Wi-Fi network name (SSID)
-const char* password = "Pelle!23";  // Wi-Fi network password
+const char* ssid = "SOURCE";          // Wi-Fi network name (SSID)
+const char* password = "Pelle!23";    // Wi-Fi network password
+String lidarData = "0 cm";            // Variable to store LIDAR data
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
@@ -36,6 +37,7 @@ void setup() {
   server.on("/forwards", handleMove);
   server.on("/backwards", handleMove);
   server.on("/compass", handleCompass);
+  server.on("/lidar", handleLidar);
   server.onNotFound(handleNotFound);
   
   // Start the web server
@@ -44,6 +46,21 @@ void setup() {
 
 void loop() {
   server.handleClient();  // Listen for incoming HTTP requests and respond to them
+  
+  // Check if data is available from the Arduino Mega
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n');
+    if (data.startsWith("LIDAR:")) {
+      lidarData = data.substring(6);
+      Serial.println("Lidar: " + lidarData);
+    } 
+//    else if (data.startsWith("COMP:")){ //////////////////////////////////////////
+//      Serial.println("Comp:" + data.substring(5));
+//    } 
+    else {
+      Serial.println("Command not found" + String(data)); 
+    }
+  }
 }
 
 
@@ -66,8 +83,13 @@ void handleCompass() {
   if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
     String valueString = server.arg("value");       // Get the "value" argument from the URL
     Serial.println("Turn:" + valueString);          // Print the compass value to the serial monitor
+    server.send(200, "text/plain", valueString);
   }
-  server.send(200);
+}
+
+// This function handles the lidar command (like "/lidar")
+void handleLidar() {
+  server.send(200, "text/plain", lidarData); // Send the latest Lidar value with a 200 OK status.
 }
 
 // This function is called when a non-existing URL is accessed (404 error)

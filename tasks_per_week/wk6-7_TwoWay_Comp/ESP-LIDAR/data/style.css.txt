@@ -1,0 +1,90 @@
+html { 
+  font-family: Helvetica; 
+  display: flex; 
+  justify-content: left; 
+  height: 100vh; 
+  margin: 0; 
+  text-align: center; 
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px; /* Space between buttons */
+  max-width: 400px; /* Ensure the container wraps after two buttons */
+  margin-top: 20px; /* Adjust this value to position the container from the top */
+}
+
+.button { 
+  user-select: none; 
+  background-color: #46ff46; 
+  border: none; 
+  color: #555555; 
+  padding: 12px 28px; 
+  font-size: 24px; 
+  cursor: pointer; 
+  width: 190px; /* Fixed width */
+  height: 100px; /* Fixed height */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  border-radius: 5px; 
+}
+
+.button2 {
+  background-color: #555555;
+  color: #46ff46; 
+}
+
+.slider-container {
+  position: relative;
+  width: 100%; /* Make the slider container wider */
+}
+
+#compassSlider {
+  width: 100%; /* Make the slider wider */
+  height: 15px; /* Increase the height of the slider */
+  display: flex;
+  justify-content: center; 
+}
+
+#compassSlider::-webkit-slider-runnable-track,
+#compassSlider::-moz-range-track,
+progress {
+  width: 98%;
+  height: 5px; /* Set the height to your desired value */
+  cursor: pointer;
+  background: #ebebeb;
+  border: 1px solid #555555; /* Properly define the border */
+  border-radius: 5px;
+}
+
+#compassSlider::-webkit-slider-thumb,
+#compassSlider::-moz-range-thumb {
+  border: 2px solid #555555;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #46ff46;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -1px; /* Adjust to align thumb with track */
+}
+
+#compassValue, #lidarText {
+  font-size: 1.5em; /* Make the value text larger */
+  margin-top: 10px; /* Add some space above the value text */
+  /* display: flex; */
+  /* justify-content: center;  */
+  width: 100%; /* Ensure the div takes the full width of the parent */
+  text-align: center;
+  margin-left: 5px;
+
+}
+
+progress::-webkit-progress-value, progress::-moz-progress-bar {
+  background-color: #46ff46; /* Fill color of the progress bar */
+}

@@ -4,6 +4,7 @@
 
 #include <LiquidCrystal.h>
 #include <Wire.h>
+#include <LIDARLite.h>
 
 // JoyStick Variables
 #define joy_x A2
@@ -54,6 +55,17 @@ const uint8_t CMPS14_address = 0x60;
 int current_degree = 0, target_degree = 0, last_used_degree = 0;
 int direction_difference, compass_offset;
 const int degree_tolerance = 1;
+
+// LiDAR Variables
+#define lidar_pot A3
+LIDARLite lidar;
+int lidar_dist = 0;       // Average distance after x amount of readings
+//const int readings = 10;  // X amount of readings
+int reading_count = 0;    // Rolling counter for readings
+int lidar_dist_sum = 0;   // Sum of readings over x amount of readings
+int lidar_dist_threshold = 0;
+
+// Website Variables
 String message; //whole message sent from website
 
 void setup() {
@@ -64,6 +76,10 @@ void setup() {
   Wire.begin();
   lcd.begin(20,4);
   Serial.begin(9600);
+  //Serial2.begin(9600); // Compass Serial Bus
+  Serial3.begin(9600); // LiDAR Serial Bus
+  lidar.begin(0, true); 
+  lidar.configure(0); //change to 1 for short range, high speed
   
   compass_offset = compass_logic(); // Get compass reading on start-up
 }
@@ -71,13 +87,72 @@ void setup() {
 void loop(){  
   display_lcd();
   current_degree = compass_logic();
+  lidar_dist = get_lidar_distance(20);
+  lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
+  
   if (joystick_mode) {
     last_used_degree = current_degree;
     joystick_movement();
   } else {
-    rotate_vehicle(last_used_degree); // Self-correct rotation
-    get_serial_commands();
+    //rotate_vehicle(last_used_degree); // Self-correct rotation
+    get_commands_from_web();
+    send_info_to_web();
+    /*TO DO: Make seperate func for sending data (lidar + compass) */
+    //drive_prox_check();
+    //follow_path();
   }
+}
+//==================================================================LiDAR Functions=============================================
+
+// TO-DO: Change for loop to boolean and counter
+int get_lidar_distance(int readings) {
+  lidar_dist_sum = 0;
+  for (int i = 0; i < readings; i++) {
+    if (i == 0) {
+      lidar_dist_sum += lidar.distance(true);
+    } else {
+      lidar_dist_sum += lidar.distance(false);
+    }
+  }
+  return (int)(lidar_dist_sum / readings);
+}
+
+
+// EXERCISE 3
+void drive_prox_check() {
+  //int lidar_dist_threshold = 20;
+  //int lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
+  while (true) {
+    lidar_dist = get_lidar_distance(20);
+    byte motor_direction = lidar_dist > lidar_dist_threshold ? Motor_forward : Motor_backward;
+    display_lcd();
+    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
+    
+    if (joystick_mode) break; //needs dedicated button for loop extraction
+  }
+}
+
+// EXERCISE 5
+void move_to_threshold(int deg, int threshold) {
+  rotate_vehicle(deg);
+  while (get_lidar_distance(20) > threshold) {
+    move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
+    current_degree = compass_logic();
+
+//    if (abs(current_degree - deg) > 5){
+//        rotate_vehicle(deg);
+//    }
+    
+  }
+  move_motor(0, 0, 0, 0);
+}
+
+void follow_path() {
+  move_to_threshold(0, 40);
+  move_to_threshold(270, 125);
+  move_to_threshold(180, 113);
+  move_to_threshold(90, 165);
+  joystick_mode = true;
 }
 
 //==================================================================LCD Specific Functions=============================================
@@ -99,13 +174,10 @@ void display_lcd(){
     lcd.print(current_degree);
     
     lcd.setCursor(0,2);
-    lcd.print(pulse_count_L);
-    lcd.print(", ");
-    lcd.print(int(dist_L));
-    lcd.print("|");
-    lcd.print(pulse_count_R);
-    lcd.print(", ");
-    lcd.print(int(dist_R));
+    lcd.print("Pot: ");
+    lcd.print(lidar_dist_threshold);
+    lcd.print(" | D: ");
+    lcd.print(lidar_dist);
     
     lcd.setCursor(0,3);
     if (joystick_mode) {
@@ -125,6 +197,40 @@ String get_direction(int heading) {
     return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
 }
 
+
+//========================================================================Website Functions========================================================
+
+// Controls vehicle with serial inputs
+// Available commands: dist, drive, move; deg, turn
+void get_commands_from_web() {
+  if (Serial.available() > 0){
+    message = Serial.readStringUntil('\n'); 
+    int delim = message.indexOf(":");
+      
+    if (delim > -1) {
+      String command = message.substring(0, delim);
+      command.toLowerCase();
+      int value = message.substring(delim + 1).toInt();
+        
+      if ((command.startsWith("dist") 
+      || command.startsWith("drive") 
+      || command.startsWith("move"))
+      && value != 0) {
+          travel_distance(value, motor_max_speed);
+      } else if (command.startsWith("deg") || command.startsWith("turn")) {
+          rotate_vehicle(value);
+      } else {
+        Serial.println("Command not found: " + message);
+      }
+    }
+  }
+
+}
+
+void send_info_to_web(){    
+  Serial3.println("LIDAR:" + String(lidar_dist));
+  //Serial3.println("COMP:" + String(current_degree));
+}
 //========================================================================Compass Functions========================================================
 
 // Sets starting direction as 0 degrees and updates degree value if turning
@@ -151,34 +257,6 @@ int compass_logic() {
     return corrected_heading;
   }
   return 0;
-}
-
-// Controls vehicle with serial inputs
-// Available commands: dist, drive, move; deg, turn
-void get_serial_commands() {
-  if (Serial.available() > 0){
-    message = Serial.readStringUntil('\n'); 
-    int delim = message.indexOf(":");
-    
-    if (delim > -1) {
-      String command = message.substring(0, delim);
-      command.toLowerCase();
-      int value = message.substring(delim + 1).toInt();
-      
-      if (command.startsWith("dist") 
-      || command.startsWith("drive") 
-      || command.startsWith("move")
-      && value != 0) {
-          travel_distance(value, motor_max_speed);
-      } else if (command.startsWith("deg") || command.startsWith("turn")) {
-          rotate_vehicle(value);
-      } else {
-        Serial.println("Command not found: " + message);
-      }
-    } else {
-      Serial.println("Incorrect command. Try \"dist:\" or \"degree:\".");
-    }
-  }
 }
 
 //==================================================================Motor Movement Functions========================================
@@ -296,7 +374,7 @@ void rotate_vehicle(int target_deg) {
 
 
 // Drives the vehicle from an input distance and speed
-void travel_distance(int distance, int max_speed){
+void travel_distance(int distance, int motor_max_speed){
   reset_dist_variables();
   // Flip motor direction depending on value of distance
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
@@ -304,7 +382,7 @@ void travel_distance(int distance, int max_speed){
   while (distance_travelled < abs(distance)){
     distance_travelled = (dist_R + dist_L) / 2;
     display_lcd();
-    move_motor(motor_direction, motor_direction, max_speed, max_speed);
+    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
   }
   move_motor(0, 0, 0, 0);
 }

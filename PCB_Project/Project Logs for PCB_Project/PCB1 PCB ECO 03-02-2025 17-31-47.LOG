@@ -1,0 +1,76 @@
+Added Component: Designator=OUT(TECO-280371-2_V)
+Add component (AddParameter): Name = "3D Model"; Value = "280371-2.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Category"; Value = "Connectors,Interconnects"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Color"; Value = "Black"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Connector Type"; Value = "Header,Shrouded"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Finish"; Value = "Gold"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Finish Thickness"; Value = "15µin(0.38µm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Mating Length"; Value = "0.260"(6.60mm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Type"; Value = "MalePin"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet URL"; Value = "http://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F280370%7FM1%7Fpdf%7FEnglish%7FENG_CD_280370_M1.pdf%7F280371-2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet Version"; Value = "Rev. M1, 08/2016"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Dynamic Catalog"; Value = "AMPMODUModIISeries"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Family"; Value = "RectangularConnectors-Headers,MalePins"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "TE Connectivity"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer URL"; Value = "http://www.te.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Technology"; Value = "ThroughHole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Type"; Value = "ThroughHole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Positions"; Value = "4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Positions Loaded"; Value = "All"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Other Names"; Value = "280371-2-ND
+A106401"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package Description"; Value = "Male Header, Pitch 2.54 mm, 1 x 4 Position, Height 12.8 mm, Tail Length 3.5 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package Reference"; Value = "280371-2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Packaging"; Value = "Bulk"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "0.100"(2.54mm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS Information"; Value = "280371-2StatementofCompliance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Series"; Value = "AMPMODUModII"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Standard Package"; Value = "1,000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Termination"; Value = "Solder"; VariantName = "[No Variations]"
+Added Component: Designator=RGB(TECO-280371-2_V)
+Add component (AddParameter): Name = "3D Model"; Value = "280371-2.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Category"; Value = "Connectors,Interconnects"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Color"; Value = "Black"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Connector Type"; Value = "Header,Shrouded"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Finish"; Value = "Gold"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Finish Thickness"; Value = "15µin(0.38µm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Mating Length"; Value = "0.260"(6.60mm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Contact Type"; Value = "MalePin"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet URL"; Value = "http://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F280370%7FM1%7Fpdf%7FEnglish%7FENG_CD_280370_M1.pdf%7F280371-2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Datasheet Version"; Value = "Rev. M1, 08/2016"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Dynamic Catalog"; Value = "AMPMODUModIISeries"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Family"; Value = "RectangularConnectors-Headers,MalePins"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "TE Connectivity"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer URL"; Value = "http://www.te.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Technology"; Value = "ThroughHole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Type"; Value = "ThroughHole"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Positions"; Value = "4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Positions Loaded"; Value = "All"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Rows"; Value = "1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Other Names"; Value = "280371-2-ND
+A106401"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package Description"; Value = "Male Header, Pitch 2.54 mm, 1 x 4 Position, Height 12.8 mm, Tail Length 3.5 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package Reference"; Value = "280371-2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Packaging"; Value = "Bulk"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Pitch"; Value = "0.100"(2.54mm)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "RoHS Information"; Value = "280371-2StatementofCompliance"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Series"; Value = "AMPMODUModII"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Standard Package"; Value = "1,000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Termination"; Value = "Solder"; VariantName = "[No Variations]"
+Add Pin To Net: Unknown Pin: Pin CMPS14-5V
+Add Pin To Net: Unknown Pin: Pin CMPS14-GND
+Add Pin To Net: Unknown Pin: Pin CMPS14-SCL
+Add Pin To Net: Unknown Pin: Pin CMPS14-SDA
+Add Pin To Net: Unknown Pin: Pin LiDAR-5V
+Add Pin To Net: Unknown Pin: Pin LiDAR-GND
+Add Pin To Net: Unknown Pin: Pin LiDAR-SCL
+Add Pin To Net: Unknown Pin: Pin LiDAR-SDA
+Add Pin To Net: Unknown Pin: Pin OUT-5V
+Add Pin To Net: Unknown Pin: Pin OUT-GND
+Add Pin To Net: Unknown Pin: Pin OUT-SCL
+Add Pin To Net: Unknown Pin: Pin OUT-SDA
+Add Pin To Net: Unknown Pin: Pin RGB-5V
+Add Pin To Net: Unknown Pin: Pin RGB-GND
+Add Pin To Net: Unknown Pin: Pin RGB-SCL
+Add Pin To Net: Unknown Pin: Pin RGB-SDA

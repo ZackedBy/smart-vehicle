@@ -1,0 +1,500 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 9em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD25\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">04/02/2025</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">10:48:20</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:00</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc" class="file"><acronym title="C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc">C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">52</td></tr>
+</table>
+</td>
+</table><a name="IDN0HOAGQRZBV5OEMCKUEUWQDDMDNNZQOVLWT5UPJPMQJJFOTJAF3M"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDHF44PHXGEY5UGUDB12EU0V5P0B5F4QQRHMAXNBPRBM50MTJGHIIO">Clearance Constraint (Gap=0.006mm) (Disabled)(All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDDNDEDDTAWM3ENFUFWY0W4NLGZL4TJ3X111PUWWPTZ32Y02C5N31D">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">22</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDVBUMG1ZFIVUICKKAWZTBGDAI05HBOFUHOKLBLCKHYQKVTCSQDGC">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">3</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDUTWWIE4JRV1NGEE31UFM0IMO3CEMMJCUXXKHNPC452NUZOR5VML">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID1JM1G4ZEYW1EJ315B1WIQNFC5CNSGB5LOKQLT3FRWECZTBUMZKOG">Width Constraint (Min=0.006mm) (Max=1mm) (Preferred=0.008mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID2MKZIE1NADI4FKPHYGJ0VP001W2RYDQTNLICKONKPKFZ010H32F">Routing Topology Rule(Topology=Shortest) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDTB0C3JVRHJRRLAZLOWGLHN0SBE122IB5DDHE1GKKPUYSBXCFUXYE">Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID2TXL4VYAQJVDNSRSUXF2V4LJZGXXYDCAHJ1OQ1GSDL1XXZMOVAEI">Hole Size Constraint (Min=0.025mm) (Max=2.54mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDAI3LDHY5UW4FON0CZLSIKWDINE2AHMOYQ3QEYBGKBU4GH0RAXO2J">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDBIOUVLJW13URJZBWBBS44I5W2N35KF4ED0V5JROV5ZVYOBAZMFQ">Minimum Solder Mask Sliver (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDE4HFWRFOWTXTNTKIN1NXKA5NYFBRRIO0J5PT0KPJYHK0OPKO0OPL">Silk To Solder Mask (Clearance=0.254mm) (IsPad),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDIO5SV2SXNH3LGZJQCEWFQELM0ME1RFR5Q3O4AF45BLJMRZ22EOB">Silk to Silk (Clearance=0.254mm) (All),(All)</a></td>
+<td class="column2">11</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDKIOCXEMZUHVHIITBVGTRBMUMWF0Y0JOHAZGFF4LPW52SB4W0KFFJ">Net Antennae (Tolerance=0mm) (All)</a></td>
+<td class="column2">16</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDTEPN5V33EDOKQXHVBGYVMBNCHJ2LNMUCG3FHLEAS2T0UZOOPWKO">Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">52</td>
+</tr>
+</table><br><a name="IDDNDEDDTAWM3ENFUFWY0W4NLGZL4TJ3X111PUWWPTZ32Y02C5N31D"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Short-Circuit Constraint (Allowed=No) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6425.607mil|Location2.X=6492.904mil|Location1.Y=1320.1mil|Location2.Y=1387.396mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6425.607mil|Location2.X=6492.904mil|Location1.Y=1320.1mil|Location2.Y=1387.396mil|Absolute=True">Short-Circuit Constraint: Between Pad CMPS14-1(33.546mm,5.023mm) on Multi-Layer And Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer Location : [X = 164.065mm][Y = 34.385mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6413.218mil|Location2.X=6473.199mil|Location1.Y=1414.022mil|Location2.Y=1474.003mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6413.218mil|Location2.X=6473.199mil|Location1.Y=1414.022mil|Location2.Y=1474.003mil|Absolute=True">Short-Circuit Constraint: Between Pad CMPS14-2(33.546mm,7.563mm) on Multi-Layer And Track (31.394mm,7.315mm)(33.298mm,7.315mm) on Top Layer Location : [X = 163.657mm][Y = 36.678mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6412.482mil|Location2.X=6485.18mil|Location1.Y=1412.537mil|Location2.Y=1485.235mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6412.482mil|Location2.X=6485.18mil|Location1.Y=1412.537mil|Location2.Y=1485.235mil|Absolute=True">Short-Circuit Constraint: Between Pad CMPS14-2(33.546mm,7.563mm) on Multi-Layer And Track (33.298mm,7.315mm)(33.546mm,7.563mm) on Top Layer Location : [X = 163.8mm][Y = 36.802mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6414.396mil|Location2.X=6481.768mil|Location1.Y=1520.062mil|Location2.Y=1587.434mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6414.396mil|Location2.X=6481.768mil|Location1.Y=1520.062mil|Location2.Y=1587.434mil|Absolute=True">Short-Circuit Constraint: Between Pad CMPS14-3(33.546mm,10.103mm) on Multi-Layer And Track (30.956mm,10.103mm)(33.546mm,10.103mm) on Top Layer Location : [X = 163.781mm][Y = 39.465mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6425.617mil|Location2.X=6492.989mil|Location1.Y=1820.062mil|Location2.Y=1887.434mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6425.617mil|Location2.X=6492.989mil|Location1.Y=1820.062mil|Location2.Y=1887.434mil|Absolute=True">Short-Circuit Constraint: Between Pad CMPS14-6(33.546mm,17.723mm) on Multi-Layer And Track (33.546mm,17.723mm)(36.443mm,17.723mm) on Top Layer Location : [X = 164.066mm][Y = 47.085mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5362.615mil|Location2.X=5429.912mil|Location1.Y=1320.1mil|Location2.Y=1387.396mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5362.615mil|Location2.X=5429.912mil|Location1.Y=1320.1mil|Location2.Y=1387.396mil|Absolute=True">Short-Circuit Constraint: Between Pad LiDAR-1(6.546mm,5.023mm) on Multi-Layer And Track (6.546mm,5.023mm)(11.966mm,5.023mm) on Top Layer Location : [X = 137.065mm][Y = 34.385mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5347.949mil|Location2.X=5422.452mil|Location1.Y=1610.996mil|Location2.Y=1685.5mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5347.949mil|Location2.X=5422.452mil|Location1.Y=1610.996mil|Location2.Y=1685.5mil|Absolute=True">Short-Circuit Constraint: Between Pad LiDAR-4(6.546mm,12.643mm) on Multi-Layer And Track (4.293mm,10.39mm)(6.546mm,12.643mm) on Top Layer Location : [X = 136.784mm][Y = 41.865mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5351.404mil|Location2.X=5418.776mil|Location1.Y=1720.062mil|Location2.Y=1787.434mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5351.404mil|Location2.X=5418.776mil|Location1.Y=1720.062mil|Location2.Y=1787.434mil|Absolute=True">Short-Circuit Constraint: Between Pad LiDAR-5(6.546mm,15.183mm) on Multi-Layer And Track (4.185mm,15.183mm)(6.546mm,15.183mm) on Top Layer Location : [X = 136.781mm][Y = 44.545mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5362.625mil|Location2.X=5429.997mil|Location1.Y=1820.062mil|Location2.Y=1887.434mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5362.625mil|Location2.X=5429.997mil|Location1.Y=1820.062mil|Location2.Y=1887.434mil|Absolute=True">Short-Circuit Constraint: Between Pad LiDAR-6(6.546mm,17.723mm) on Multi-Layer And Track (6.546mm,17.723mm)(11.426mm,17.723mm) on Top Layer Location : [X = 137.066mm][Y = 47.085mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6715.057mil|Location2.X=6782.88mil|Location1.Y=1413.94mil|Location2.Y=1481.764mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6715.057mil|Location2.X=6782.88mil|Location1.Y=1413.94mil|Location2.Y=1481.764mil|Absolute=True">Short-Circuit Constraint: Between Pad OUT-1(41.046mm,7.563mm) on Multi-Layer And Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer Location : [X = 171.424mm][Y = 36.775mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6709.142mil|Location2.X=6776.982mil|Location1.Y=1519.828mil|Location2.Y=1587.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6709.142mil|Location2.X=6776.982mil|Location1.Y=1519.828mil|Location2.Y=1587.668mil|Absolute=True">Short-Circuit Constraint: Between Pad OUT-2(41.046mm,10.103mm) on Multi-Layer And Track (38.868mm,10.103mm)(41.046mm,10.103mm) on Top Layer Location : [X = 171.274mm][Y = 39.465mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6720.955mil|Location2.X=6788.795mil|Location1.Y=1619.828mil|Location2.Y=1687.668mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6720.955mil|Location2.X=6788.795mil|Location1.Y=1619.828mil|Location2.Y=1687.668mil|Absolute=True">Short-Circuit Constraint: Between Pad OUT-3(41.046mm,12.643mm) on Multi-Layer And Track (41.046mm,12.643mm)(42.17mm,12.643mm) on Top Layer Location : [X = 171.574mm][Y = 42.005mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6762.651mil|Location2.X=6791.382mil|Location1.Y=1639.382mil|Location2.Y=1668.114mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6762.651mil|Location2.X=6791.382mil|Location1.Y=1639.382mil|Location2.Y=1668.114mil|Absolute=True">Short-Circuit Constraint: Between Pad OUT-3(41.046mm,12.643mm) on Multi-Layer And Track (42.17mm,12.643mm)(43.409mm,11.405mm) on Top Layer Location : [X = 172.136mm][Y = 42.005mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6715.048mil|Location2.X=6782.889mil|Location1.Y=1725.734mil|Location2.Y=1793.575mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6715.048mil|Location2.X=6782.889mil|Location1.Y=1725.734mil|Location2.Y=1793.575mil|Absolute=True">Short-Circuit Constraint: Between Pad OUT-4(41.046mm,15.183mm) on Multi-Layer And Track (41.046mm,15.183mm)(41.046mm,17.755mm) on Top Layer Location : [X = 171.424mm][Y = 44.695mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6065.45mil|Location2.X=6133.274mil|Location1.Y=1412.365mil|Location2.Y=1480.189mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6065.45mil|Location2.X=6133.274mil|Location1.Y=1412.365mil|Location2.Y=1480.189mil|Absolute=True">Short-Circuit Constraint: Between Pad RGB-1(24.546mm,7.523mm) on Multi-Layer And Track (24.546mm,4.283mm)(24.546mm,7.523mm) on Top Layer Location : [X = 154.924mm][Y = 36.735mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6060.336mil|Location2.X=6135.213mil|Location1.Y=1514.561mil|Location2.Y=1589.439mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6060.336mil|Location2.X=6135.213mil|Location1.Y=1514.561mil|Location2.Y=1589.439mil|Absolute=True">Short-Circuit Constraint: Between Pad RGB-2(24.546mm,10.063mm) on Multi-Layer And Track (23.139mm,10.058mm)(24.765mm,10.058mm) on Top Layer Location : [X = 154.883mm][Y = 39.421mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6071.349mil|Location2.X=6139.189mil|Location1.Y=1618.253mil|Location2.Y=1686.093mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6071.349mil|Location2.X=6139.189mil|Location1.Y=1618.253mil|Location2.Y=1686.093mil|Absolute=True">Short-Circuit Constraint: Between Pad RGB-3(24.546mm,12.603mm) on Multi-Layer And Track (24.546mm,12.603mm)(26.285mm,12.603mm) on Top Layer Location : [X = 155.074mm][Y = 41.965mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6065.442mil|Location2.X=6133.282mil|Location1.Y=1724.16mil|Location2.Y=1792mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6065.442mil|Location2.X=6133.282mil|Location1.Y=1724.16mil|Location2.Y=1792mil|Absolute=True">Short-Circuit Constraint: Between Pad RGB-4(24.546mm,15.143mm) on Multi-Layer And Track (24.546mm,15.143mm)(24.546mm,20.666mm) on Top Layer Location : [X = 154.924mm][Y = 44.655mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6542.877mil|Location2.X=6605.53mil|Location1.Y=1322.421mil|Location2.Y=1385.075mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6542.877mil|Location2.X=6605.53mil|Location1.Y=1322.421mil|Location2.Y=1385.075mil|Absolute=True">Short-Circuit Constraint: Between Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer And Via (36.678mm,5.029mm) from Top Layer to Bottom Layer Location : [X = 166.985mm][Y = 34.385mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6573.665mil|Location2.X=6580.083mil|Location1.Y=1350.665mil|Location2.Y=1357.083mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6573.665mil|Location2.X=6580.083mil|Location1.Y=1350.665mil|Location2.Y=1357.083mil|Absolute=True">Short-Circuit Constraint: Between Track (36.671mm,5.023mm)(36.678mm,5.029mm) on Top Layer And Via (36.678mm,5.029mm) from Top Layer to Bottom Layer Location : [X = 167.053mm][Y = 34.388mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6745.724mil|Location2.X=6753.244mil|Location1.Y=1335.755mil|Location2.Y=1343.276mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6745.724mil|Location2.X=6753.244mil|Location1.Y=1335.755mil|Location2.Y=1343.276mil|Absolute=True">Short-Circuit Constraint: Between Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer And Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer Location : [X = 171.437mm][Y = 34.024mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6745.724mil|Location2.X=6753.244mil|Location1.Y=1335.755mil|Location2.Y=1343.276mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6745.724mil|Location2.X=6753.244mil|Location1.Y=1335.755mil|Location2.Y=1343.276mil|Absolute=True">Short-Circuit Constraint: Between Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer And Via (41.046mm,4.674mm) from Top Layer to Bottom Layer Location : [X = 171.437mm][Y = 34.024mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDVBUMG1ZFIVUICKKAWZTBGDAI05HBOFUHOKLBLCKHYQKVTCSQDGC"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6434.008mil|Location2.X=6596.433mil|Location1.Y=1334.063mil|Location2.Y=1373.433mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6434.008mil|Location2.X=6596.433mil|Location1.Y=1334.063mil|Location2.Y=1373.433mil|Absolute=True">Un-Routed Net Constraint: Track (33.546mm,5.023mm)(36.671mm,5.023mm) on Top Layer Dead Copper - Net Not Assigned.</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6575.748mil|Location2.X=6578mil|Location1.Y=1352.748mil|Location2.Y=1355mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6575.748mil|Location2.X=6578mil|Location1.Y=1352.748mil|Location2.Y=1355mil|Absolute=True">Un-Routed Net Constraint: Track (36.671mm,5.023mm)(36.678mm,5.029mm) on Top Layer Dead Copper - Net Not Assigned.</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6747.968mil|Location2.X=6751mil|Location1.Y=1338mil|Location2.Y=1341.032mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6747.968mil|Location2.X=6751mil|Location1.Y=1338mil|Location2.Y=1341.032mil|Absolute=True">Un-Routed Net Constraint: Track (41.046mm,4.674mm)(41.072mm,4.648mm) on Top Layer Dead Copper - Net Not Assigned.</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDIO5SV2SXNH3LGZJQCEWFQELM0ME1RFR5Q3O4AF45BLJMRZ22EOB"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk to Silk (Clearance=0.254mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5953.167mil|Location2.X=5960.833mil|Location1.Y=1559.765mil|Location2.Y=1567.432mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5953.167mil|Location2.X=5960.833mil|Location1.Y=1559.765mil|Location2.Y=1567.432mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "GND" (20.93mm,9.728mm) on Top Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5947.581mil|Location2.X=5958.831mil|Location1.Y=1630.678mil|Location2.Y=1641.928mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5947.581mil|Location2.X=5958.831mil|Location1.Y=1630.678mil|Location2.Y=1641.928mil|Absolute=True">Silk To Silk Clearance Constraint: (0.15mm &lt; 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "SCL" (21.031mm,12.116mm) on Top Overlay Silk Text to Silk Clearance [0.15mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5539.892mil|Location2.X=5547.559mil|Location1.Y=1636.167mil|Location2.Y=1643.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5539.892mil|Location2.X=5547.559mil|Location1.Y=1636.167mil|Location2.Y=1643.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Arc (15.546mm,11.103mm) on Top Overlay And Text "SCL" (8.484mm,12.294mm) on Top Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5469.167mil|Location2.X=5476.833mil|Location1.Y=1358.685mil|Location2.Y=1366.351mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5469.167mil|Location2.X=5476.833mil|Location1.Y=1358.685mil|Location2.Y=1366.351mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Arc (8.396mm,5.023mm) on Top Overlay And Text "5V" (8.636mm,4.496mm) on Top Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6510.663mil|Location2.X=6521.913mil|Location1.Y=1464.419mil|Location2.Y=1475.669mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6510.663mil|Location2.X=6521.913mil|Location1.Y=1464.419mil|Location2.Y=1475.669mil|Absolute=True">Silk To Silk Clearance Constraint: (0.24mm &lt; 0.254mm) Between Text "CMPS14" (36.906mm,7.215mm) on Top Overlay And Track (34.916mm,3.628mm)(34.916mm,19.118mm) on Top Overlay Silk Text to Silk Clearance [0.24mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6035.969mil|Location2.X=6047.219mil|Location1.Y=1538.295mil|Location2.Y=1549.545mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6035.969mil|Location2.X=6047.219mil|Location1.Y=1538.295mil|Location2.Y=1549.545mil|Absolute=True">Silk To Silk Clearance Constraint: (0.045mm &lt; 0.254mm) Between Text "GND" (20.93mm,9.728mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0.045mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6682.909mil|Location2.X=6694.159mil|Location1.Y=1526.398mil|Location2.Y=1537.648mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6682.909mil|Location2.X=6694.159mil|Location1.Y=1526.398mil|Location2.Y=1537.648mil|Absolute=True">Silk To Silk Clearance Constraint: (0.18mm &lt; 0.254mm) Between Text "OUT" (39.294mm,9.297mm) on Top Overlay And Track (39.701mm,6.143mm)(39.701mm,16.603mm) on Top Overlay Silk Text to Silk Clearance [0.18mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6035.882mil|Location2.X=6043.548mil|Location1.Y=1629.167mil|Location2.Y=1636.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6035.882mil|Location2.X=6043.548mil|Location1.Y=1629.167mil|Location2.Y=1636.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 0.254mm) Between Text "SCL" (21.031mm,12.116mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6386.142mil|Location2.X=6397.392mil|Location1.Y=1427.375mil|Location2.Y=1438.625mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6386.142mil|Location2.X=6397.392mil|Location1.Y=1427.375mil|Location2.Y=1438.625mil|Absolute=True">Silk To Silk Clearance Constraint: (0.206mm &lt; 0.254mm) Between Text "SCL" (29.743mm,7.036mm) on Top Overlay And Track (32.176mm,3.628mm)(32.176mm,19.118mm) on Top Overlay Silk Text to Silk Clearance [0.206mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6033.969mil|Location2.X=6045.219mil|Location1.Y=1754.054mil|Location2.Y=1765.304mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6033.969mil|Location2.X=6045.219mil|Location1.Y=1754.054mil|Location2.Y=1765.304mil|Absolute=True">Silk To Silk Clearance Constraint: (0.146mm &lt; 0.254mm) Between Text "SDA" (20.828mm,14.834mm) on Top Overlay And Track (23.201mm,6.103mm)(23.201mm,16.563mm) on Top Overlay Silk Text to Silk Clearance [0.146mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6803.804mil|Location2.X=6815.054mil|Location1.Y=1556.973mil|Location2.Y=1568.223mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6803.804mil|Location2.X=6815.054mil|Location1.Y=1556.973mil|Location2.Y=1568.223mil|Absolute=True">Silk To Silk Clearance Constraint: (0.181mm &lt; 0.254mm) Between Text "SDA" (42.799mm,9.703mm) on Top Overlay And Track (42.391mm,6.143mm)(42.391mm,16.603mm) on Top Overlay Silk Text to Silk Clearance [0.181mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDKIOCXEMZUHVHIITBVGTRBMUMWF0Y0JOHAZGFF4LPW52SB4W0KFFJ"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Net Antennae (Tolerance=0mm) (All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6084.815mil|Location2.X=6140.372mil|Location1.Y=1528.815mil|Location2.Y=1616.52mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6084.815mil|Location2.X=6140.372mil|Location1.Y=1528.815mil|Location2.Y=1616.52mil|Absolute=True">Net Antennae: Track (23.139mm,10.058mm)(24.765mm,10.058mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1628.988mil|Location2.Y=1716.693mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1628.988mil|Location2.Y=1716.693mil|Absolute=True">Net Antennae: Track (24.546mm,12.603mm)(26.285mm,12.603mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1728.988mil|Location2.Y=1816.693mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1728.988mil|Location2.Y=1816.693mil|Absolute=True">Net Antennae: Track (24.546mm,15.143mm)(24.546mm,20.666mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1428.988mil|Location2.Y=1516.693mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6076.177mil|Location2.X=6131.734mil|Location1.Y=1428.988mil|Location2.Y=1516.693mil|Absolute=True">Net Antennae: Track (24.546mm,4.283mm)(24.546mm,7.523mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1530.563mil|Location2.Y=1618.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1530.563mil|Location2.Y=1618.268mil|Absolute=True">Net Antennae: Track (30.956mm,10.103mm)(33.546mm,10.103mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1430.563mil|Location2.Y=1518.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1430.563mil|Location2.Y=1518.268mil|Absolute=True">Net Antennae: Track (33.298mm,7.315mm)(33.546mm,7.563mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1830.563mil|Location2.Y=1918.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6430.508mil|Location2.X=6486.065mil|Location1.Y=1830.563mil|Location2.Y=1918.268mil|Absolute=True">Net Antennae: Track (33.546mm,17.723mm)(36.443mm,17.723mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1530.563mil|Location2.Y=1618.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1530.563mil|Location2.Y=1618.268mil|Absolute=True">Net Antennae: Track (38.868mm,10.103mm)(41.046mm,10.103mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1730.563mil|Location2.Y=1818.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1730.563mil|Location2.Y=1818.268mil|Absolute=True">Net Antennae: Track (4.185mm,15.183mm)(6.546mm,15.183mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1630.563mil|Location2.Y=1718.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1630.563mil|Location2.Y=1718.268mil|Absolute=True">Net Antennae: Track (4.293mm,10.39mm)(6.546mm,12.643mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1630.563mil|Location2.Y=1718.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1630.563mil|Location2.Y=1718.268mil|Absolute=True">Net Antennae: Track (41.046mm,12.643mm)(42.17mm,12.643mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1730.563mil|Location2.Y=1818.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1730.563mil|Location2.Y=1818.268mil|Absolute=True">Net Antennae: Track (41.046mm,15.183mm)(41.046mm,17.755mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1430.563mil|Location2.Y=1518.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6725.783mil|Location2.X=6781.341mil|Location1.Y=1430.563mil|Location2.Y=1518.268mil|Absolute=True">Net Antennae: Track (41.046mm,4.674mm)(41.046mm,7.563mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1830.563mil|Location2.Y=1918.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1830.563mil|Location2.Y=1918.268mil|Absolute=True">Net Antennae: Track (6.546mm,17.723mm)(11.426mm,17.723mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1330.563mil|Location2.Y=1418.268mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=5367.516mil|Location2.X=5423.073mil|Location1.Y=1330.563mil|Location2.Y=1418.268mil|Absolute=True">Net Antennae: Track (6.546mm,5.023mm)(11.966mm,5.023mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6544.5mil|Location2.X=6620.336mil|Location1.Y=1321.5mil|Location2.Y=1443.456mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\janio\OneDrive\Desktop\Software_Engineering\Year_2\Sem_2\EP_2\embedded-jit\PCB_Project\PCB1.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6544.5mil|Location2.X=6620.336mil|Location1.Y=1321.5mil|Location2.Y=1443.456mil|Absolute=True">Net Antennae: Via (36.678mm,5.029mm) from Top Layer to Bottom Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>
