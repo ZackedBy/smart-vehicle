@@ -76,7 +76,7 @@ void setup() {
   Wire.begin();
   lcd.begin(20,4);
   Serial.begin(9600);
-  //Serial2.begin(9600); // Compass Serial Bus
+  Serial2.begin(9600); // Compass Serial Bus
   Serial3.begin(9600); // LiDAR Serial Bus
   lidar.begin(0, true); 
   lidar.configure(0); //change to 1 for short range, high speed
@@ -203,8 +203,8 @@ String get_direction(int heading) {
 // Controls vehicle with serial inputs
 // Available commands: dist, drive, move; deg, turn
 void get_commands_from_web() {
-  if (Serial.available() > 0){
-    message = Serial.readStringUntil('\n'); 
+ 
+    message = Serial2.readStringUntil('\n'); 
     int delim = message.indexOf(":");
       
     if (delim > -1) {
@@ -223,13 +223,13 @@ void get_commands_from_web() {
         Serial.println("Command not found: " + message);
       }
     }
-  }
+  
 
 }
 
 void send_info_to_web(){    
   Serial3.println("LIDAR:" + String(lidar_dist));
-  //Serial3.println("COMP:" + String(current_degree));
+  Serial3.println("COMP:" + String(current_degree));
 }
 //========================================================================Compass Functions========================================================
 

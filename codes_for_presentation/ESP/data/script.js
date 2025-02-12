@@ -12,24 +12,22 @@ const defaultValue = 0;
 let lastValidCompassValue;
 
 // This function fetches asynchronously LIDAR data from the server and updates the display.
-// async function fetchCompassData() {
-//   try {
-//     const response = await fetch("/compass"); // Fetch the LIDAR data from the server
-//     console.log(response);
-//     const data = await response.text(); // Get the response text
-//     const compVal = parseInt(data, 10); // Parse the LIDAR data as an integer
+async function fetchCompassData() {
+  try {
+    const response = await fetch("/realComp"); // Fetch the LIDAR data from the server
+    const data = await response.text(); // Get the response text
+    const compVal = parseInt(data, 10); // Parse the LIDAR data as an integer
 
-//     console.log(compVal);
-//     if (compVal) {
-//         //console.log("Lidar value:", lidarValue);
-//         realCompassValue.innerText = `${compVal} cm`;  // Update the LIDAR text element with the fetched data
-//      }
-//   } catch (error) {
-//     console.error("COMP ERR:", error); // Log any errors to the console
-//   }
-// }
+    if (compVal) {
+        //console.log("Lidar value:", lidarValue);
+        realCompassValue.innerText = `${compVal}°`;  // Update the LIDAR text element with the fetched data
+     }
+  } catch (error) {
+    console.error("COMP ERR:", error); // Log any errors to the console
+  }
+}
 
-// setInterval(fetchCompassData, 100);
+setInterval(fetchCompassData, 200);
 
 
 // Function to set compass to 0. Used on load and for Find North button
@@ -52,7 +50,8 @@ function sendCompassValue(pos) {
   lastValidCompassValue = pos;
   fetch(`/compass?value=${pos}`)
     .then((response) => console.log(`Compass value: ${pos}; `, response.status))
-    .catch((error) => console.error("Error sending turning command:", error));
+    .catch((err) => console.log("hi"))
+    //.catch((error) => console.error("Error sending turning command:", error));
 }
 
 // Utility to calculate the angle relative to the center
@@ -267,4 +266,4 @@ async function fetchLidarData() {
   }
 }
 
-setInterval(fetchLidarData, 100);
+setInterval(fetchLidarData, 200);

@@ -5,6 +5,7 @@
 const char* ssid = "SOURCE";          // Wi-Fi network name (SSID)
 const char* password = "Pelle!23";    // Wi-Fi network password
 String lidarData = "0 cm";            // Variable to store LIDAR data
+String compassData = "0";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
@@ -37,6 +38,7 @@ void setup() {
   server.on("/forwards", handleMove);
   server.on("/backwards", handleMove);
   server.on("/compass", handleCompass);
+  server.on("/realComp", sendRealComp);
   server.on("/lidar", handleLidar);
   server.onNotFound(handleNotFound);
   
@@ -52,11 +54,11 @@ void loop() {
     String data = Serial.readStringUntil('\n');
     if (data.startsWith("LIDAR:")) {
       lidarData = data.substring(6);
-      Serial.println("Lidar: " + lidarData);
+      //Serial.println("Lidar: " + lidarData);
+    } else if (data.startsWith("COMP:")){ //////////////////////////////////////////
+      compassData = data.substring(5);
+      //Serial.println("Comp:" + data.substring(5));
     } 
-//    else if (data.startsWith("COMP:")){ //////////////////////////////////////////
-//      Serial.println("Comp:" + data.substring(5));
-//    } 
     else {
       Serial.println("Command not found" + String(data)); 
     }
@@ -83,8 +85,10 @@ void handleCompass() {
   if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
     String valueString = server.arg("value");       // Get the "value" argument from the URL
     Serial.println("Turn:" + valueString);          // Print the compass value to the serial monitor
-    server.send(200, "text/plain", valueString);
   }
+}
+void sendRealComp() {
+   server.send(200, "text/plain", compassData);
 }
 
 // This function handles the lidar command (like "/lidar")
