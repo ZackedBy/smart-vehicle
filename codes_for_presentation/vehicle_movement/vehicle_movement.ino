@@ -5,6 +5,7 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <LIDARLite.h>
+#include "Adafruit_TCS34725.h"
 
 // JoyStick Variables
 #define joy_x A2
@@ -65,6 +66,10 @@ int reading_count = 0;    // Rolling counter for readings
 int lidar_dist_sum = 0;   // Sum of readings over x amount of readings
 int lidar_dist_threshold = 0;
 
+//RGB Sensor Variables
+//#define i2c_address (0x29)
+Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_1X);
+
 // Website Variables
 String message; //whole message sent from website
 
@@ -74,17 +79,25 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
   
   Wire.begin();
+  if (rgb_sens.begin()) {
+    Serial.println("Found sensor");
+  } else {
+    Serial.println("No TCS34725 found ... check your connections");
+    while (1); // halt!
+  }
   lcd.begin(20,4);
   Serial.begin(9600);
   Serial2.begin(9600); // Compass Serial Bus
   Serial3.begin(9600); // LiDAR Serial Bus
+
   lidar.begin(0, true); 
   lidar.configure(0); //change to 1 for short range, high speed
-  
+
   compass_offset = compass_logic(); // Get compass reading on start-up
 }
 
 void loop(){  
+  get_rgb_values();
   display_lcd();
   current_degree = compass_logic();
   lidar_dist = get_lidar_distance(20);
@@ -153,6 +166,23 @@ void follow_path() {
   move_to_threshold(180, 113);
   move_to_threshold(90, 165);
   joystick_mode = true;
+}
+//========================================================================RGB Functions================================================
+
+void get_rgb_values(){
+  uint16_t clear, red, green, blue;
+  
+  float r, g, b;
+  rgb_sens.getRGB(&r, &g, &b);
+
+  Serial.print("\tR:\t"); Serial.print(r);
+  Serial.print("\tG:\t"); Serial.print(g);
+  Serial.print("\tB:\t"); Serial.print(b);
+  Serial.println("\t");
+  
+  Serial.print("\t");
+  Serial.print((int)r, HEX); Serial.print((int)g, HEX); Serial.print((int)b, HEX);
+  Serial.println();
 }
 
 //==================================================================LCD Specific Functions=============================================

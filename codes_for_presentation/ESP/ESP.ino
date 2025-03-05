@@ -57,9 +57,7 @@ void loop() {
       //Serial.println("Lidar: " + lidarData);
     } else if (data.startsWith("COMP:")){ //////////////////////////////////////////
       compassData = data.substring(5);
-      //Serial.println("Comp:" + data.substring(5));
-    } 
-    else {
+    } else {
       Serial.println("Command not found" + String(data)); 
     }
   }
