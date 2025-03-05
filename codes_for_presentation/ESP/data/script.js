@@ -27,7 +27,7 @@ async function fetchCompassData() {
   }
 }
 
-setInterval(fetchCompassData, 200);
+setInterval(fetchCompassData, 100);
 
 
 // Function to set compass to 0. Used on load and for Find North button
@@ -46,12 +46,14 @@ function updateCompass(pos) {
 }
 
 // Send the current compass value to the server
-function sendCompassValue(pos) {
+async function sendCompassValue(pos) {
   lastValidCompassValue = pos;
-  fetch(`/compass?value=${pos}`)
-    .then((response) => console.log(`Compass value: ${pos}; `, response.status))
-    .catch((err) => console.log("hi"))
-    //.catch((error) => console.error("Error sending turning command:", error));
+  try {
+    const response = await fetch(`/compass?value=${pos}`);
+    console.log(`Compass value: ${pos}; `, response.status);
+  } catch (error) {
+    console.error("Error sending turning command:", error);
+  }
 }
 
 // Utility to calculate the angle relative to the center
@@ -266,4 +268,4 @@ async function fetchLidarData() {
   }
 }
 
-setInterval(fetchLidarData, 200);
+setInterval(fetchLidarData, 100);

@@ -78,17 +78,18 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
   
-  Wire.begin();
+  // includes Wire.begin
   if (rgb_sens.begin()) {
     Serial.println("Found sensor");
   } else {
     Serial.println("No TCS34725 found ... check your connections");
     while (1); // halt!
   }
+  
   lcd.begin(20,4);
-  Serial.begin(9600);
-  Serial2.begin(9600); // Compass Serial Bus
-  Serial3.begin(9600); // LiDAR Serial Bus
+  
+  Serial.begin(9600);  // For uploading code/monitoring "prints"
+  Serial2.begin(9600); // For sending/receiving website data
 
   lidar.begin(0, true); 
   lidar.configure(0); //change to 1 for short range, high speed
@@ -107,7 +108,7 @@ void loop(){
     last_used_degree = current_degree;
     joystick_movement();
   } else {
-    //rotate_vehicle(last_used_degree); // Self-correct rotation
+    rotate_vehicle(last_used_degree); // Self-correct rotation
     get_commands_from_web();
     send_info_to_web();
     /*TO DO: Make seperate func for sending data (lidar + compass) */
@@ -258,8 +259,8 @@ void get_commands_from_web() {
 }
 
 void send_info_to_web(){    
-  Serial3.println("LIDAR:" + String(lidar_dist));
-  Serial3.println("COMP:" + String(current_degree));
+  Serial2.println("LIDAR:" + String(lidar_dist));
+  Serial2.println("COMP:" + String(current_degree));
 }
 //========================================================================Compass Functions========================================================
 
