@@ -282,23 +282,10 @@ const colorBall = document.getElementById("Color");
 async function fetchColorData() {
   try {
     const response = await fetch("/rgb");
-    const text = await response.text();
+    const color = await response.text();
 
-    const [r, g, b] = text.trim().split(/\s*,\s*/).map(Number);
-
-    let color = "black";
-
-    if(r > g  && r > b) {
-      color = "red";
-    } else if (b > g  && b > r) {
-      color = "blue";
-    } else if (g > 80) {
-      color = "green";
-    }
-
-    colorBall.style.setProperty("background-color", color, "important");
-
-
+    //colorBall.style.setProperty("background-color", color, "important");
+    colorBall.style.backgroundColor = color;
   } catch (error) {
     console.log("Error fetching color data", error)
   }

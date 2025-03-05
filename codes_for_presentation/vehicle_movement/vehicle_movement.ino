@@ -178,10 +178,21 @@ void get_rgb_values(){
   Serial.print("\t");
   Serial.print((int)r, HEX); Serial.print((int)g, HEX); Serial.print((int)b, HEX);
   Serial.println();
-  String rgbString = String(r, 2) + "," + String(g, 2) + "," + String(b, 2);
-  Serial2.println("RGB:" + rgbString);
+  String color = get_color(r, g, b);
+  Serial2.println("RGB:" + color);
 }
 
+String get_color(float r, float g, float b) {
+    String color = "";
+    if(r > 110 && r > g  && r > b) {
+      color = "red";
+    } else if (b > g  && b > r) {
+      color = g > 75 ? "green" : "blue";
+    } else {
+      color = "black";
+    }
+    return color;
+}
 //==================================================================LCD Specific Functions=============================================
 
 // Displays and refreshes LCD with non-disruptive delay
