@@ -68,7 +68,7 @@ int lidar_dist_threshold = 0;
 
 //RGB Sensor Variables
 //#define i2c_address (0x29)
-Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_1X);
+Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
 // Website Variables
 String message; //whole message sent from website
@@ -111,9 +111,6 @@ void loop(){
     rotate_vehicle(last_used_degree); // Self-correct rotation
     get_commands_from_web();
     send_info_to_web();
-    /*TO DO: Make seperate func for sending data (lidar + compass) */
-    //drive_prox_check();
-    //follow_path();
   }
 }
 //==================================================================LiDAR Functions=============================================
@@ -152,11 +149,6 @@ void move_to_threshold(int deg, int threshold) {
   while (get_lidar_distance(20) > threshold) {
     move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
     current_degree = compass_logic();
-
-//    if (abs(current_degree - deg) > 5){
-//        rotate_vehicle(deg);
-//    }
-    
   }
   move_motor(0, 0, 0, 0);
 }
@@ -171,10 +163,12 @@ void follow_path() {
 //========================================================================RGB Functions================================================
 
 void get_rgb_values(){
-  uint16_t clear, red, green, blue;
-  
+  //uint16_t clear, red, green, blue;
+ 
   float r, g, b;
+  //rgb_sens.setInterrupt(true);
   rgb_sens.getRGB(&r, &g, &b);
+  //rgb_sens.setInterrupt(false);
 
   Serial.print("\tR:\t"); Serial.print(r);
   Serial.print("\tG:\t"); Serial.print(g);
@@ -184,6 +178,8 @@ void get_rgb_values(){
   Serial.print("\t");
   Serial.print((int)r, HEX); Serial.print((int)g, HEX); Serial.print((int)b, HEX);
   Serial.println();
+  String rgbString = String(r, 2) + "," + String(g, 2) + "," + String(b, 2);
+  Serial2.println("RGB:" + rgbString);
 }
 
 //==================================================================LCD Specific Functions=============================================
@@ -228,7 +224,6 @@ String get_direction(int heading) {
     return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
 }
 
-
 //========================================================================Website Functions========================================================
 
 // Controls vehicle with serial inputs
@@ -254,11 +249,9 @@ void get_commands_from_web() {
         Serial.println("Command not found: " + message);
       }
     }
-  
-
 }
 
-void send_info_to_web(){    
+void send_info_to_web(){   
   Serial2.println("LIDAR:" + String(lidar_dist));
   Serial2.println("COMP:" + String(current_degree));
 }
@@ -411,6 +404,10 @@ void travel_distance(int distance, int motor_max_speed){
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
 
   while (distance_travelled < abs(distance)){
+    if (lidar_dist < 10) {
+      Serial2.println("LIDAR:Warning! About to crash!");
+      break;
+    }
     distance_travelled = (dist_R + dist_L) / 2;
     display_lcd();
     move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);

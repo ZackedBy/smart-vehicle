@@ -2,10 +2,11 @@
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
 
-const char* ssid = "SOURCE";          // Wi-Fi network name (SSID)
-const char* password = "Pelle!23";    // Wi-Fi network password
+const char* ssid = "OnePlus 7 Pro";          // Wi-Fi network name (SSID)
+const char* password = "77777771";    // Wi-Fi network password
 String lidarData = "0 cm";            // Variable to store LIDAR data
 String compassData = "0";
+String rgbValues = "0 0 0";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
@@ -40,6 +41,7 @@ void setup() {
   server.on("/compass", handleCompass);
   server.on("/realComp", sendRealComp);
   server.on("/lidar", handleLidar);
+  server.on("/rgb", handleRGB);
   server.onNotFound(handleNotFound);
   
   // Start the web server
@@ -54,9 +56,21 @@ void loop() {
     String data = Serial.readStringUntil('\n');
     if (data.startsWith("LIDAR:")) {
       lidarData = data.substring(6);
-      //Serial.println("Lidar: " + lidarData);
-    } else if (data.startsWith("COMP:")){ //////////////////////////////////////////
+    } else if (data.startsWith("COMP:")){
       compassData = data.substring(5);
+    } else if (data.startsWith("RGB:")) {
+      rgbValues = data.substring(4);
+      Serial.println(rgbValues);
+//      int firstComma = rgbData.indexOf(",");
+//      int secondComma = rgbData.indexOf("," + firstComma + 1);
+//
+//      if (firstComma != -1 && secondComma != -1) {
+//        float r = rgbData.substring(0, firstComma).toFloat();
+//        float g = rgbData.substring(firstComma + 1, secondComma).toFloat();
+//        float b = rgbData.substring(secondComma + 1).toFloat();
+//        rgbValues = String(r) + " " + String(g) + " " + String(b);
+//        Serial.println(rgbValues);
+//      }
     } else {
       Serial.println("Command not found" + String(data)); 
     }
@@ -92,6 +106,10 @@ void sendRealComp() {
 // This function handles the lidar command (like "/lidar")
 void handleLidar() {
   server.send(200, "text/plain", lidarData); // Send the latest Lidar value with a 200 OK status.
+}
+
+void handleRGB() {
+  server.send(200, "text/plain", rgbValues);
 }
 
 // This function is called when a non-existing URL is accessed (404 error)

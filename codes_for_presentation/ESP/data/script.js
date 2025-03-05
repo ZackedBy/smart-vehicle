@@ -19,16 +19,15 @@ async function fetchCompassData() {
     const compVal = parseInt(data, 10); // Parse the LIDAR data as an integer
 
     if (compVal) {
-        //console.log("Lidar value:", lidarValue);
-        realCompassValue.innerText = `${compVal}°`;  // Update the LIDAR text element with the fetched data
-     }
+      //console.log("Lidar value:", lidarValue);
+      realCompassValue.innerText = `${compVal}°`; // Update the LIDAR text element with the fetched data
+    }
   } catch (error) {
     console.error("COMP ERR:", error); // Log any errors to the console
   }
 }
 
 setInterval(fetchCompassData, 50);
-
 
 // Function to set compass to 0. Used on load and for Find North button
 function setCompassTo(value) {
@@ -256,13 +255,20 @@ const lidarText = document.getElementById("lidar-val");
 async function fetchLidarData() {
   try {
     const response = await fetch("/lidar"); // Fetch the LIDAR data from the server
-    const data = await response.text(); // Get the response text
-    const lidarValue = parseInt(data, 10); // Parse the LIDAR data as an integer
-
-    if (lidarValue) {
-        //console.log("Lidar value:", lidarValue);
-        lidarText.innerText = `${lidarValue} cm`;  // Update the LIDAR text element with the fetched data
-     }
+    const data = await response.text().then((text) => text.trim()); // Get the response text
+    const lidarValue = Number(data); // Parse the LIDAR data as an integer
+    lidarText.innerText = "";
+    if (!isNaN(lidarValue)) {
+      lidarText.innerText = `LiDAR distance: ${lidarValue} cm`; // Update the LIDAR text element with the fetched data
+      if (lidarValue < 10) {
+        lidarText.style.color = "red";
+      } else {
+        lidarText.style.color = "black";
+      }
+    } else if (data.trim()) {
+      lidarText.innerText = data;
+      lidarText.style.color = "red";
+    }
   } catch (error) {
     console.error("Error fetching LIDAR data:", error); // Log any errors to the console
   }
