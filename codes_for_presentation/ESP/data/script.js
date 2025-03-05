@@ -27,7 +27,7 @@ async function fetchCompassData() {
   }
 }
 
-setInterval(fetchCompassData, 100);
+setInterval(fetchCompassData, 50);
 
 
 // Function to set compass to 0. Used on load and for Find North button
@@ -268,4 +268,4 @@ async function fetchLidarData() {
   }
 }
 
-setInterval(fetchLidarData, 100);
+setInterval(fetchLidarData, 50);
