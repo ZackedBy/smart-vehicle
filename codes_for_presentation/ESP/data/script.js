@@ -21,6 +21,7 @@ async function fetchCompassData() {
     if (compVal) {
       //console.log("Lidar value:", lidarValue);
       realCompassValue.innerText = `${compVal}°`; // Update the LIDAR text element with the fetched data
+      compassText.innerText = `${pos}°`;
     }
   } catch (error) {
     console.error("COMP ERR:", error); // Log any errors to the console
@@ -103,6 +104,7 @@ function updateCompassOnMove(event) {
 }
 
 // Handle the final action when releasing the interaction
+
 function finalizeCompassInteraction(event) {
   const rect = compassControl.getBoundingClientRect();
   const clientX = event.changedTouches
@@ -258,17 +260,15 @@ async function fetchLidarData() {
     const data = await response.text().then((text) => text.trim()); // Get the response text
     const lidarValue = Number(data); // Parse the LIDAR data as an integer
     lidarText.innerText = "";
-    if (!isNaN(lidarValue)) {
-      lidarText.innerText = `LiDAR distance: ${lidarValue} cm`; // Update the LIDAR text element with the fetched data
-      if (lidarValue < 10) {
-        lidarText.style.color = "red";
-      } else {
-        lidarText.style.color = "black";
-      }
-    } else if (data.trim()) {
-      lidarText.innerText = data;
+
+    if (isNaN(lidarValue) || lidarValue < 10) {
+      lidarText.innerText = "Warning! About to crash!"
       lidarText.style.color = "red";
+    } else {
+      lidarText.innerText = `LiDAR distance: ${lidarValue} cm`;
+      lidarText.style.color = "black";
     }
+
   } catch (error) {
     console.error("Error fetching LIDAR data:", error); // Log any errors to the console
   }
