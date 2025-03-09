@@ -49,26 +49,24 @@ float distance_travelled = 0; // average distance travelled of both motors
 #define d7 22
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 unsigned long prev_millis_lcd = 0;
-const int lcd_interval = 500;
 
 // Compass Variables
 const uint8_t CMPS14_address = 0x60;
-int current_degree = 0, target_degree = 0, last_used_degree = 0;
+int current_degree = 0, target_degreeree = 0, last_used_degree = 0, prev_checked_degree = 0;
 int direction_difference, compass_offset;
-const int degree_tolerance = 1;
+unsigned long prev_error_check = 0;
 
 // LiDAR Variables
 #define lidar_pot A3
 LIDARLite lidar;
 int lidar_dist = 0;       // Average distance after x amount of readings
-//const int readings = 10;  // X amount of readings
-int reading_count = 0;    // Rolling counter for readings
-int lidar_dist_sum = 0;   // Sum of readings over x amount of readings
+const int num_readings = 20;  // X amount of readings
 int lidar_dist_threshold = 0;
 
 //RGB Sensor Variables
 //#define i2c_address (0x29)
 Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+float r, g, b;
 String color = "black";
 
 // Website Variables
@@ -100,26 +98,26 @@ void setup() {
 }
 
 void loop(){
-  get_rgb_values();
+  get_rgb_value();
   display_lcd();
   current_degree = compass_logic();
-  lidar_dist = get_lidar_distance(20);
+  lidar_dist = get_lidar_distance(num_readings);
   //lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
 
   if (joystick_mode) {
     last_used_degree = current_degree;
     joystick_movement();
   } else {
-    //rotate_vehicle(last_used_degree); // Self-correct rotation
+    rotate_vehicle(last_used_degree); // Self-correct rotation
     get_commands_from_web();
   }
-  send_info_to_web(); // Send info to web, regardless of mode
+  send_info_to_web();
 }
 //==================================================================LiDAR Functions=============================================
 
 // TO-DO: Change for loop to boolean and counter
 int get_lidar_distance(int readings) {
-  lidar_dist_sum = 0;
+  int lidar_dist_sum = 0;
   for (int i = 0; i < readings; i++) {
     if (i == 0) {
       lidar_dist_sum += lidar.distance(true);
@@ -132,8 +130,10 @@ int get_lidar_distance(int readings) {
 
 // EXERCISE 3
 void drive_prox_check() {
+  //int lidar_dist_threshold = num_readings;
+  //int lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
   while (true) {
-    lidar_dist = get_lidar_distance(20);
+    lidar_dist = get_lidar_distance(num_readings);
     byte motor_direction = lidar_dist > lidar_dist_threshold ? Motor_forward : Motor_backward;
     display_lcd();
     move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
@@ -145,7 +145,7 @@ void drive_prox_check() {
 // EXERCISE 5
 void move_to_threshold(int deg, int threshold) {
   rotate_vehicle(deg);
-  while (get_lidar_distance(20) > threshold) {
+  while (get_lidar_distance(num_readings) > threshold) {
     move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
     current_degree = compass_logic();
   }
@@ -161,10 +161,8 @@ void follow_path() {
 }
 //========================================================================RGB Functions================================================
 
-void get_rgb_values(){
+void get_rgb_value(){
   //uint16_t clear, red, green, blue;
-
-  float r, g, b;
   //rgb_sens.setInterrupt(true);
   rgb_sens.getRGB(&r, &g, &b);
   //rgb_sens.setInterrupt(false);
@@ -177,48 +175,40 @@ void get_rgb_values(){
 //  Serial.print("\t");
 //  Serial.print((int)r, HEX); Serial.print((int)g, HEX); Serial.print((int)b, HEX);
 //  Serial.println();
-  color = get_color(r, g, b);
+  color = "black";
+  if(r > 100 && r > g  && r > b) {
+    color = "red";
+  } else if (b > g  && b > r) {
+    color = g > 80 ? "green" : "blue";
+  }
 }
 
-String get_color(float r, float g, float b) {
-    String color = "black";
-    if(r > 110 && r > g  && r > b) {
-      color = "red";
-    } else if (b > g  && b > r) {
-      color = g > 75 ? "green" : "blue";
-    }
-    return color;
-}
 //==================================================================LCD Specific Functions=============================================
 
 // Displays and refreshes LCD with non-disruptive delay
 void display_lcd(){
-  unsigned long current_millis_lcd = millis();
-  if (current_millis_lcd - prev_millis_lcd >= lcd_interval) {
-    prev_millis_lcd = current_millis_lcd;
+  if (millis() - prev_millis_lcd >= 500) {
+    prev_millis_lcd = millis();
     lcd.clear();
+    
     lcd.setCursor(0,0);
-    lcd.print("Mode: ");
-    lcd.print(joystick_mode ? "Joystick" : "ESP");
+    lcd.print("Mode: "); lcd.print(joystick_mode ? "Joystick" : "ESP");
 
     lcd.setCursor(0,1);
-    lcd.print("Dir: ");
-    lcd.print(get_direction(current_degree));
-    lcd.print(", Deg: ");
-    lcd.print(current_degree);
+    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
+    lcd.print(" | Col: "); lcd.print(color);
 
     lcd.setCursor(0,2);
-    lcd.print("D: ");
-    lcd.print(lidar_dist);
-    lcd.print(" | RGB: ");
-    lcd.print(color);
+    lcd.print("D: "); lcd.print(lidar_dist);
+    lcd.print(" | "); 
+    lcd.print(int(r)); lcd.print(" "); 
+    lcd.print(int(g)); lcd.print(" "); 
+    lcd.print(int(b));
 
     lcd.setCursor(0,3);
     if (joystick_mode) {
-      lcd.print("X: ");
-      lcd.print(joy_x_value);
-      lcd.print(", Y: ");
-      lcd.print(joy_y_value);
+      lcd.print("X: "); lcd.print(joy_x_value);
+      lcd.print(", Y: "); lcd.print(joy_y_value);
     } else {
       lcd.print(message);
     }
@@ -348,94 +338,148 @@ void joystick_movement() {
     }
 }
 
+// Normalises difference to [-180, 180]
+int get_diff(int target) {
+  int diff = target - current_degree;
+  if (diff > 180) {
+    diff -= 360;
+  } else if (diff < -180) {
+    diff += 360;
+  }
+  return diff;
+}
+
 // Rotates the vehicle with shortest path
-// Slows down as it nears the target
-void rotate_vehicle(int target_deg) {
-  last_used_degree = target_deg;
+void rotate_vehicle(int target_degree) {
+  int proximity_tolerance = 2;        // Accepts +/- 2 from target_degree
+  int start_degree = current_degree;  // Stores degree when command is given
+  last_used_degree = target_degree;   // Update auto-rotate degree
+  prev_error_check = 0;
+  bool tried_reverse = false;
 
-  int degree_monitor = current_degree; // Used to monitor and compare the current compass reading
-  unsigned long last_update = millis(); // Timestamp for the last progress check
-  const unsigned long error_timeout = 500; // Timeout in milliseconds to detect no progress
-  const int degree_threshold = 10;
+  // Initial distance to rotate
+  int direction_difference = get_diff(target_degree);
 
-  while (true) {
+  // Set the initial rotation direction based on the shortest path
+  bool rotating_clockwise = direction_difference > 0;
+
+  // Loops until difference between target and current is less than tolerance
+  while (abs(direction_difference) >= proximity_tolerance) {
+    
     display_lcd();
     current_degree = compass_logic();
+    direction_difference = get_diff(target_degree);
 
-    direction_difference = target_deg - current_degree;
-
-    // Normalise the difference [-180, 180]
-    if (direction_difference > 180) {
-      direction_difference -= 360;
-    } else if (direction_difference < -180) {
-      direction_difference += 360;
-    }
-
-    // Vehicle has reached the target, break out of loop
-    if (abs(direction_difference) <= degree_tolerance) {
-      break;
-    }
-
-    // Handles scenario when turning and path is blocked
-    if (millis() - last_update >= error_timeout) {
-      if (abs(current_degree - degree_monitor) < degree_threshold) {
-        // Blockage detected
-        last_used_degree = current_degree;
-        message = "Path Blocked. Stop";
-        break; // Break out of loop and stop motor
-      } else {
-        // Progress detected, reset the monitor and message
-        if (message.equals("Path Blocked. Stop")) message = "";
-        degree_monitor = current_degree;
-        last_update = millis();
+    // Check if turning is blocked
+    if (is_turning_blocked()) {
+      if (tried_reverse) {
+        last_used_degree = start_degree; // Update auto-rotate back to same degree as when function was called
+        break;
       }
+      prev_error_check = millis();
+      message = "Block. Trying rev...";
+      tried_reverse = true;
+      rotating_clockwise = !rotating_clockwise; // Flip direction after blockage
     }
 
     // Reduce rotation speed for last few degrees
-    int rotation_speed = abs(direction_difference) > 5
+    int rotation_speed = abs(direction_difference) > 10
       ? motor_max_speed
-      : (int) motor_max_speed / 4;
+      : (int)motor_max_speed / 4;
 
-    // Rotate vehicle with the shortest path
-    if (direction_difference > 0) {
-      // Move CW
-      move_motor(Motor_forward, Motor_backward, rotation_speed, rotation_speed);
+    // Rotate vehicle in the new direction
+    if (rotating_clockwise) {
+      move_motor(Motor_forward, Motor_backward, rotation_speed, rotation_speed); // Move CW
     } else {
-      // Move CCW
-      move_motor(Motor_backward, Motor_forward, rotation_speed, rotation_speed);
+      move_motor(Motor_backward, Motor_forward, rotation_speed, rotation_speed); // Move CCW
     }
   }
-  // Stop movement
-  move_motor(0, 0, 0, 0);
+
+  move_motor(0, 0, 0, 0); // Stop movement
+  message = "Turn:" + String(target_degree); // Reset message
 }
 
 
-// Drives the vehicle from an input distance and speed
-void travel_distance(int distance, int motor_max_speed){
-  reset_dist_variables();
-  // Flip motor direction depending on value of distance
-  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
+bool is_turning_blocked() {
+  const unsigned long error_timeout = 500; // 500ms timeout
+  const int degree_threshold = 10;
 
-  while (distance_travelled < abs(distance)){
-    if (path_blocked(distance)) {
-      break;
-    }
-
-    distance_travelled = (dist_R + dist_L) / 2;
-    display_lcd();
-    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
+  // Store initial degree to compare later
+  if (prev_error_check == 0) {
+    prev_error_check = millis();
+    prev_checked_degree = current_degree;
   }
-  move_motor(0, 0, 0, 0);
-}
-
-boolean path_blocked(int distance){
-  lidar_dist = get_lidar_distance(20);
-  if (lidar_dist < 10 && distance > 0) {
-    move_motor(0,0,0,0);
-    rotate_vehicle(current_degree + 90);
-    return true;
+  
+  // Checks progress every timeout
+  if (millis() - prev_error_check >= error_timeout) {
+  
+    if (abs(current_degree - prev_checked_degree) <= degree_threshold ) {
+      // No progress detected -> blockage
+      return true;
+    } else {
+      // Progress detected, reset the monitor
+      prev_checked_degree = current_degree;
+      prev_error_check = millis();
+    }
+    
   }
   return false;
+}
+
+// Drives the vehicle from an input distance and speed
+void travel_distance(int distance, int motor_speed){
+  reset_dist_variables();
+  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
+
+  while (distance_travelled <= abs(distance)) {
+    lidar_dist = get_lidar_distance(num_readings);
+
+    // Checks if path is blocked
+    if (lidar_dist < 10 && distance > 0) {
+      motor_direction = check_and_turn();
+    }
+
+    // Adjust speed based on lidar readings
+    int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
+    distance_travelled = (dist_R + dist_L) / 2;
+
+    display_lcd();
+    move_motor(motor_direction, motor_direction, var_speed, var_speed);
+  }
+  move_motor(0, 0, 0, 0);
+}
+
+
+byte check_and_turn(){   
+  move_motor(0, 0, 0, 0);
+  // Detach interrupts so encoders don't increase distance_travelled
+  detachInterrupt(digitalPinToInterrupt(ENC_A_R));
+  detachInterrupt(digitalPinToInterrupt(ENC_A_L));
+  byte new_direction = Motor_forward;
+
+  for (int i = 0; i < 3; i++) {
+    if (i == 0 || i == 2) {  // First try turning right OR turn right again if left fails
+      rotate_vehicle(current_degree + 90);
+      // Drive in reverse if all paths are blocked
+      if (i == 2) {
+        new_direction = Motor_backward;
+        break;
+      }
+    } else {  // If right fails, try turning left
+        rotate_vehicle(current_degree - 90);
+        rotate_vehicle(current_degree - 90);
+    }
+
+    // If a path is clear after turning, restore initial distance values
+    if (get_lidar_distance(num_readings) >= 10) {
+      break;
+    }
+  }
+  // Reattach interrupts for distance_travelled calculation
+  attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
+
+  return new_direction;
 }
 
 
