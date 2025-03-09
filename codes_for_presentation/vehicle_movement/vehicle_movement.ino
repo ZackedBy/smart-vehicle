@@ -436,11 +436,15 @@ void travel_distance(int distance, int motor_speed){
 
     // Checks if path is blocked
     if (lidar_dist < 10 && distance > 0) {
-      motor_direction = check_and_turn();
+      motor_direction = check_path_and_turn();
     }
 
     // Adjust speed based on lidar readings
     int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
+    // Adjust speed based on color under rgb sensor
+    var_speed = change_speed_for_color(var_speed);
+    if (var_speed == 0) break; // Stop car if red underneath
+    
     distance_travelled = (dist_R + dist_L) / 2;
 
     display_lcd();
@@ -449,8 +453,19 @@ void travel_distance(int distance, int motor_speed){
   move_motor(0, 0, 0, 0);
 }
 
+int change_speed_for_color(int m_speed) {
+  get_rgb_value();
+  if (color == "red"){
+    return 0;
+  } else if (color == "green") {
+    return m_speed;
+  } else if (color == "blue") {
+    return (int) m_speed / 2;
+  }
+  return m_speed;
+}
 
-byte check_and_turn(){   
+byte check_path_and_turn(){   
   move_motor(0, 0, 0, 0);
   // Detach interrupts so encoders don't increase distance_travelled
   detachInterrupt(digitalPinToInterrupt(ENC_A_R));
