@@ -9,25 +9,15 @@
 	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
 </head>
 	<body>
-		<section>
-			<h1>Motor Control</h1>
-			<div class="container">	<!-- This is a box that holds the buttons. -->
-				<div class="drive-container">
-					<button class="button" onclick="forwards()">FORWARDS (cm)<br></button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
-					<button class="button" onclick="backwards()">BACKWARDS (cm)<br></button>
-					<input type="number" id="forwardInput" value="5" min="1">
-					<input type="number" id="backwardInput" value="5" min="1">
-				</div>
 
-			</div>
-			<p>LiDAR Distance: <span id="lidar-val">0 cm</span></p>
-		</section>
-
-
+		<video id="intro" class="full-screen" autoplay muted>
+			<source src="intro.mp4" type="video/mp4">
+			video could not be played
+		</video>
 		<section class="container">
 			<h1 style="margin-bottom: 0;">Compass Control</h1>
 
-			<button class="button button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
+			<button class="button3 button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
 			<span id="realCompassValue">0°</span>
 			<div id="compassValue" onclick="editCompassValue()">
 				<span id="compassText">0°</span>
@@ -39,6 +29,7 @@
 			</div>
 
 			<div id="compassControl" style="position: relative; width: 200px; height: 200px;">
+				<div id="compassWheel"></div>
 				<canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
 				<div id="north" class="compass-label">N</div>
 				<div id="northeast" class="compass-label">NE</div>
@@ -49,13 +40,26 @@
 				<div id="west" class="compass-label">W</div>
 				<div id="northwest" class="compass-label">NW</div>
 			</div>
-		</section>
 
-		<section class="container">
-			<div id="Color" style="position: relative; width: 50px; height: 50px">
+			<div class="color-wrapper">
+				<div class="color-container">
+					<div id="Color"></div>
+				</div>
+				</div>
+			<a>
+			<h1>Motor Control</h1>
+			<div class="container">	<!-- This is a box that holds the buttons. -->
+				<div class="drive-container">
+					<button class="button" onclick="forwards()">FORWARDS (cm)<br></button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
+					<button class="button" onclick="backwards()">BACKWARDS (cm)<br></button>
+					<input type="number" id="forwardInput" value="5" min="1">
+					<input type="number" id="backwardInput" value="5" min="1">
+				</div>
 
 			</div>
-		</section>
+			<p>LiDAR Distance: <span id="lidar-val">0 cm</span></p>
+			</a>
+	</section>
 
 	</body>
 </html>

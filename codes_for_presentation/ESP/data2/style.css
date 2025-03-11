@@ -1,4 +1,4 @@
-html { 
+html {
   font-family: Helvetica;	/* The text will be in a nice, clean font called Helvetica */
   display: flex;			/* We make everything flexible, like stretching playdough */
   justify-content: center;	/* All the stuff inside will be pushed to the left side */
@@ -7,18 +7,38 @@ html {
   margin: 0;				/* No extra space around the page’s edges */
   text-align: center;		/* All the words inside will be in the middle */
   box-sizing: border-box;	/* We include the border in the size, like wrapping a gift tightly */
+  background-image: url('road3.png');
+  background-size: cover;
+  background-position: center;
 }
 
 h1 {
   text-decoration: underline;
 }
 
-section {
-  background-color: #c9c9c9;
+.full-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vh;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 9999;
+  background-color: black;
+}
+/*section {
   padding: 10px;
   border-radius: 20px;
   border: 2px solid #555555;
   box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+}*/
+
+a {
+  background-image: url('rug.png');
+  border-radius: 20px;
+  border: 2px solid #555555;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  color: azure;
 }
 
 .container {
@@ -28,7 +48,33 @@ section {
   align-items: center;
   gap: 15px;				/* Leave a little space between the buttons */
   max-width: 400px;			/* The container will not get too wide, like a small box */
-  margin-top: 20px;			/* Move the container down a little from the top */
+  /*margin-top: 10px;			/* Move the container down a little from the top */
+
+}
+
+.color-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*margin-top: 10px;*/
+  width: 75px;
+  height: 75px;
+  background-image: url('button.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 50px;
+}
+
+#Color {
+  width: 62px;
+  height: 62px;
+  border-radius: 50px;
 }
 
 .drive-container{
@@ -37,11 +83,12 @@ section {
   gap: 5px;
 }
 
-.button { 
+.button {
   user-select: none;		/* You can't accidentally select the button with your mouse */
-  background-color: #46ff46;/* The button will be green */
+  background-image: url('pedal1.png'); /* Background image for the buttons */
+  background-size: cover; /* Makes sure the image covers the whole background with no repeats */
   border: none;				/* No border around the button */
-  color: #555555;			/* The text on the button will be dark grey */
+  color: #ffffff;			/* The text on the button will be dark grey */
   padding: 12px 28px;		/* The button will have some space inside, like a pillow */
   font-size: 24px;			/* The words on the button will be big and easy to read */
   cursor: pointer;			/* The mouse pointer will turn into a hand when you hover over it */
@@ -52,6 +99,27 @@ section {
   justify-content: center;	/* The words will be in the middle of the button */
   text-align: center;		/* The text inside the button will be centered */
   border-radius: 5px;		/* The corners of the button will be rounded, not sharp */
+  text-shadow: 2px 2px 5px #000, -1px -1px 5px #000, 1px -1px 5px #000, -1px 1px 5px #000, 1px 1px 5px #000;
+  /* Creates a border-like effect around each letter */
+}
+
+.button3 {
+    user-select: none;		/* You can't accidentally select the button with your mouse */
+    background-size: cover; /* Makes sure the image covers the whole background with no repeats */
+    border: none;				/* No border around the button */
+    color: #ffffff;			/* The text on the button will be dark grey */
+    padding: 12px 28px;		/* The button will have some space inside, like a pillow */
+    font-size: 24px;			/* The words on the button will be big and easy to read */
+    cursor: pointer;			/* The mouse pointer will turn into a hand when you hover over it */
+    width: calc(50% - 5px);				/* The button will be a specific width */
+    height: 100px;			/* The button will be a certain height, like a big rectangle */
+    display: flex;			/* The button will stretch like playdough again */
+    align-items: center;		/* The words will be centered inside the button */
+    justify-content: center;	/* The words will be in the middle of the button */
+    text-align: center;		/* The text inside the button will be centered */
+    border-radius: 5px;		/* The corners of the button will be rounded, not sharp */
+    text-shadow: 2px 2px 5px #000, -1px -1px 5px #000, 1px -1px 5px #000, -1px 1px 5px #000, 1px 1px 5px #000;
+    /* Creates a border-like effect around each letter */
 }
 
 .button2 {
@@ -107,13 +175,30 @@ input[type="number"] {
   text-align: center;		/* The number will be in the middle */
 }
 
-#compassControl {
+/*#compassControl {
   border: 2px solid #000;
   border-radius: 50%;
   margin: 20px auto;
   position: relative;
   background: radial-gradient(circle, #46ff46, #35be35);
   cursor: pointer;
+}*/
+#compassControl {
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin: 5px auto;
+  position: relative;
+  cursor: pointer;
+}
+
+#compassWheel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('wheel.png');
+  background-size: cover;
+  border-radius: 50%;
+  transition: tranform 0.5s ease-in-out;
 }
 #compassText {
   border-radius: 2px;
@@ -130,6 +215,7 @@ input[type="number"] {
   font-size: 14px;
   font-weight: bold;
   transform: translate(-50%, -50%);
+  color: azure;
 }
 
 #north { top: -5%; left: 51%; }

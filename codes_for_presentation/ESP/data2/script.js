@@ -43,6 +43,12 @@ setCompassTo(defaultValue); // Set compass to zero on load
 function updateCompass(pos) {
   compassText.innerText = `${pos}°`; // Update compass value display
   compassInput.value = pos;
+  rotateCompassWheel(pos);
+}
+
+function rotateCompassWheel(pos) {
+  let compass = document.getElementById("compassWheel");
+  compass.style.transform = `rotate(${pos}deg)`;
 }
 
 // Send the current compass value to the server
@@ -298,3 +304,15 @@ async function fetchColorData() {
   }
 }
 setInterval(fetchColorData, 50);
+
+//----------------------INTRO VIDEO-------------------------------
+document.addEventListener("DOMContentLoaded", function() {
+  const video = document.getElementById("intro");
+
+  video.addEventListener("ended", function() {
+    video.style.display = "none";
+  });
+
+  video.addEventListener("click", () => video.style.display = "none");
+  document.addEventListener("keydown", () => video.style.display = "none");
+});
