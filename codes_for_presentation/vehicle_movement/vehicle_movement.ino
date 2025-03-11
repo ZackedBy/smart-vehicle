@@ -430,20 +430,25 @@ bool is_turning_blocked() {
 void travel_distance(int distance, int motor_speed){
   reset_dist_variables();
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
+  bool tried_all_paths = false;
 
   while (distance_travelled <= abs(distance)) {
     lidar_dist = get_lidar_distance(num_readings);
 
     // Checks if path is blocked
-    if (lidar_dist < 10 && distance > 0) {
+    if (lidar_dist < 10 && distance > 0 && !tried_all_paths) {
       motor_direction = check_path_and_turn();
+      if (motor_direction == Motor_backward) {
+        tried_all_paths = true;
+      }
     }
 
     // Adjust speed based on lidar readings
     int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
     // Adjust speed based on color under rgb sensor
-    var_speed = change_speed_for_color(var_speed);
-    if (var_speed == 0) break; // Stop car if red underneath
+    //var_speed = change_speed_for_color(var_speed);
+    // Change to reverse -5?
+    //if (var_speed == 0) break; // Stop car if red underneath
     
     distance_travelled = (dist_R + dist_L) / 2;
 

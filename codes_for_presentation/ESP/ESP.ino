@@ -33,8 +33,11 @@ void setup() {
   server.serveStatic("/", SPIFFS, "/index.html");             // Serves and shows the main webpage (HTML file) when someone visits the home page
   server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
-  server.serveStatic("/favicon.ico", SPIFFS, "/favicon.png"); // Serve a favicon (small icon) for the website
-
+  server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.png"); // Serve a favicon (small icon) for the website
+  server.serveStatic("/assets/wheel.png", SPIFFS, "/assets/wheel.png");
+  server.serveStatic("/assets/pedal.jpg", SPIFFS, "/assets/pedal.jpg");
+  server.serveStatic("/assets/road.jpg", SPIFFS, "/assets/road.jpg");
+  
   // Receiving commands from webpage
   server.on("/forwards", getMoveCommand);
   server.on("/backwards", getMoveCommand);
@@ -87,7 +90,7 @@ void getMoveCommand() {
 void getCompassCommand() {
   if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
     String valueString = server.arg("value");       // Get the "value" argument from the URL
-    Serial.println("Turn:" + valueString);          // Print the compass value to the serial monitor
+    Serial.println("Turn:" + valueString);          // Sends command back to Arduino
     server.send(200);
   }
 }

@@ -19,16 +19,16 @@ async function fetchCompassData() {
     const compVal = parseInt(data, 10); // Parse the LIDAR data as an integer
 
     if (compVal) {
-      //console.log("Lidar value:", lidarValue);
-      realCompassValue.innerText = `${compVal}°`; // Update the LIDAR text element with the fetched data
-      compassText.innerText = `${pos}°`;
-    }
+        //console.log("Lidar value:", lidarValue);
+        realCompassValue.innerText = `${compVal}°`;  // Update the LIDAR text element with the fetched data
+     }
   } catch (error) {
     console.error("COMP ERR:", error); // Log any errors to the console
   }
 }
 
 setInterval(fetchCompassData, 50);
+
 
 // Function to set compass to 0. Used on load and for Find North button
 function setCompassTo(value) {
@@ -43,6 +43,12 @@ setCompassTo(defaultValue); // Set compass to zero on load
 function updateCompass(pos) {
   compassText.innerText = `${pos}°`; // Update compass value display
   compassInput.value = pos;
+  rotateCompassWheel(pos);
+}
+
+function rotateCompassWheel(pos) {
+  let compass = document.getElementById("compassWheel");
+  compass.style.transform = `rotate(${pos}deg)`;
 }
 
 // Send the current compass value to the server
@@ -104,7 +110,6 @@ function updateCompassOnMove(event) {
 }
 
 // Handle the final action when releasing the interaction
-
 function finalizeCompassInteraction(event) {
   const rect = compassControl.getBoundingClientRect();
   const clientX = event.changedTouches
@@ -257,18 +262,13 @@ const lidarText = document.getElementById("lidar-val");
 async function fetchLidarData() {
   try {
     const response = await fetch("/lidar"); // Fetch the LIDAR data from the server
-    const data = await response.text().then((text) => text.trim()); // Get the response text
-    const lidarValue = Number(data); // Parse the LIDAR data as an integer
-    lidarText.innerText = "";
+    const data = await response.text(); // Get the response text
+    const lidarValue = parseInt(data, 10); // Parse the LIDAR data as an integer
 
-    if (isNaN(lidarValue) || lidarValue < 10) {
-      lidarText.innerText = "Warning! About to crash!"
-      lidarText.style.color = "red";
-    } else {
-      lidarText.innerText = `LiDAR distance: ${lidarValue} cm`;
-      lidarText.style.color = "black";
-    }
-
+    if (lidarValue) {
+        //console.log("Lidar value:", lidarValue);
+        lidarText.innerText = `${lidarValue} cm`;  // Update the LIDAR text element with the fetched data
+     }
   } catch (error) {
     console.error("Error fetching LIDAR data:", error); // Log any errors to the console
   }
@@ -284,10 +284,22 @@ async function fetchColorData() {
     const response = await fetch("/rgb");
     const color = await response.text();
 
-    //colorBall.style.setProperty("background-color", color, "important");
-    colorBall.style.backgroundColor = color;
+    colorBall.style.setProperty("background-color", color, "important");
+
   } catch (error) {
     console.log("Error fetching color data", error)
   }
 }
 setInterval(fetchColorData, 50);
+
+//----------------------INTRO VIDEO-------------------------------
+// document.addEventListener("DOMContentLoaded", function() {
+//   const video = document.getElementById("intro");
+
+//   video.addEventListener("ended", function() {
+//     video.style.display = "none";
+//   });
+
+//   video.addEventListener("click", () => video.style.display = "none");
+//   document.addEventListener("keydown", () => video.style.display = "none");
+// });
