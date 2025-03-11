@@ -6,17 +6,18 @@ const char* ssid = "OnePlus 7 Pro";          // Wi-Fi network name (SSID)
 const char* password = "77777771";    // Wi-Fi network password
 String lidarData = "0 cm";            // Variable to store LIDAR data
 String compassData = "0";
-String rgbValues = "0 0 0";
+String color = "black";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
 void setup() {
-  Serial.begin(9600); 
+  Serial.begin(9600);
+  //Serial.setTimeout(500);
 
   // Initialize the file system (SPIFFS) on the ESP8266
   if (!SPIFFS.begin()) {        // Initialize and check success on SPIFFS
-    Serial.println("Error while mounting SPIFFS"); 
-    return; 
+    Serial.println("Error while mounting SPIFFS");
+    return;
   }
 
   // Connect to the Wi-Fi network using the provided SSID and password
@@ -24,7 +25,7 @@ void setup() {
   WiFi.begin(ssid, password);               // Begin connecting to Wi-Fi
   while (WiFi.status() != WL_CONNECTED) {   // Wait in a loop until the connection is successful
     delay(500);
-    Serial.print(".");  
+    Serial.print(".");
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
 
@@ -34,23 +35,26 @@ void setup() {
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
   server.serveStatic("/favicon.ico", SPIFFS, "/favicon.png"); // Serve a favicon (small icon) for the website
 
+  // Receiving commands from webpage
+  server.on("/forwards", getMoveCommand);
+  server.on("/backwards", getMoveCommand);
+  server.on("/compass", getCompassCommand);
 
-  // Define custom actions/function calls for specific URLs (ie when a button press from webpage requests a particular URL)
-  server.on("/forwards", handleMove);
-  server.on("/backwards", handleMove);
-  server.on("/compass", handleCompass);
-  server.on("/realComp", sendRealComp);
-  server.on("/lidar", handleLidar);
-  server.on("/rgb", handleRGB);
+  // Sending info to webpage
+  server.on("/realComp", sendCompass);
+  server.on("/lidar", sendLidar);
+  server.on("/rgb", sendColor);
+
+  // Handles unknown urls
   server.onNotFound(handleNotFound);
-  
+
   // Start the web server
   server.begin();
 }
 
 void loop() {
   server.handleClient();  // Listen for incoming HTTP requests and respond to them
-  
+
   // Check if data is available from the Arduino Mega
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
@@ -59,57 +63,48 @@ void loop() {
     } else if (data.startsWith("COMP:")){
       compassData = data.substring(5);
     } else if (data.startsWith("RGB:")) {
-      rgbValues = data.substring(4);
-      Serial.println(rgbValues);
-//      int firstComma = rgbData.indexOf(",");
-//      int secondComma = rgbData.indexOf("," + firstComma + 1);
-//
-//      if (firstComma != -1 && secondComma != -1) {
-//        float r = rgbData.substring(0, firstComma).toFloat();
-//        float g = rgbData.substring(firstComma + 1, secondComma).toFloat();
-//        float b = rgbData.substring(secondComma + 1).toFloat();
-//        rgbValues = String(r) + " " + String(g) + " " + String(b);
-//        Serial.println(rgbValues);
-//      }
+      color = data.substring(4);
     } else {
-      Serial.println("Command not found" + String(data)); 
+      Serial.println("Command not found:" + String(data));
     }
   }
 }
 
-
-
-// Function handles movement ("/forward?value=10", "backward?value=20", etc.)
-void handleMove() {
+// Gets move command from webpage ("/forward?value=10", "backward?value=20", etc.)
+void getMoveCommand() {
   if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
     String valueString = server.arg("value");       // Get the "value" argument from the URL
     int distance = valueString.toInt();
     if (server.uri().startsWith("/backwards")) {
       distance = -distance;                         // Negate for backwards movement
     }
-    Serial.println("Move:" + String(distance)); 
+    Serial.println("Move:" + String(distance));
+    server.send(200);
   }
-  server.send(200);
 }
 
-// This function handles the compass command (like "/compass?value=30")
-void handleCompass() {
+// Gets compass command from webpage (like "/compass?value=30")
+void getCompassCommand() {
   if (server.hasArg("value")) {                     // Check if there is a "value" argument in the request URL
     String valueString = server.arg("value");       // Get the "value" argument from the URL
     Serial.println("Turn:" + valueString);          // Print the compass value to the serial monitor
+    server.send(200);
   }
 }
-void sendRealComp() {
+
+// Sends compass degrees to webpage ("/realComp")
+void sendCompass() {
    server.send(200, "text/plain", compassData);
 }
 
-// This function handles the lidar command (like "/lidar")
-void handleLidar() {
+// Sends lidar distance (cm) to webpage ("/lidar")
+void sendLidar() {
   server.send(200, "text/plain", lidarData); // Send the latest Lidar value with a 200 OK status.
 }
 
-void handleRGB() {
-  server.send(200, "text/plain", rgbValues);
+// Sends color string to webpage ("/rgb")
+void sendColor() {
+  server.send(200, "text/plain", color);
 }
 
 // This function is called when a non-existing URL is accessed (404 error)
