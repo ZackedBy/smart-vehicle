@@ -104,13 +104,14 @@ a {
 }
 
 .pedal {
+  color: white !important;
   background-image: url('assets/pedal.jpg'); /*Background image for the buttons*/
 }
 
 .button2 {
   border: 5px solid black;
   background: rgb(104,47,0);
-background: linear-gradient(0deg, rgba(104,47,0,1) 0%, rgba(203,97,0,1) 70%);
+  background: linear-gradient(0deg, rgba(104,47,0,1) 0%, rgba(203,97,0,1) 70%);
   color: #ffffff;			/* The text will be bright green */
 }
 

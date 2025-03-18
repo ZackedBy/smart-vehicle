@@ -2,13 +2,33 @@
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
 
-const char* ssid = "OnePlus 7 Pro";          // Wi-Fi network name (SSID)
+const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
 const char* password = "77777771";    // Wi-Fi network password
+const char* auth_name = "admin";      // Authentication username
+const char* auth_pass = "admin";      // Authentication password
+
 String lidarData = "0 cm";            // Variable to store LIDAR data
 String compassData = "0";
 String color = "black";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
+
+void handleAuth() {
+  if (!server.authenticate(auth_name, auth_pass)) {
+    return server.requestAuthentication();
+  } 
+  
+  // Manually serve the HTML file after successful authentication
+  File file = SPIFFS.open("/index.html", "r");  // Open the index.html file from SPIFFS
+  if (!file) {
+    server.send(500, "text/plain", "Failed to open file.");
+    return;
+  }
+
+  // Stream the file to the client
+  server.streamFile(file, "text/html");
+  file.close();  // Don't forget to close the file after sending it
+}
 
 void setup() {
   Serial.begin(9600);
@@ -29,8 +49,7 @@ void setup() {
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
 
-  // Set up the web pages (URLS) and files that the server will show/use when someone visits the site
-  server.serveStatic("/", SPIFFS, "/index.html");             // Serves and shows the main webpage (HTML file) when someone visits the home page
+  server.on("/", handleAuth);
   server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
   server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.png"); // Serve a favicon (small icon) for the website

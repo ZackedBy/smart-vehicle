@@ -96,7 +96,15 @@ void setup() {
 
   compass_offset = compass_logic(); // Get compass reading on start-up
 }
-
+/**
+ * To DO:
+ * Figure out why sometimes not try longest path
+ * why switch mode/restart when open serial monitor
+ * make webpage more POV driver
+ * Calibrate colors more?
+ * dont stack commands whilst joystick mode
+ * 
+*/
 void loop(){
   get_rgb_value();
   display_lcd();
