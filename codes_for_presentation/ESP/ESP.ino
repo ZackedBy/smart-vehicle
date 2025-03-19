@@ -2,8 +2,8 @@
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
 
-const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
-const char* password = "77777771";    // Wi-Fi network password
+const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
+const char* password = "7kDtaphg";    // Wi-Fi network password
 const char* auth_name = "admin";      // Authentication username
 const char* auth_pass = "admin";      // Authentication password
 
@@ -49,7 +49,9 @@ void setup() {
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
 
-  server.on("/", handleAuth);
+  server.on("/credentials", checkCredentials);
+
+  server.on("/", HTTP_GET, handleAuth);
   server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
   server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.png"); // Serve a favicon (small icon) for the website
@@ -67,8 +69,15 @@ void setup() {
   server.on("/lidar", sendLidar);
   server.on("/rgb", sendColor);
 
+  
   // Handles unknown urls
   server.onNotFound(handleNotFound);
+
+  /**
+   * TO-DO:
+   * Look into ArduinoOTA for easy 02A authentication
+   */
+//  server.on("/logout", );
 
   // Start the web server
   server.begin();
@@ -76,7 +85,7 @@ void setup() {
 
 void loop() {
   server.handleClient();  // Listen for incoming HTTP requests and respond to them
-
+ 
   // Check if data is available from the Arduino Mega
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
@@ -88,6 +97,20 @@ void loop() {
       color = data.substring(4);
     } else {
       Serial.println("Command not found:" + String(data));
+    }
+  }
+}
+
+void checkCredentials() {
+  if(server.hasArg("value")){
+    String valueString = server.arg("value");
+    int comma = valueString.indexOf(",");
+    String username = valueString.substring(0, comma);
+    String password = valueString.subString(comma + 1);
+
+    if (username == auth_name && password == auth_pass) {
+      server.serveStatic("/index.html", SPIFFS, "/index.html");
+      server.send(200);
     }
   }
 }

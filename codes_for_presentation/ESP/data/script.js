@@ -303,3 +303,11 @@ setInterval(fetchColorData, 50);
 //   video.addEventListener("click", () => video.style.display = "none");
 //   document.addEventListener("keydown", () => video.style.display = "none");
 // });
+
+//------------------------LOGOUT-----------------------------------------
+async function logout() {
+  // fetch("/logout")
+  // setTimeout(() => {
+  //   window.location.href = "/";
+  // }, 1000);
+}

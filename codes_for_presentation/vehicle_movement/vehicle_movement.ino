@@ -57,11 +57,9 @@ int direction_difference, compass_offset;
 unsigned long prev_error_check = 0;
 
 // LiDAR Variables
-#define lidar_pot A3
 LIDARLite lidar;
 int lidar_dist = 0;       // Average distance after x amount of readings
 const int num_readings = 20;  // X amount of readings
-int lidar_dist_threshold = 0;
 
 //RGB Sensor Variables
 //#define i2c_address (0x29)
@@ -102,7 +100,6 @@ void setup() {
  * why switch mode/restart when open serial monitor
  * make webpage more POV driver
  * Calibrate colors more?
- * dont stack commands whilst joystick mode
  * 
 */
 void loop(){
@@ -110,9 +107,9 @@ void loop(){
   display_lcd();
   current_degree = compass_logic();
   lidar_dist = get_lidar_distance(num_readings);
-  //lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
 
   if (joystick_mode) {
+    if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
     last_used_degree = current_degree;
     joystick_movement();
   } else {
@@ -136,19 +133,7 @@ int get_lidar_distance(int readings) {
   return (int)(lidar_dist_sum / readings);
 }
 
-// EXERCISE 3
-void drive_prox_check() {
-  //int lidar_dist_threshold = num_readings;
-  //int lidar_dist_threshold = map(analogRead(lidar_pot), 0, 1023, 5, 40);
-  while (true) {
-    lidar_dist = get_lidar_distance(num_readings);
-    byte motor_direction = lidar_dist > lidar_dist_threshold ? Motor_forward : Motor_backward;
-    display_lcd();
-    move_motor(motor_direction, motor_direction, motor_max_speed, motor_max_speed);
 
-    if (joystick_mode) break; //needs dedicated button for loop extraction
-  }
-}
 
 // EXERCISE 5
 void move_to_threshold(int deg, int threshold) {
@@ -260,6 +245,7 @@ void get_commands_from_web() {
     }
   }
 }
+
 
 void send_info_to_web(){
   Serial2.println("LIDAR:" + String(lidar_dist));
