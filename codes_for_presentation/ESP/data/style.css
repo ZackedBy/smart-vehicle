@@ -110,10 +110,38 @@ a {
 
 .button2 {
   border: 5px solid black;
-  background: rgb(104,47,0);
-  background: linear-gradient(0deg, rgba(104,47,0,1) 0%, rgba(203,97,0,1) 70%);
-  color: #ffffff;			/* The text will be bright green */
+  background-color: #5c2e05; /* Base warm brown color */
+
+  /* Layered wood grain effect */
+  background-image:
+  repeating-linear-gradient(
+    90deg,
+    rgba(90, 45, 10, 0.9) 0px,
+    rgba(110, 55, 20, 0.95) 8px,
+    rgba(80, 40, 15, 0.85) 16px
+  ),
+  repeating-linear-gradient(
+    0deg,
+    rgba(110, 55, 20, 0.2) 0px,
+    rgba(90, 45, 15, 0.4) 20px,
+    rgba(70, 35, 10, 0.2) 40px
+  ),
+  linear-gradient(0deg, rgba(80,40,15,1) 0%, rgba(130,70,30,1) 70%);
+
+  background-blend-mode: overlay, multiply, normal;
+  background-size: cover;
+
+  /* Button Styling */
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
+
 
 @media (max-width: 300px) {
   .button {

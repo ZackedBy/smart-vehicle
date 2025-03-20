@@ -13,7 +13,6 @@
 		<section class="container">
 			<h1 style="margin-bottom: 0;">Compass Control</h1>
 
-			<button class="button button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
 			<span id="realCompassValue">0°</span>
 			<div id="compassValue" onclick="editCompassValue()">
 				<span id="compassText">0°</span>
@@ -27,20 +26,22 @@
 			<div id="compassControl" style="position: relative; width: 200px; height: 200px;">
 				<div id="compassWheel"></div>
 				<canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
-				<div id="north" class="compass-label">N</div>
+				<!--<div id="north" class="compass-label">N</div>
 				<div id="northeast" class="compass-label">NE</div>
 				<div id="east" class="compass-label">E</div>
 				<div id="southeast" class="compass-label">SE</div>
 				<div id="south" class="compass-label">S</div>
 				<div id="southwest" class="compass-label">SW</div>
 				<div id="west" class="compass-label">W</div>
-				<div id="northwest" class="compass-label">NW</div>
+				<div id="northwest" class="compass-label">NW</div>-->
 			</div>
 
 			<div class="color-wrapper">
 				<div class="color-container">
 					<div id="Color"></div>
 				</div>
+				<button class="button button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
+
 			</div>
 			<a>
 				<h1>Motor Control</h1>
