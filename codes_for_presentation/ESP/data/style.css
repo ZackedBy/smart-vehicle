@@ -71,6 +71,22 @@ a {
   border-radius: 50px;
 }
 
+.lidar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(109, 101,93, 0.8);
+
+  border: 2px solid rgb(2, 2, 2);
+  border-radius: 255px;
+
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+
 #Color {
   width: 62px;
   height: 62px;
@@ -165,19 +181,19 @@ input[type="number"] {
   text-align: center;		/* The number will be in the middle */
 }
 
-#compassControl {
+/*#compassControl {
   border: 2px solid #000;
   border-radius: 50%;
   margin: 5px auto;
   position: relative;
   cursor: pointer;
-}
+}*/
 
 #compassWheel {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url('assets/wheel.png');
+  background-image: url('assets/wheel2.png');
   background-size: cover;
   border-radius: 50%;
   transition: tranform 0.5s ease-in-out;

@@ -9,7 +9,7 @@
 	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
 </head>
 	<body>
-		<button onclick="logout()">Logout</button>
+		<button style="position: absolute; top: 0; left: 0;" onclick="logout()">Logout</button>
 		<section class="container">
 			<h1 style="margin-bottom: 0;">Compass Control</h1>
 
@@ -35,7 +35,9 @@
 				<div id="west" class="compass-label">W</div>
 				<div id="northwest" class="compass-label">NW</div>-->
 			</div>
-
+			<div class="lidar-container">
+			<p style="font-weight: bold;">LiDAR Distance: <span id="lidar-val">0 cm</span></p>
+			</div>
 			<div class="color-wrapper">
 				<div class="color-container">
 					<div id="Color"></div>
@@ -44,7 +46,6 @@
 
 			</div>
 			<a>
-				<h1>Motor Control</h1>
 				<div class="container">	<!-- This is a box that holds the buttons. -->
 					<div class="drive-container">
 						<button class="button pedal" onclick="forwards()">FORWARDS (cm)<br></button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
@@ -52,9 +53,7 @@
 						<input type="number" id="forwardInput" value="5" min="1">
 						<input type="number" id="backwardInput" value="5" min="1">
 					</div>
-
 				</div>
-				<p>LiDAR Distance: <span id="lidar-val">0 cm</span></p>
 			</a>
 		</section>
 

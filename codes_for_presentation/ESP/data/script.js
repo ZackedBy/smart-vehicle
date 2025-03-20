@@ -34,7 +34,7 @@ setInterval(fetchCompassData, 50);
 function setCompassTo(value) {
   updateCompass(value);
   sendCompassValue(value);
-  drawLineToCircumference(value, compassControl.getBoundingClientRect());
+  //drawLineToCircumference(value, compassControl.getBoundingClientRect());
 }
 
 setCompassTo(defaultValue); // Set compass to zero on load
@@ -74,7 +74,7 @@ function calculateAngleFromCenter(clientX, clientY, rect) {
 }
 
 // Function to draw a line from the center to the circumference
-function drawLineToCircumference(angle, rect) {
+/*function drawLineToCircumference(angle, rect) {
   const centerX = rect.width / 2;
   const centerY = rect.height / 2;
   const radius = Math.min(rect.width, rect.height) / 2;
@@ -95,7 +95,7 @@ function drawLineToCircumference(angle, rect) {
   ctx.strokeStyle = "red";
   ctx.lineWidth = 2;
   ctx.stroke();
-}
+}*/
 
 // Handle real-time updates during interaction
 function updateCompassOnMove(event) {
@@ -106,7 +106,7 @@ function updateCompassOnMove(event) {
 
   const angle = calculateAngleFromCenter(clientX, clientY, rect);
   updateCompass(angle);
-  drawLineToCircumference(angle, rect);
+  //drawLineToCircumference(angle, rect);
 }
 
 // Handle the final action when releasing the interaction
