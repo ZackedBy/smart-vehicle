@@ -29,7 +29,10 @@
 
         async function checkCredentials() {
             const response = await fetch(`/credentials?value=${inputName},${inputPass}`)
-            if (response.status == 200)
+            if (response.status == 200) {
+                window.location.href = "./index.html";
+                return false;
+            }
             if (ok) {
                 sessionStorage.setItem(token)
                 fetch("/login-good")
