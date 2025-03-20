@@ -2,10 +2,13 @@
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
 
-const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
-const char* password = "7kDtaphg";    // Wi-Fi network password
+//const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
+//const char* password = "7kDtaphg";    // Wi-Fi network password
+const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
+const char* password = "77777771";    // Wi-Fi network password
 const char* auth_name = "admin";      // Authentication username
 const char* auth_pass = "admin";      // Authentication password
+bool isAuthenticated = false;
 
 String lidarData = "0 cm";            // Variable to store LIDAR data
 String compassData = "0";
@@ -13,23 +16,23 @@ String color = "black";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
-void handleAuth() {
-  if (!server.authenticate(auth_name, auth_pass)) {
-    return server.requestAuthentication();
-  } 
-  
-  // Manually serve the HTML file after successful authentication
-  File file = SPIFFS.open("/index.html", "r");  // Open the index.html file from SPIFFS
-  if (!file) {
-    server.send(500, "text/plain", "Failed to open file.");
-    return;
-  }
-
-  // Stream the file to the client
-  server.streamFile(file, "text/html");
-  file.close();  // Don't forget to close the file after sending it
-}
-
+//void handleAuth() {
+//  if (!server.authenticate(auth_name, auth_pass)) {
+//    return server.requestAuthentication();
+//  } 
+//  
+//  // Manually serve the HTML file after successful authentication
+//  File file = SPIFFS.open("/index.html", "r");  // Open the index.html file from SPIFFS
+//  if (!file) {
+//    server.send(500, "text/plain", "Failed to open file.");
+//    return;
+//  }
+//
+//  // Stream the file to the client
+//  server.streamFile(file, "text/html");
+//  file.close();  // Don't forget to close the file after sending it
+//}
+ 
 void setup() {
   Serial.begin(9600);
   //Serial.setTimeout(500);
@@ -49,15 +52,31 @@ void setup() {
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
 
-  server.on("/credentials", checkCredentials);
 
-  server.on("/", HTTP_GET, handleAuth);
+
+  // Maybe move these to handleLogin?
+  server.serveStatic("/index", SPIFFS, "/index.html");
+  server.serveStatic("/", SPIFFS, "/login.html");
   server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
-  server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.png"); // Serve a favicon (small icon) for the website
+  server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.ico");
   server.serveStatic("/assets/wheel.png", SPIFFS, "/assets/wheel.png");
   server.serveStatic("/assets/pedal.jpg", SPIFFS, "/assets/pedal.jpg");
   server.serveStatic("/assets/road.jpg", SPIFFS, "/assets/road.jpg");
+  server.serveStatic("/assets/JIT-logo2.jpg", SPIFFS, "/assets/JIT-logo2.jpg");
+  
+//  server.on("/style.css", HTTP_GET, handleSecureFileRequest);
+//  server.on("/script.js", HTTP_GET, handleSecureFileRequest);
+//  server.on("/index", HTTP_GET, handleSecureFileRequest, supplyStyle);
+//  server.on("/assets/favicon.ico", HTTP_GET, handleSecureFileRequest); // Serve a favicon (small icon) for the website
+//  server.on("/assets/wheel.png", HTTP_GET, handleSecureFileRequest);
+//  server.on("/assets/pedal.jpg", HTTP_GET, handleSecureFileRequest);
+//  server.on("/assets/road.jpg", HTTP_GET, handleSecureFileRequest);
+
+
+//  server.on("/", HTTP_GET, checkCredentials);
+  server.on("/login", HTTP_POST, checkCredentials);
+  server.on("/logout", logout);
   
   // Receiving commands from webpage
   server.on("/forwards", getMoveCommand);
@@ -77,7 +96,6 @@ void setup() {
    * TO-DO:
    * Look into ArduinoOTA for easy 02A authentication
    */
-//  server.on("/logout", );
 
   // Start the web server
   server.begin();
@@ -101,18 +119,73 @@ void loop() {
   }
 }
 
-void checkCredentials() {
-  if(server.hasArg("value")){
-    String valueString = server.arg("value");
-    int comma = valueString.indexOf(",");
-    String username = valueString.substring(0, comma);
-    String password = valueString.subString(comma + 1);
+//void handleAuth() {
+//  if (checkCredentials) {
+//    server.sendHeader("Location", "/index", true); // Redirect to /
+//    server.send(200, "text/plain", "test1"); // HTTP 302 Found (Redirect)
+//  } else {
+//    server.sendHeader("Location", "/", true); // Redirect to /login
+//    server.send(200, "text/plain", "test2"); 
+//  }
+//}
+bool handleFileRead(String path) {
+    if (path.endsWith("/")) path += "index.html"; // Default file
+    String contentType = "text/plain";
+    if (path.endsWith(".html")) contentType = "text/html";
+    else if (path.endsWith(".css")) contentType = "text/css";
+    else if (path.endsWith(".js")) contentType = "application/javascript";
+    else if (path.endsWith(".png")) contentType = "image/png";
+    else if (path.endsWith(".jpg") || path.endsWith(".jpeg")) contentType = "image/jpeg";
+    
+    if (SPIFFS.exists(path)) {
+        File file = SPIFFS.open(path, "r");
+        server.streamFile(file, contentType);
+        file.close();
+        return true;
+    }
+    return false;
+}
+
+void handleSecureFileRequest() {
+  if (!checkCredentials()) return;
+  if (!handleFileRead(server.uri())) {
+    server.send(404, "text/plain", "File not found.");
+  }
+}
+
+void supplyStyle() {
+    File css = SPIFFS.open("/style.css", "r");
+    server.streamFile(css, "text/css");
+    css.close();
+
+    File js = SPIFFS.open("/script.js", "r");
+    server.streamFile(js, "application/javascript");
+    js.close();
+}
+
+void logout() {
+  isAuthenticated = false;
+  server.send(200, "text/plain", "Logging out");
+}
+
+boolean checkCredentials() {
+  if (server.hasArg("username") && server.hasArg("password")) {
+    String username = server.arg("username");
+    String password = server.arg("password");
 
     if (username == auth_name && password == auth_pass) {
-      server.serveStatic("/index.html", SPIFFS, "/index.html");
-      server.send(200);
+      isAuthenticated = true;
+      server.send(200, "text/plain", "Redirecting...");
+      return true;
     }
   }
+  if (isAuthenticated) {
+    server.send(200);
+    return true;
+  }
+  
+  server.send(401, "text/plain", "Unauthorized");
+  return false;
 }
 
 // Gets move command from webpage ("/forward?value=10", "backward?value=20", etc.)

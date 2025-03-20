@@ -1,3 +1,6 @@
+if (sessionStorage.getItem("auth") !== "true") {
+  window.location.href = "/"
+}
 // ----------------------------- COMPASS RELATED -----------------------------
 
 // DOM Elements for Compass Control
@@ -306,8 +309,13 @@ setInterval(fetchColorData, 50);
 
 //------------------------LOGOUT-----------------------------------------
 async function logout() {
-  // fetch("/logout")
-  // setTimeout(() => {
-  //   window.location.href = "/";
-  // }, 1000);
+  const response = await fetch("/logout")
+  if (response.status === 200) {
+    sessionStorage.setItem("auth", "false");
+    window.location.href = "/";
+  } else {
+      console.error("HUUUUUH???")
+  }
 }
+
+window.onbeforeunload = logout;
