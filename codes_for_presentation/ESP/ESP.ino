@@ -1,11 +1,12 @@
 #include <ESP8266WiFi.h>        // Library for Wi-Fi functionality
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (SPIFFS)
+#include <ArduinoJson.h>        // Library for safe JSON formatting
 
-//const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
-//const char* password = "7kDtaphg";    // Wi-Fi network password
-const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
-const char* password = "77777771";    // Wi-Fi network password
+const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
+const char* password = "7kDtaphg";    // Wi-Fi network password
+//const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
+//const char* password = "77777771";    // Wi-Fi network password
 const char* auth_name = "admin";      // Authentication username
 const char* auth_pass = "admin";      // Authentication password
 bool isAuthenticated = false;
@@ -84,11 +85,8 @@ void setup() {
   server.on("/compass", getCompassCommand);
 
   // Sending info to webpage
-  server.on("/realComp", sendCompass);
-  server.on("/lidar", sendLidar);
-  server.on("/rgb", sendColor);
+  server.on("/getData", sendAllData);
 
-  
   // Handles unknown urls
   server.onNotFound(handleNotFound);
 
@@ -179,11 +177,7 @@ boolean checkCredentials() {
       return true;
     }
   }
-  if (isAuthenticated) {
-    server.send(200);
-    return true;
-  }
-  
+
   server.send(401, "text/plain", "Unauthorized");
   return false;
 }
@@ -210,19 +204,17 @@ void getCompassCommand() {
   }
 }
 
-// Sends compass degrees to webpage ("/realComp")
-void sendCompass() {
-   server.send(200, "text/plain", compassData);
-}
+// Sends all current data to webpage
+void sendAllData() {
+  JsonDocument doc;
+  doc["compass"] = compassData;
+  doc["lidar"] = lidarData;
+  doc["color"] = color;
 
-// Sends lidar distance (cm) to webpage ("/lidar")
-void sendLidar() {
-  server.send(200, "text/plain", lidarData); // Send the latest Lidar value with a 200 OK status.
-}
+  String jsonData;
+  serializeJson(doc, jsonData);
 
-// Sends color string to webpage ("/rgb")
-void sendColor() {
-  server.send(200, "text/plain", color);
+  server.send(200, "application/json", jsonData);
 }
 
 // This function is called when a non-existing URL is accessed (404 error)

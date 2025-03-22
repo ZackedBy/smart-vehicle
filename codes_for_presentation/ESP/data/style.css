@@ -1,0 +1,228 @@
+html {
+  font-family: Helvetica; /* The text will be in a nice, clean font called Helvetica */
+  display: flex; /* We make everything flexible, like stretching playdough */
+  justify-content: center; /* All the stuff inside will be pushed to the left side */
+  align-items: center;
+  color: white;
+  min-height: 100vh; /* The page will be as tall as your whole screen */
+  max-width: 100vh;
+  min-width: 100vw;
+  max-width: 100vw;
+  margin: 0; /* No extra space around the page’s edges */
+  text-align: center; /* All the words inside will be in the middle */
+  box-sizing: border-box; /* We include the border in the size, like wrapping a gift tightly */
+  background-image: url("assets/road.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+h1 {
+  text-decoration: underline;
+}
+
+.center-flex {
+  display: flex; /* The container inside will also stretch, like playdough */
+  justify-content: center; /* Everything inside will be centered */
+  align-items: center;
+}
+
+.container {
+  flex-direction: column;
+  gap: 15px; /* Leave a little space between the buttons */
+  width: 400px;
+}
+
+
+
+@media (orientation: landscape) and (max-width: 1024px) {
+  .container {
+    width: 100%;
+    flex-direction: row-reverse;
+    max-width: 100%;
+  }
+  .controls {
+    flex-direction: column !important;
+    width: 50%;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    width: 100%;
+  }
+}
+
+.gauge-border {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  background: 10px solid rgb(76, 76, 76);
+  background: linear-gradient(
+    0deg,
+    rgba(76, 76, 76, 1) 0%,
+    rgba(165, 165, 165, 1) 58%
+  );
+  border-radius: 50px;
+}
+
+.gauge {
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  border-radius: 50%;
+  background-color: black;
+}
+
+.button {
+  user-select: none; /* You can't accidentally select the button with your mouse */
+  background-size: cover; /*Makes sure the image covers the whole background with no repeats */
+  border: none; /* No border around the button */
+  color: #ffffff; /* The text on the button will be dark grey */
+  padding: 12px 28px; /* The button will have some space inside, like a pillow */
+  font-size: 24px; /* The words on the button will be big and easy to read */
+  cursor: pointer; /* The mouse pointer will turn into a hand when you hover over it */
+  width: calc(50% - 5px); /* The button will be a specific width */
+  height: 100px; /* The button will be a certain height, like a big rectangle */
+  display: flex; /* The button will stretch like playdough again */
+  align-items: center; /* The words will be centered inside the button */
+  justify-content: center; /* The words will be in the middle of the button */
+  text-align: center; /* The text inside the button will be centered */
+  border-radius: 5px; /* The corners of the button will be rounded, not sharp */
+  text-shadow: 2px 2px 5px #000, -1px -1px 5px #000, 1px -1px 5px #000,
+    -1px 1px 5px #000, 1px 1px 5px #000;
+  /* Creates a border-like effect around each letter */
+}
+
+@media (max-width: 300px) {
+  .button {
+    font-size: 18px;
+  }
+}
+
+
+.floor-mat {
+  width: 100%;
+  height: 200px;
+  justify-content: space-evenly;
+  background-color: black;
+  border-radius: 20px;
+  border: 2px solid #555555;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  color: azure;
+}
+
+.pedal-container {
+  width: 35%;
+  height: calc(100% - 10px);
+  background-color: #111;
+  border-radius: 20px;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+#forwardInput, #backwardInput {
+  position: absolute;
+  top: 10px;
+  width: 80%;
+}
+.pedal {
+  width: 120%;
+  height: 70%;
+  background: linear-gradient(to bottom, #444, #222);
+  border-radius: 20px;
+  position: absolute;
+  cursor: pointer;
+  bottom: 12px;
+  transition: transform 0.1s ease-in-out;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.pedal::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0px,
+      rgba(0, 0, 0, 0.5) 15px,
+      rgba(255, 255, 255, 0.21) 30px
+  );
+  pointer-events: none;
+}
+
+.pedal.pressed {
+  transform: translateY(20px);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.wood {
+  width: calc(100% - 10px);
+  border: 5px solid black;
+  background-color: #5c2e05; /* Base warm brown color */
+
+  /* Layered wood grain effect */
+  background-image: repeating-linear-gradient(
+      90deg,
+      rgba(90, 45, 10, 0.9) 0px,
+      rgba(110, 55, 20, 0.95) 8px,
+      rgba(80, 40, 15, 0.85) 16px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(110, 55, 20, 0.2) 0px,
+      rgba(90, 45, 15, 0.4) 20px,
+      rgba(70, 35, 10, 0.2) 40px
+    ),
+    linear-gradient(0deg, rgba(80, 40, 15, 1) 0%, rgba(130, 70, 30, 1) 70%);
+
+  background-blend-mode: overlay, multiply, normal;
+  background-size: cover;
+
+  /* Button Styling */
+  color: #ffffff;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+input[type="number"] {
+  font-size: 20px;
+  width: calc(50% - 17px);
+  min-width: 20px;
+  padding: 2px 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#compassValue {
+  font-size: 1.5em; /* The font size showing the compass value will be big-ish */
+  text-align: center; /* The number will be in the middle */
+}
+
+#compassWheel {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("assets/wheel.png");
+  background-size: cover;
+  border-radius: 50%;
+  transition: tranform 0.5s ease-in-out;
+}
+#compassText {
+  padding: 5px;
+  cursor: pointer;
+}
+#compassText:hover {
+  border-radius: 5px;
+  color: #46ff46;
+  background-color: #555555;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Wroom Wroom!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="assets/favicon.ico">
+
+	<!-- Ensure can't quickly access page -->
+	<!-- <script type="text/javascript">
+		if (sessionStorage.getItem("auth") !== "true") {
+    		window.location.href = "/"
+  		}
+	</script> -->
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
+
+</head>
+	<body>
+		<button style="position: absolute; top: 0; left: 0;" onclick="logout()">Logout</button>
+		<div class="container center-flex">
+
+			<div id="compassControl" style="position: relative; width: 300px; height: 300px;">
+				<div id="compassWheel"></div>
+			</div>
+
+			<div class="container center-flex controls">
+				<div class="center-flex wood" style="justify-content: space-evenly;">
+
+					<div class=" center-flex gauge-border">
+						<div class="gauge" id="Color"></div>
+					</div>
+
+					<div class=" center-flex gauge-border">
+						<div class="center-flex gauge" style="cursor: pointer; font-size: 2rem; color: yellow;" onclick="setCompassTo(0)">
+							N
+						</div>
+					</div>
+
+					<div class="center-flex gauge-border">
+						<div class="center-flex gauge" id="compassValue" onclick="editCompassValue()">
+							<span id="compassText">0°</span>
+							<form id="compassForm" style="display: none;">
+								<input type="number" id="compassInput" value="0" min="0" max="360" />
+								<button type="submit" style="display: none;">Submit</button>
+							</form>
+						</div>
+					</div>
+
+					<div class="center-flex gauge-border">
+						<div class="center-flex gauge">
+							<span id="lidar-val" style="cursor: default;">0 cm</span>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="floor-mat center-flex">
+					<div class="pedal-container center-flex">
+						<input type="number" id="backwardInput" value="5" min="1">
+						<div class="pedal center-flex" onclick="backwards()">Backwards</div>
+					</div>
+					<div class="pedal-container center-flex">
+						<input type="number" id="forwardInput" value="5" min="1">
+						<div class="pedal center-flex" onclick="forwards()">Forwards</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+	</body>
+</html>

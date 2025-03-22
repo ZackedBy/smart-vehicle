@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Wroom Wroom!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="assets/favicon.ico">
+
+	<!-- Ensure can't quickly access page -->
+	<script type="text/javascript">
+		// async function checkIfLoggedIn() {
+		// 	const response = await fetch("/login");
+		// 	if (response.status !== 200) {
+		// 		window.location.href = "/"
+		// 	}
+		// }
+		// checkIfLoggedIn();
+		if (sessionStorage.getItem("auth") !== "true") {
+    		window.location.href = "/"
+  		}
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
+
+</head>
+	<body>
+		<button style="position: absolute; top: 0; left: 0;" onclick="logout()">Logout</button>
+		<section class="container">
+			<h1 style="margin-bottom: 0;">Compass Control</h1>
+
+			<div id="compassValue" onclick="editCompassValue()">
+				<span id="compassText">0°</span>
+
+				<form id="compassForm" style="display: none;">
+					<input type="number" id="compassInput" value="0" min="0" max="360" />
+					<button type="submit" style="display: none;">Submit</button>
+				</form>
+			</div>
+
+			<div id="compassControl" style="position: relative; width: 200px; height: 200px;">
+				<div id="compassWheel"></div>
+				<canvas id="compassCanvas" width="200" height="200" style="position: absolute; top: 0; left: 0;"></canvas>
+			</div>
+			<div class="lidar-container">
+			<p style="font-weight: bold;">LiDAR Distance: <span id="lidar-val">0 cm</span></p>
+			</div>
+			<div class="color-wrapper">
+				<div class="color-container">
+					<div id="Color"></div>
+				</div>
+				<button class="button button2" style="padding: 0; max-height: 50px;" onclick="setCompassTo(0)">FIND NORTH</button>
+
+			</div>
+			<a>
+				<div class="container">	<!-- This is a box that holds the buttons. -->
+					<div class="drive-container">
+						<button class="button pedal" onclick="forwards()">FORWARDS (cm)<br></button> <!-- The onclick="forwards5()" tells the page to run the forwards5() function in the JavaScript when the button is clicked -->
+						<button class="button pedal" onclick="backwards()">BACKWARDS (cm)<br></button>
+						<input type="number" id="forwardInput" value="5" min="1">
+						<input type="number" id="backwardInput" value="5" min="1">
+					</div>
+				</div>
+			</a>
+		</section>
+
+	</body>
+</html>
