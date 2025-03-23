@@ -61,10 +61,11 @@ void setup() {
   server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
   server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
   server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.ico");
-  server.serveStatic("/assets/wheel.png", SPIFFS, "/assets/wheel.png");
-  server.serveStatic("/assets/pedal.jpg", SPIFFS, "/assets/pedal.jpg");
-  server.serveStatic("/assets/road.jpg", SPIFFS, "/assets/road.jpg");
-  server.serveStatic("/assets/JIT-logo2.jpg", SPIFFS, "/assets/JIT-logo2.jpg");
+//  server.serveStatic("/assets/wheel.png", SPIFFS, "/assets/wheel.png");
+  server.serveStatic("/assets/steering-wheel.svg", SPIFFS, "/assets/steering-wheel.svg");
+//  server.serveStatic("/assets/pedal.jpg", SPIFFS, "/assets/pedal.jpg");
+  server.serveStatic("/assets/road.svg", SPIFFS, "/assets/road.svg");
+  server.serveStatic("/assets/JIT-logo.jpg", SPIFFS, "/assets/JIT-logo.jpg");
   
 //  server.on("/style.css", HTTP_GET, handleSecureFileRequest);
 //  server.on("/script.js", HTTP_GET, handleSecureFileRequest);

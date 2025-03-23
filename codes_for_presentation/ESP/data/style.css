@@ -11,9 +11,17 @@ html {
   margin: 0; /* No extra space around the page’s edges */
   text-align: center; /* All the words inside will be in the middle */
   box-sizing: border-box; /* We include the border in the size, like wrapping a gift tightly */
-  background-image: url("assets/road.jpg");
+
+  background: linear-gradient(to bottom,
+    rgba(255, 102, 0, 0.5),   /* Deep Orange */
+    rgba(255, 165, 0, 0.3),   /* Sunset Gold */
+    rgba(255, 102, 178, 0.2), /* Warm Pink */
+    rgba(128, 0, 128, 0.1)    /* Deep Purple */
+  ),
+  url("assets/road.svg");
+  /* background-color: rgb(120, 120, 209); */
   background-size: cover;
-  background-position: center;
+  background-position: bottom;
 }
 
 h1 {
@@ -135,7 +143,6 @@ h1 {
   cursor: pointer;
   bottom: 12px;
   transition: transform 0.1s ease-in-out;
-  font-family: Arial, sans-serif;
   font-weight: bold;
   text-transform: uppercase;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
@@ -209,14 +216,28 @@ input[type="number"] {
 }
 
 #compassWheel {
-  position: absolute;
+  position: relative;
   width: 100%;
   height: 100%;
-  background-image: url("assets/wheel.png");
+  background-image: url("assets/steering-wheel.svg");
   background-size: cover;
   border-radius: 50%;
-  transition: tranform 0.5s ease-in-out;
 }
+
+#logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  background-image: url("assets/JIT-logo.jpg");
+  background-size: cover;
+  border-radius: 50%;
+  width: 92px;
+  height: 70px;
+  border: 5px solid black;
+}
+
 #compassText {
   padding: 5px;
   cursor: pointer;
