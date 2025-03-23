@@ -203,11 +203,30 @@ h1 {
 
 input[type="number"] {
   font-size: 20px;
-  width: calc(50% - 17px);
-  min-width: 20px;
-  padding: 2px 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  max-width: 60%;
+  text-align: center;
+  border-radius: 10px;
+}
+#compassText {
+  padding: 5px;
+  cursor: pointer;
+}
+#compassText:hover {
+  border-radius: 5px;
+  color: #46ff46;
+  background-color: #555555;
+}
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+#compassInput::-webkit-outer-spin-button,
+#compassInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+#compassInput {
+  -moz-appearance: textfield;
 }
 
 #compassValue {
@@ -238,12 +257,4 @@ input[type="number"] {
   border: 5px solid black;
 }
 
-#compassText {
-  padding: 5px;
-  cursor: pointer;
-}
-#compassText:hover {
-  border-radius: 5px;
-  color: #46ff46;
-  background-color: #555555;
-}
+
