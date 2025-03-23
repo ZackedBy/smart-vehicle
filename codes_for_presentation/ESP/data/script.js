@@ -1,29 +1,5 @@
-//--------------------PEDALS-------------------
-const pedals = document.getElementsByClassName("pedal");
-
-function pressPedal(event) {
-  event.target.classList.add("pressed");
-}
-
-function releasePedal(event) {
-  event.target.classList.remove("pressed");
-}
-
-// Mouse Events
-for (let i = 0; i < pedals.length; i++) {
-  pedals[i].addEventListener("mousedown", pressPedal);
-  pedals[i].addEventListener("mouseup", releasePedal);
-}
-
-// Touch Events for Mobile
-for (let i = 0; i < pedals.length; i++) {
-  pedals[i].addEventListener("touchstart", pressPedal);
-  pedals[i].addEventListener("touchend", releasePedal);
-}
-
 // ----------------------------- COMPASS RELATED -----------------------------
 
-// DOM Elements for Compass Control
 const compassControl = document.getElementById("compassControl");
 const compassValue = document.getElementById("compassValue");
 const compassText = document.getElementById("compassText");
@@ -174,58 +150,53 @@ compassControl.ontouchstart = startInteraction;
 compassControl.ontouchend = endInteraction;
 compassControl.ontouchmove = moveInteraction;
 
-// This function fetches asynchronously LIDAR data from the server and updates the display.
-// async function fetchCompassData() {
-//   try {
-//     const response = await fetch("/realComp"); // Fetch the LIDAR data from the server
-//     const data = await response.text(); // Get the response text
-//     const compVal = parseInt(data, 10); // Parse the LIDAR data as an integer
-
-//     if (compVal) {
-//         //console.log("Lidar value:", lidarValue);
-//         realCompassValue.innerText = `${compVal}°`;  // Update the LIDAR text element with the fetched data
-//      }
-//   } catch (error) {
-//     console.error("COMP ERR:", error); // Log any errors to the console
-//   }
-// }
-
-
-
-
 // ----------------------------- MOVEMENT RELATED -----------------------------
 
-// DOM Elements for Movement Control
 const forwardInput = document.getElementById("forwardInput");
 const backwardsInput = document.getElementById("backwardInput");
-const forwardButton = document.querySelector('button[onclick="forwards()"]');
-const backwardsButton = document.querySelector('button[onclick="backwards()"]');
+const pedals = document.getElementsByClassName("pedal");
 
 // Function to validate input and enable/disable the button
-function validateInput(input, button) {
+function validateInput(input, pedal) {
   // Check if the value is a valid number
-  if (isNaN(input.value) || input.value === "") {
-    input.style.backgroundColor = "red"; // Change the background color to red for invalid input
-    button.style.backgroundColor = "red"; // Change the button color to red
-    button.style.color = "white";
-    button.style.cursor = "default";
-    button.disabled = true; // Disable the button if the input is not valid
+  if (isNaN(input.value) || input.value === "" || input.value <= 0) {
+    input.style.backgroundColor = "red";
+    pedal.style.pointerEvents = "none"; // Disable interactions
   } else {
-    input.style.backgroundColor = ""; // Reset the background color if input is valid
-    button.style.backgroundColor = "#46ff46"; // Green button when valid
-    button.style.color = "#555555";
-    button.style.cursor = "pointer";
-    button.disabled = false; // Enable the button if the input is valid
+    input.style.backgroundColor = "";
+    pedal.style.pointerEvents = "auto"; // Enable interactions
   }
 }
 
 // Event listeners for input change
 forwardInput.addEventListener("input", () =>
-  validateInput(forwardInput, forwardButton)
+  validateInput(forwardInput, pedals[1])
 );
 backwardsInput.addEventListener("input", () =>
-  validateInput(backwardsInput, backwardsButton)
+  validateInput(backwardsInput, pedals[0])
 );
+
+function pressPedal(event) {
+  if (event.target.style.pointerEvents === "none") return;
+  event.target.classList.add("pressed");
+}
+
+function releasePedal(event) {
+  if (event.target.style.pointerEvents === "none") return;
+  event.target.classList.remove("pressed");
+}
+
+// Mouse Events
+for (let i = 0; i < pedals.length; i++) {
+  pedals[i].addEventListener("mousedown", pressPedal);
+  pedals[i].addEventListener("mouseup", releasePedal);
+}
+
+// Touch Events for Mobile
+for (let i = 0; i < pedals.length; i++) {
+  pedals[i].addEventListener("touchstart", pressPedal);
+  pedals[i].addEventListener("touchend", releasePedal);
+}
 
 // Function for moving the motor forward with specific distance
 function forwards() {
@@ -247,42 +218,6 @@ function move(dir, dis) {
     )
     .catch((error) => console.error("Error sending move command:", error));
 }
-
-// ----------------------------- LIDAR RELATED -----------------------------
-// const lidarText = document.getElementById("lidar-val");
-
-// // This function fetches asynchronously LIDAR data from the server and updates the display.
-// async function fetchLidarData() {
-//   try {
-//     const response = await fetch("/lidar"); // Fetch the LIDAR data from the server
-//     const data = await response.text(); // Get the response text
-//     const lidarValue = parseInt(data, 10); // Parse the LIDAR data as an integer
-
-//     if (lidarValue) {
-//         //console.log("Lidar value:", lidarValue);
-//         lidarText.innerText = `${lidarValue} cm`;  // Update the LIDAR text element with the fetched data
-//      }
-//   } catch (error) {
-//     console.error("Error fetching LIDAR data:", error); // Log any errors to the console
-//   }
-// }
-
-
-//--------------------------COLOR SENSOR---------------------------
-//Function to fetch and display the closest color the sensor detects on the ground
-// const colorBall = document.getElementById("Color");
-// async function fetchColorData() {
-//   try {
-//     const response = await fetch("/rgb");
-//     const color = await response.text();
-
-//     colorBall.style.setProperty("background-color", color, "important");
-
-//   } catch (error) {
-//     console.log("Error fetching color data", error)
-//   }
-// }
-
 
 //------------------------LOGOUT-----------------------------------------
 function logout() {
