@@ -70,54 +70,7 @@ String color = "black";
 // Website Variables
 String message; //whole message sent from website
 
-void setup() {
-  attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
-  attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
-  attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
 
-  // includes Wire.begin
-  if (rgb_sens.begin()) {
-    Serial.println("Found sensor");
-  } else {
-    Serial.println("No TCS34725 found ... check your connections");
-    while (1); // halt!
-  }
-
-  lcd.begin(20,4);
-
-  Serial.begin(9600);  // For uploading code/monitoring "prints"
-  Serial2.begin(9600); // For sending/receiving website data
-  //Serial2.setTimeout(500); // Reduce timeout so reading doesn't block
-
-  lidar.begin(0, true);
-  lidar.configure(0); //change to 1 for short range, high speed
-
-  compass_offset = compass_logic(); // Get compass reading on start-up
-}
-/**
- * To DO:
- * Figure out why sometimes not try longest path
- * why switch mode/restart when open serial monitor
- * make webpage more POV driver
- * Calibrate colors more?
- * 
-*/
-void loop(){
-  get_rgb_value();
-  display_lcd();
-  current_degree = compass_logic();
-  lidar_dist = get_lidar_distance(num_readings);
-
-  if (joystick_mode) {
-    if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
-    last_used_degree = current_degree;
-    joystick_movement();
-  } else {
-    rotate_vehicle(last_used_degree); // Self-correct rotation
-    get_commands_from_web();
-  }
-  send_info_to_web();
-}
 //==================================================================LiDAR Functions=============================================
 
 // TO-DO: Change for loop to boolean and counter
@@ -359,7 +312,7 @@ void rotate_vehicle(int target_degree) {
 
   // Loops until difference between target and current is less than tolerance
   while (abs(direction_difference) >= proximity_tolerance) {
-    
+    send_info_to_web();
     display_lcd();
     current_degree = compass_logic();
     direction_difference = get_diff(target_degree);
@@ -427,6 +380,7 @@ void travel_distance(int distance, int motor_speed){
   bool tried_all_paths = false;
 
   while (distance_travelled <= abs(distance)) {
+    send_info_to_web();
     lidar_dist = get_lidar_distance(num_readings);
 
     // Checks if path is blocked
@@ -530,4 +484,46 @@ void reset_dist_variables() {
   dist_R = 0;
   dist_L = 0;
   distance_travelled = 0;
+}
+
+//===========================================================Entry========================================
+void setup() {
+  attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
+  attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
+
+  // includes Wire.begin
+  if (rgb_sens.begin()) {
+    Serial.println("Found sensor");
+  } else {
+    Serial.println("No TCS34725 found ... check your connections");
+    while (1); // halt!
+  }
+
+  lcd.begin(20,4);
+
+  Serial.begin(9600);  // For uploading code/monitoring "prints"
+  Serial2.begin(9600); // For sending/receiving website data
+
+  lidar.begin(0, true);
+  lidar.configure(0); //change to 1 for short range, high speed
+
+  compass_offset = compass_logic(); // Get compass reading on start-up
+}
+
+void loop(){
+  get_rgb_value();
+  display_lcd();
+  current_degree = compass_logic();
+  lidar_dist = get_lidar_distance(num_readings);
+
+  if (joystick_mode) {
+    if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
+    last_used_degree = current_degree;
+    joystick_movement();
+  } else {
+    rotate_vehicle(last_used_degree); // Self-correct rotation
+    get_commands_from_web();
+  }
+  send_info_to_web();
 }
