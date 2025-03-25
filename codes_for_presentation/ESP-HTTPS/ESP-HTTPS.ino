@@ -3,27 +3,27 @@
 #include <FS.h>                 // Library for working with file systems (FS)
 //#include <LittleFS.h>           // Library for faster loading
 #include <ArduinoJson.h>        // Library for safe JSON formatting
-#include "certs.h"              // Holds self-signed certs
+#include "HiddenInfo.h"         // Holds self-signed certs & Wifi settings
 
 #define CACHE_SIZE 5
 ServerSession store[CACHE_SIZE];
 BearSSL::ServerSessions serverCache(store, CACHE_SIZE);
-//BearSSL::WiFiServerSecure server(443);
+ESP8266WebServerSecure server(443);
 
-const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
-const char* password = "7kDtaphg";    // Wi-Fi network password
+const char* ssid = WIFI_NAME;           // Wi-Fi network name (SSID)
+const char* password = WIFI_PASS;       // Wi-Fi network password
 
-const char* auth_name = "admin";      // Authentication username
-const char* auth_pass = "admin";      // Authentication password
+const char* auth_name = AUTH_NAME;      // Authentication username
+const char* auth_pass = AUTH_PASS;      // Authentication password
 
 bool isAuthenticated = false;
 
-String lidarData = "0 cm";            // Variable to store LIDAR data
+String lidarData = "0 cm";              // Variable to store LIDAR data
 String compassData = "0";
 String color = "black";
 
 //ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
-ESP8266WebServerSecure server(443);
+
 
 void checkCredentials() {
   if (server.hasArg("username") && server.hasArg("password")) {
