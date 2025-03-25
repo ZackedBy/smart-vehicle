@@ -162,9 +162,11 @@ function validateInput(input, pedal) {
   if (isNaN(input.value) || input.value === "" || input.value <= 0) {
     input.style.backgroundColor = "red";
     pedal.style.pointerEvents = "none"; // Disable interactions
+    pedal.style.opacity = "0.5";
   } else {
     input.style.backgroundColor = "";
     pedal.style.pointerEvents = "auto"; // Enable interactions
+    pedal.style.opacity = "1";
   }
 }
 
@@ -272,4 +274,4 @@ async function fetchEspThenUpdate() {
   }
 }
 
-setInterval(fetchEspThenUpdate, 50);
+setInterval(fetchEspThenUpdate, 100);

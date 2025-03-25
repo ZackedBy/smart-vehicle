@@ -63,7 +63,7 @@ const int num_readings = 20;  // X amount of readings
 
 //RGB Sensor Variables
 //#define i2c_address (0x29)
-Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_4X);
 float r, g, b;
 String color = "black";
 
@@ -87,46 +87,39 @@ int get_lidar_distance(int readings) {
 }
 
 
-
-// EXERCISE 5
-void move_to_threshold(int deg, int threshold) {
-  rotate_vehicle(deg);
-  while (get_lidar_distance(num_readings) > threshold) {
-    move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
-    current_degree = compass_logic();
-  }
-  move_motor(0, 0, 0, 0);
-}
-
-void follow_path() {
-  move_to_threshold(0, 40);
-  move_to_threshold(270, 125);
-  move_to_threshold(180, 113);
-  move_to_threshold(90, 165);
-  joystick_mode = true;
-}
 //========================================================================RGB Functions================================================
+int red = 0, green = 0, blue = 0;
+void cal_col() {
+  rgb_sens.getRGB(&r, &g, &b);
+  red = r;
+  blue = b;
+  green = g;
+}
 
-void get_rgb_value(){
+void get_rgb_value() {
   //uint16_t clear, red, green, blue;
   //rgb_sens.setInterrupt(true);
   rgb_sens.getRGB(&r, &g, &b);
   //rgb_sens.setInterrupt(false);
-
-//  Serial.print("\tR:\t"); Serial.print(r);
-//  Serial.print("\tG:\t"); Serial.print(g);
-//  Serial.print("\tB:\t"); Serial.print(b);
-//  Serial.println("\t");
 //
 //  Serial.print("\t");
 //  Serial.print((int)r, HEX); Serial.print((int)g, HEX); Serial.print((int)b, HEX);
 //  Serial.println();
   color = "black";
-  if(r > 100 && r > g  && r > b) {
-    color = "red";
-  } else if (b > g  && b > r) {
-    color = g > 80 ? "green" : "blue";
-  }
+//  if(r > 100 && r > g  && r > b) {
+//    color = "red";
+//  } else if (b > g  && b > r) {
+//    color = g > 80 ? "green" : "blue";
+//  }
+
+//  bool red = (r > 105 && r < 170) && (g > 50 && g < 90) && (b > 120 && b < 180);
+//  bool blue = (r > 80 && r < 150) && (g > 175) && (b > 230);
+//  bool yellow = (r > 180) && (g > 203) && (b > 100 && b < 220);
+//  if (red) color = "red";
+//  else if (blue) color = "blue";
+//  else if (yellow) color = "yellow";
+//  else color = "black";
+  bool
 }
 
 //==================================================================LCD Specific Functions=============================================
@@ -312,22 +305,27 @@ void rotate_vehicle(int target_degree) {
 
   // Loops until difference between target and current is less than tolerance
   while (abs(direction_difference) >= proximity_tolerance) {
+    current_degree = compass_logic();               // update compass reading
+    direction_difference = get_diff(target_degree);
+    if (abs(direction_difference) <= proximity_tolerance) {
+      break; //break early if good
+    }
+    lidar_dist = get_lidar_distance(1);  // update lidar reading
+    //get_rgb_value();                                // update color reading
     send_info_to_web();
     display_lcd();
-    current_degree = compass_logic();
-    direction_difference = get_diff(target_degree);
 
     // Check if turning is blocked
-    if (is_turning_blocked()) {
-      if (tried_reverse) {
-        last_used_degree = start_degree; // Update auto-rotate back to same degree as when function was called
-        break;
-      }
-      prev_error_check = millis();
-      message = "Block. Trying rev...";
-      tried_reverse = true;
-      rotating_clockwise = !rotating_clockwise; // Flip direction after blockage
-    }
+//    if (is_turning_blocked()) {
+//      if (tried_reverse) {
+//        last_used_degree = start_degree; // Update auto-rotate back to same degree as when function was called
+//        break;
+//      }
+//      //prev_error_check = millis();
+//      message = "Block. Trying rev...";
+//      tried_reverse = true;
+//      rotating_clockwise = !rotating_clockwise; // Flip direction after blockage
+//    }
 
     // Reduce rotation speed for last few degrees
     int rotation_speed = abs(direction_difference) > 10
@@ -349,7 +347,7 @@ void rotate_vehicle(int target_degree) {
 
 bool is_turning_blocked() {
   const unsigned long error_timeout = 500; // 500ms timeout
-  const int degree_threshold = 10;
+  const int degree_threshold = 5;
 
   // Store initial degree to compare later
   if (prev_error_check == 0) {
@@ -359,20 +357,20 @@ bool is_turning_blocked() {
   
   // Checks progress every timeout
   if (millis() - prev_error_check >= error_timeout) {
-  
+    prev_error_check = millis();
     if (abs(current_degree - prev_checked_degree) <= degree_threshold ) {
       // No progress detected -> blockage
       return true;
     } else {
       // Progress detected, reset the monitor
       prev_checked_degree = current_degree;
-      prev_error_check = millis();
     }
     
   }
   return false;
 }
-
+int total_dist = 0;
+int turns = 0;
 // Drives the vehicle from an input distance and speed
 void travel_distance(int distance, int motor_speed){
   reset_dist_variables();
@@ -380,31 +378,32 @@ void travel_distance(int distance, int motor_speed){
   bool tried_all_paths = false;
 
   while (distance_travelled <= abs(distance)) {
+    get_rgb_value();
     send_info_to_web();
     lidar_dist = get_lidar_distance(num_readings);
 
     // Checks if path is blocked
-    if (lidar_dist < 10 && distance > 0 && !tried_all_paths) {
-      motor_direction = check_path_and_turn();
-      if (motor_direction == Motor_backward) {
-        tried_all_paths = true;
-      }
-    }
+//    if (lidar_dist < 10 && distance > 0 && !tried_all_paths) {
+//      motor_direction = check_path_and_turn();
+//      if (motor_direction == Motor_backward) {
+//        tried_all_paths = true;
+//      }
+//    }
 
     // Adjust speed based on lidar readings
     int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
-    // Adjust speed based on color under rgb sensor
-    //var_speed = change_speed_for_color(var_speed);
-    // Change to reverse -5?
-    //if (var_speed == 0) break; // Stop car if red underneath
+
+    if (color != "black") {
+      break;
+    }
     
     distance_travelled = (dist_R + dist_L) / 2;
-
     display_lcd();
     move_motor(motor_direction, motor_direction, var_speed, var_speed);
   }
   move_motor(0, 0, 0, 0);
 }
+
 
 int change_speed_for_color(int m_speed) {
   get_rgb_value();
@@ -463,13 +462,14 @@ void encoder_pulse_L(){
   pulse_count_L++;
   dist_L = pulse_count_L / pulse_per_cm;
 }
-
+volatile int presses = 0;
 // Trigger function on joystick press
 void joystick_interrupt() {
   unsigned long current_time = millis();
   if (current_time - last_button_press_time > debounce_time) {
     message = "";
     reset_dist_variables();
+    presses++;
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
@@ -484,6 +484,52 @@ void reset_dist_variables() {
   dist_R = 0;
   dist_L = 0;
   distance_travelled = 0;
+}
+
+// EXERCISE 5
+void move_to_threshold(int deg, int threshold) {
+  rotate_vehicle(deg);
+  while (get_lidar_distance(num_readings) > threshold) {
+    move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
+    current_degree = compass_logic();
+  }
+  move_motor(0, 0, 0, 0);
+}
+
+void follow_path() {
+  move_to_threshold(0, 40);
+  move_to_threshold(270, 125);
+  move_to_threshold(180, 113);
+  move_to_threshold(90, 165);
+  joystick_mode = true;
+}
+void drive(int distance, byte dir) {
+  reset_dist_variables();
+  while (distance_travelled <= abs(distance)) {
+    distance_travelled = (dist_R + dist_L) / 2;
+    display_lcd();
+    move_motor(dir, dir, motor_max_speed, motor_max_speed);
+  }
+  move_motor(0, 0, 0, 0);
+}
+bool finito = false;
+
+void maze() {
+
+  while (!finito) {
+    travel_distance(100, 123);
+    if (color == "red") {
+      drive(2, Motor_backward);
+      rotate_vehicle(current_degree - 45);
+    } else if (color == "blue") {
+      drive(2, Motor_backward);
+      rotate_vehicle(current_degree + 45);
+    } else if (color == "yellow") {
+      rotate_vehicle(180);
+      drive(10, Motor_forward);
+      finito = true;
+    }
+  }
 }
 
 //===========================================================Entry========================================
@@ -516,14 +562,18 @@ void loop(){
   display_lcd();
   current_degree = compass_logic();
   lidar_dist = get_lidar_distance(num_readings);
-
+  if (presses == 1) {
+    get_rgb_value();
+  }
   if (joystick_mode) {
     if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
     last_used_degree = current_degree;
     joystick_movement();
   } else {
-    rotate_vehicle(last_used_degree); // Self-correct rotation
-    get_commands_from_web();
+    //rotate_vehicle(last_used_degree); // Self-correct rotation
+    //get_commands_from_web();
+    Serial.println(total_dist);
+    if(!finito) maze();
   }
   send_info_to_web();
 }

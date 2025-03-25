@@ -125,7 +125,7 @@ compassForm.addEventListener("submit", (e) => {
     angle = Math.min(Math.max(angle, 0), 360);
   }
 
-  // Update the compass display and draw the line
+  // Update the compass display
   setCompassTo(angle);
 
   // Update last valid value

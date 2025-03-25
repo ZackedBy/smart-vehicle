@@ -5,10 +5,10 @@
 #include <ArduinoJson.h>        // Library for safe JSON formatting
 #include "HiddenInfo.h"         // Holds self-signed certs & Wifi settings
 
-#define CACHE_SIZE 5
-ServerSession store[CACHE_SIZE];
-BearSSL::ServerSessions serverCache(store, CACHE_SIZE);
-ESP8266WebServerSecure server(443);
+//#define CACHE_SIZE 5
+//ServerSession store[CACHE_SIZE];
+//BearSSL::ServerSessions serverCache(store, CACHE_SIZE);
+//ESP8266WebServerSecure server(443);
 
 const char* ssid = WIFI_NAME;           // Wi-Fi network name (SSID)
 const char* password = WIFI_PASS;       // Wi-Fi network password
@@ -22,7 +22,7 @@ String lidarData = "0 cm";              // Variable to store LIDAR data
 String compassData = "0";
 String color = "black";
 
-//ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
+ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
 
 
 void checkCredentials() {
@@ -32,7 +32,6 @@ void checkCredentials() {
 
     if (username == auth_name && password == auth_pass) {
       isAuthenticated = true;
-//      server.sendHeader("Location", "/index", true);
       server.send(302, "text/plain", "Redirecting to /index...");
       return;
     }
@@ -109,6 +108,7 @@ void setup() {
 
   // Connect to the Wi-Fi network using the provided SSID and password
   Serial.print("\nConnecting to " + (String)ssid);
+  
   WiFi.begin(ssid, password);               // Begin connecting to Wi-Fi
   while (WiFi.status() != WL_CONNECTED) {   // Wait in a loop until the connection is successful
     delay(500);
@@ -116,26 +116,37 @@ void setup() {
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
 
-//  BearSSL::X509List *serverCertList = new BearSSL::X509List(server_cert);
-//  BearSSL::PrivateKey *serverPrivKey = new BearSSL::PrivateKey(server_private_key);
-//  server.setRSACert(serverCertList, serverPrivKey);
-//  server.setCache(&serverCache);
-//  server.allowSelfSignedCerts();
-//  server.setX509Time();
-
-  // Load SSL certificate and private key
-  BearSSL::X509List cert(server_cert);
-  BearSSL::PrivateKey key(server_private_key);
-  server.getServer().setRSACert(&cert, &key);
-  server.getServer().setCache(&serverCache);
-  //server.getServer().allowSelfSignedCerts();
+  /**
+   * Load SSL certificate and private key
+   * Dump contents of below key/cert into respective varaibles.
+   * openssl req -x509 -newkey rsa:4096 -keyout esp_key.pem -out esp_cert.pem -sha256 -days 365 -nodes
+   * Format like so: const char SERVER_CERT[] PROGMEM = R"EOF(
+   * -----BEGIN CERTIFICATE-----
+   * .......
+   * -----END CERTIFICATE-----
+   * )EOF";
+    */
+    
+//  BearSSL::X509List cert(SERVER_CERT);
+//  BearSSL::PrivateKey key(SERVER_PRIVATE_KEY);
+//  server.getServer().setRSACert(&cert, &key);
+//  server.client().setClientRSACert(&cert, &key);
+//  server.client().allowSelfSignedCerts();
+  
+//  server.getServer().setCache(&serverCache);
   
   server.serveStatic("/", SPIFFS, "/login.html");  
+//server.on("/", HTTP_GET, []() {
+//    server.send(200, "text/plain", "Hello from ESP8266!");
+//});
   server.on("/login", HTTP_POST, checkCredentials);
   server.on("/logout", HTTP_GET, logout);
   server.on("/index", HTTP_GET, serveIndex);
   server.serveStatic("/script.js", SPIFFS, "/script.js");
-  server.serveStatic("/style.css", SPIFFS, "/style.css");   
+  server.serveStatic("/style.css", 
+                      SPIFFS, 
+                      "/style.css",
+                      "max-age=86400, must-revalidate");   
   // Cache images for quicker load   
   server.serveStatic("/assets/logo.jpg", 
                       SPIFFS, 
