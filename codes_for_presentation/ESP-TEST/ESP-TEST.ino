@@ -1,10 +1,15 @@
 #include <ESP8266WiFi.h>        // Library for Wi-Fi functionality
 #include <ESP8266WebServer.h>   // Library to create and manage a web server
-#include <FS.h>                 // Library for working with file systems (SPIFFS)
+#include <FS.h>                 // Library for working with file systems (FS)
+//#include <LittleFS.h>           // Library for faster loading
 #include <ArduinoJson.h>        // Library for safe JSON formatting
+//#include <Crypto.h>
+//#include <SHA256.h>
 
 const char* ssid = "Titenet-IoT";   // Wi-Fi network name (SSID)
 const char* password = "7kDtaphg";    // Wi-Fi network password
+//const char* ssid = "OnePlus 7 Pro";   // Wi-Fi network name (SSID)
+//const char* password = "77777771";    // Wi-Fi network password
 const char* auth_name = "admin";      // Authentication username
 const char* auth_pass = "admin";      // Authentication password
 bool isAuthenticated = false;
@@ -22,7 +27,7 @@ void checkCredentials() {
 
     if (username == auth_name && password == auth_pass) {
       isAuthenticated = true;
-      server.sendHeader("Location", "/index", true);
+//      server.sendHeader("Location", "/index", true);
       server.send(302, "text/plain", "Redirecting to /index...");
       return;
     }
@@ -110,12 +115,25 @@ void setup() {
   server.on("/login", HTTP_POST, checkCredentials);
   server.on("/logout", HTTP_GET, logout);
   server.on("/index", HTTP_GET, serveIndex);
-  server.serveStatic("/style.css", SPIFFS, "/style.css");     // Serve the CSS file for styling
-  server.serveStatic("/script.js", SPIFFS, "/script.js");     // Serve the JavaScript file
-  server.serveStatic("/assets/favicon.ico", SPIFFS, "/assets/favicon.ico");
-  server.serveStatic("/assets/steering-wheel.svg", SPIFFS, "/assets/steering-wheel.svg");
-  server.serveStatic("/assets/road.svg", SPIFFS, "/assets/road.svg");
-  server.serveStatic("/assets/JIT-logo.jpg", SPIFFS, "/assets/JIT-logo.jpg");
+  server.serveStatic("/script.js", SPIFFS, "/script.js");
+  server.serveStatic("/style.css", SPIFFS, "/style.css");   
+  // Cache images for quicker load   
+  server.serveStatic("/assets/logo.jpg", 
+                      SPIFFS, 
+                      "/assets/logo.jpg", 
+                      "max-age=86400, must-revalidate");
+  server.serveStatic("/assets/favicon.ico", 
+                      SPIFFS, 
+                      "/assets/favicon.png",
+                      "max-age=86400, must-revalidate");
+  server.serveStatic("/assets/steering-wheel.svg", 
+                      SPIFFS, 
+                      "/assets/steering-wheel.svg",
+                      "max-age=86400, must-revalidate");
+  server.serveStatic("/assets/road.svg", 
+                      SPIFFS, 
+                      "/assets/road.svg",
+                      "max-age=86400, must-revalidate");
   
   // Receiving commands from webpage
   server.on("/move", HTTP_POST, getMoveCommand);
@@ -147,4 +165,5 @@ void loop() {
       Serial.println("Command not found:" + String(data));
     }
   }
+
 }

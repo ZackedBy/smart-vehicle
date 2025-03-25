@@ -1,4 +1,6 @@
 //------------------------LOGOUT-----------------------------------------
+
+// Logs out via button
 async function logout() {
   try {
     // Send GET request to logout route
@@ -15,6 +17,12 @@ async function logout() {
   }
 }
 
+// Logout on closing page so bool flag in ESP resets
+window.addEventListener("beforeunload", function() {
+  //e.preventDefault();
+  fetch("/logout", { method: "GET", keepalive: true})
+})
+
 // ----------------------------- COMPASS RELATED -----------------------------
 
 const compassControl = document.getElementById("compassControl");
@@ -28,9 +36,10 @@ const defaultValue = 0;
 let lastValidCompassValue;
 
 // Function to set compass to 0. Used on load and for Find North button
-function setCompassTo(value) {
-  updateCompass(value);
-  sendCompassValue(value);
+function setCompassTo(val) {
+  //updateCompass(value);
+  compassInput.value = val;
+  sendCompassValue(val);
 }
 
 setCompassTo(defaultValue); // Set compass to zero on load
@@ -130,7 +139,7 @@ compassForm.addEventListener("submit", (e) => {
 // Close the form when clicking outside of it
 document.addEventListener("click", function (e) {
   const isClickInside =
-    compassForm.contains(e.target) || compassText.contains(e.target);
+    compassForm.contains(e.target) || compassValue.contains(e.target);
 
   // If clicked outside and the form is visible
   if (!isClickInside && compassForm.style.display === "inline") {
@@ -149,11 +158,13 @@ let isMouseDown = false;
 
 function startInteraction(event) {
   isMouseDown = true;
+  compassWheel.style.opacity = "0.8";
   updateCompassOnMove(event);
 }
 
 function endInteraction(event) {
   isMouseDown = false;
+  compassWheel.style.opacity = "1";
   finalizeCompassInteraction(event);
 }
 
@@ -234,15 +245,13 @@ async function move(dir) {
       },
       body: `distance=${distance}`
     });
-    console.log(`Drive: ${dir} ${distance}cm; `, response.status);
+    console.log(`Move: ${distance}; `, response.status);
   } catch (error) {
     console.error("Error sending move command:", error);
   }
 }
 
 //------------------GET VALUES FROM ESP--------------------------
-
-const realCompassValue = document.getElementById("realCompassValue");
 const lidarText = document.getElementById("lidar-val");
 const colorBall = document.getElementById("Color");
 
@@ -253,12 +262,13 @@ async function fetchEspThenUpdate() {
 
     const data = await response.json();
 
-    // Update compass value
-    if (data.compass) {
+    // Update compass value only if user isnt moving wheel
+    if (data.compass && !isMouseDown) {
       const compassValue = parseInt(data.compass, 10);
       if (!isNaN(compassValue)) {
         compassText.innerText = `${compassValue}°`;
         //compassInput.value = compassValue;
+        compassWheel.style.transform = `rotate(${compassValue}deg)`;
       }
     }
 
