@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <LIDARLite.h>
 #include "Adafruit_TCS34725.h"
+#include <ArduinoJson.h>        // Library for safe JSON formatting
 
 // JoyStick Variables
 #define joy_x A2
@@ -88,12 +89,33 @@ int get_lidar_distance(int readings) {
 
 
 //========================================================================RGB Functions================================================
-int red = 0, green = 0, blue = 0;
+struct Color {
+  int r,g,b;
+  String toString() {
+    return "R: " + String(r) + ", G: " + String(g) + ", B: " + String(b);
+  }
+};
+
+Color calibratedColors[4];
+volatile int presses = 0;
+volatile boolean calibrated = true;
+
 void cal_col() {
   rgb_sens.getRGB(&r, &g, &b);
-  red = r;
-  blue = b;
-  green = g;
+  if (presses >= 1 && presses <= 4) {
+    calibratedColors[presses - 1] = {int(r), int(g), int(b)};
+    Serial.print("Calibrated Color ");
+    Serial.print(presses);
+    Serial.print(": ");
+    Serial.println(calibratedColors[presses - 1].toString());
+    calibrated = true;
+  }
+}
+
+bool isColorMatch(Color target, int threshold = 30) {
+  return (abs(int(r) - target.r) <= threshold) &&
+         (abs(int(g) - target.g) <= threshold) &&
+         (abs(int(b) - target.b) <= threshold);
 }
 
 void get_rgb_value() {
@@ -111,7 +133,19 @@ void get_rgb_value() {
 //  } else if (b > g  && b > r) {
 //    color = g > 80 ? "green" : "blue";
 //  }
-
+    bool red, green, blue, yellow;
+    if (isColorMatch(calibratedColors[0])) {
+      color = "red";
+    } else if (isColorMatch(calibratedColors[1])) {
+      color = "green";
+    } else if (isColorMatch(calibratedColors[2])) {
+      color = "blue";
+    } else if (isColorMatch(calibratedColors[3])) {
+      color = "yellow";
+    } else {
+      color = "black";
+    }
+    
 //  bool red = (r > 105 && r < 170) && (g > 50 && g < 90) && (b > 120 && b < 180);
 //  bool blue = (r > 80 && r < 150) && (g > 175) && (b > 230);
 //  bool yellow = (r > 180) && (g > 203) && (b > 100 && b < 220);
@@ -119,7 +153,7 @@ void get_rgb_value() {
 //  else if (blue) color = "blue";
 //  else if (yellow) color = "yellow";
 //  else color = "black";
-  bool
+  
 }
 
 //==================================================================LCD Specific Functions=============================================
@@ -462,7 +496,7 @@ void encoder_pulse_L(){
   pulse_count_L++;
   dist_L = pulse_count_L / pulse_per_cm;
 }
-volatile int presses = 0;
+
 // Trigger function on joystick press
 void joystick_interrupt() {
   unsigned long current_time = millis();
@@ -470,6 +504,7 @@ void joystick_interrupt() {
     message = "";
     reset_dist_variables();
     presses++;
+    calibrated = false;
     joystick_mode = !joystick_mode;
     last_button_press_time = current_time;
   }
@@ -562,18 +597,22 @@ void loop(){
   display_lcd();
   current_degree = compass_logic();
   lidar_dist = get_lidar_distance(num_readings);
-  if (presses == 1) {
-    get_rgb_value();
-  }
-  if (joystick_mode) {
-    if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
-    last_used_degree = current_degree;
-    joystick_movement();
-  } else {
-    //rotate_vehicle(last_used_degree); // Self-correct rotation
-    //get_commands_from_web();
-    Serial.println(total_dist);
-    if(!finito) maze();
-  }
+    if (presses <= 4 && !calibrated) {
+      cal_col();  // Store calibration color
+    } else if (presses == 5) {
+      maze();
+      presses = 0;
+      Serial.println("Finitor");
+    }
+//  if (joystick_mode) {
+//    if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands 
+//    last_used_degree = current_degree;
+//    joystick_movement();
+//  } else {
+//    //rotate_vehicle(last_used_degree); // Self-correct rotation
+//    //get_commands_from_web();
+//    Serial.println(total_dist);
+//    if(!finito) maze();
+//  }
   send_info_to_web();
 }
