@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Wroom Wroom!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="assets/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="script.js" defer></script>	<!-- Defer ensures that page contents load first and JavaScript runs only after that -->
+
+</head>
+	<body>
+		<button class="button" id="logout-button" onclick="logout()">Logout</button>
+		<div class="container center-flex">
+			<button class="button" id="maze-button">
+				GO
+			</button>
+			<div class="container center-flex controls">
+				<div class="center-flex wood" style="justify-content: space-evenly;">
+
+					<div class="center-flex gauge-border">
+						<div class="gauge" id="Color"></div>
+					</div>
+
+					<div class=" center-flex gauge-border">
+						<div class="center-flex gauge">
+							<p id="encVal">0</p>
+						</div>
+					</div>
+
+					<div class="center-flex gauge-border">
+						<div class="center-flex gauge" id="compassValue" onclick="editCompassValue()">
+							<span id="compassText">0°</span>
+							<form id="compassForm" style="display: none;">
+								<input type="number" id="compassInput" value="0" min="0" max="360" />
+							</form>
+						</div>
+					</div>
+
+					<div class="center-flex gauge-border">
+						<div class="center-flex gauge">
+							<span id="lidar-val" style="cursor: default;">0 cm</span>
+						</div>
+					</div>
+
+				</div>
+				<button onclick="move()">test </button>
+				<button class="button" id="calibrate-button" onclick="startCalibrate()">
+					Calibrate encoder
+				</button>
+
+			</div>
+
+		</div>
+
+	</body>
+</html>
