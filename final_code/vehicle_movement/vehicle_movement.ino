@@ -5,13 +5,13 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <LIDARLite.h>
+//#include "lidar.h"
 #include "Adafruit_TCS34725.h"
 #include <EEPROM.h>
 
 // JoyStick Press Variables
 #define joy_key 18
 const int debounce_time = 50;
-volatile boolean joystick_mode = true;
 volatile unsigned long last_button_press_time = 0;
 
 // Motor Variables
@@ -20,8 +20,7 @@ volatile unsigned long last_button_press_time = 0;
 #define Motor_L_pwm_pin 9
 #define Motor_R_pwm_pin 10
 const byte Motor_forward = 0, Motor_backward = 1;
-const int stationary_x = 502, stationary_y = 506, motor_max_speed = 255;
-int motor_speed_x = 0, motor_speed_y = 0;
+const int motor_max_speed = 255;
 
 // Encoder Variables
 #define ENC_A_R 2
@@ -31,7 +30,6 @@ int motor_speed_x = 0, motor_speed_y = 0;
 volatile int pulse_count_R = 0, pulse_count_L = 0;
 float distance_travelled = 0; // average distance travelled of both motors
 const byte ENC_ADDR = 0x00;
-float cm_per_enc_pulse = 0.0;
 float saved_enc_value;
 
 // LCD Variables
@@ -135,7 +133,7 @@ int color_speed() {
     return (int) motor_max_speed * 0.35;
   } else if (color == "green") {
     return (int) motor_max_speed * 0.75;
-  } 
+  }
   return 0;
 }
 
@@ -146,9 +144,9 @@ void display_lcd(){
   if (millis() - prev_millis_lcd >= 500) {
     prev_millis_lcd = millis();
     lcd.clear();
-    
+
     lcd.setCursor(0,0);
-    lcd.print("Mode: "); lcd.print(joystick_mode ? "Joystick" : "ESP");
+    lcd.print("Ehh");
 
    // lcd.setCursor(0,1);
 //    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
@@ -156,9 +154,9 @@ void display_lcd(){
 
     lcd.setCursor(0,1);
     lcd.print("D: "); lcd.print(lidar_dist);
-    lcd.print(" | "); 
-    lcd.print(int(r)); lcd.print(" "); 
-    lcd.print(int(g)); lcd.print(" "); 
+    lcd.print(" | ");
+    lcd.print(int(r)); lcd.print(" ");
+    lcd.print(int(g)); lcd.print(" ");
     lcd.print(int(b));
 
     lcd.setCursor(0,2);
@@ -166,7 +164,7 @@ void display_lcd(){
     lcd.print(pulse_count_R);
     lcd.print(", L: ");
     lcd.print(pulse_count_L);
-    
+
     lcd.setCursor(0,3);
     lcd.print("P/cm: ");
     lcd.print(saved_enc_value, 4);
@@ -198,7 +196,7 @@ void get_commands_from_web() {
     } else if (message.startsWith("move")) {
       int delim = message.indexOf(":");
       int value = message.substring(delim + 1).toInt();
-      travel_distance(value, 255);
+      drive(value, Motor_forward);
     } else {
       Serial.println("Command not found: " + message);
     }
@@ -210,7 +208,7 @@ void send_info_to_web(){
   Serial2.println("COMP:" + String(current_degree));
   Serial2.println("RGB:" + color);
 
- 
+
   Serial2.print("ENC:");
   Serial2.println(saved_enc_value);
 }
@@ -269,7 +267,7 @@ int get_diff(int target) {
 void rotate_vehicle(int target_degree) {
   int proximity_tolerance = 2;        // Accepts +/- 2 from target_degree
   prev_error_check = 0;
-  
+
   // Initial distance to rotate
   int direction_difference = get_diff(target_degree);
 
@@ -287,12 +285,12 @@ void rotate_vehicle(int target_degree) {
     if (abs(direction_difference) <= proximity_tolerance) {
       break; //break early if good
     }
-    
+
     // Reduce rotation speed for last few degrees
     int rotation_speed = abs(direction_difference) > 10
       ? motor_max_speed
       : (int)motor_max_speed / 4;
-    
+
     // lidar_dist = get_lidar_distance(1);  // update lidar reading
     send_info_to_web();
     display_lcd();
@@ -312,11 +310,11 @@ void rotate_vehicle(int target_degree) {
       move_motor(Motor_backward, Motor_forward, rotation_speed, rotation_speed); // Move CCW
     }
   }
-  
+
   // Reattach interrupts for distance_travelled calculation
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
-  
+
   move_motor(0, 0, 0, 0); // Stop movement
   message = "Turn:" + String(target_degree); // Reset message
 }
@@ -331,7 +329,7 @@ bool is_turning_blocked() {
     prev_error_check = millis();
     prev_checked_degree = current_degree;
   }
-  
+
   // Checks progress every timeout
   if (millis() - prev_error_check >= error_timeout) {
     prev_error_check = millis();
@@ -351,10 +349,10 @@ void travel_distance(int distance, int motor_speed){
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
 
   while (distance_travelled <= abs(distance)) {
-    
+
     distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
     Serial.println(distance_travelled);
-    
+
     // Checks if path is blocked
     if (lidar_dist < 10 && distance > 0) {
       check_path_and_turn();
@@ -362,11 +360,11 @@ void travel_distance(int distance, int motor_speed){
 
     // Adjust speed based on lidar readings
     int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
-    
+
     // Breaks out if color detected
     if (color != "black") {
       break;
-    } 
+    }
 
     get_rgb_value();
     lidar_dist = get_lidar_distance(num_readings);
@@ -377,7 +375,7 @@ void travel_distance(int distance, int motor_speed){
   move_motor(0, 0, 0, 0);
 }
 
-void check_path_and_turn(){   
+void check_path_and_turn(){
   move_motor(0, 0, 0, 0);
   // Detach interrupts so encoders don't increase distance_travelled
   detachInterrupt(digitalPinToInterrupt(ENC_A_R));
@@ -391,7 +389,7 @@ void check_path_and_turn(){
       break;
     }
   }
-  
+
   // Reattach interrupts for distance_travelled calculation
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
@@ -437,6 +435,7 @@ void drive(int distance, byte dir) {
   reset_dist_variables();
   while (distance_travelled <= abs(distance)) {
     distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
+    Serial.println(distance_travelled);
     display_lcd();
     move_motor(dir, dir, motor_max_speed, motor_max_speed);
   }
@@ -444,26 +443,28 @@ void drive(int distance, byte dir) {
 }
 
 void cal_enc() {
-  rotate_vehicle(0);
+  //rotate_vehicle(0);
   reset_dist_variables();
-  
-  cm_per_enc_pulse = 0.0;
+
+  float cm_per_enc_pulse = 0.0;
   volatile int pulse_avg = 0;
   int start_lidar_dist = get_lidar_distance(20);
-  int curr_lidar_dist = 0;
+  int curr_lidar_dist = start_lidar_dist;
   const int distance_to_travel = 20;
-  
-  move_motor(Motor_forward, Motor_forward, 122, 122);
+  Serial.println("Start: " + String(start_lidar_dist));
+  move_motor(Motor_forward, Motor_forward, motor_max_speed, motor_max_speed);
   while(true) {
     curr_lidar_dist = get_lidar_distance(20);
-    pulse_avg = (pulse_count_L + pulse_count_R) / 2;
+    Serial.println(curr_lidar_dist);
     if (abs(start_lidar_dist - curr_lidar_dist) >= distance_to_travel) {
       //save to EEPROM
+      pulse_avg = (pulse_count_L + pulse_count_R) / 2;
       cm_per_enc_pulse = (float) distance_to_travel / pulse_avg;
-      EEPROM.put(ENC_ADDR, cm_per_enc_pulse);
+      Serial.println(cm_per_enc_pulse);
+      EEPROM.update(ENC_ADDR, cm_per_enc_pulse);
       break;
     }
-  } 
+  }
   EEPROM.get(ENC_ADDR, saved_enc_value);
   move_motor(0, 0, 0, 0);
 }
@@ -471,14 +472,14 @@ void cal_enc() {
 
 Position getStartingPosition() {
   Position pos = {0, 0};
-  
+
   rotate_vehicle(0); // turn to North
   pos.y = get_lidar_distance(20); // Set y position from lidar
   rotate_vehicle(90); // Turn to East
   pos.x = get_lidar_distance(20);// Set x position from lidar
-  
+
   rotate_vehicle(270); // Turn to West to begin maze traversal
-  
+
   return pos;
 }
 
@@ -501,15 +502,16 @@ void doMaze() {
     int dx = final_pos.x - current_pos.x; // Get x difference
     int dy = final_pos.y - current_pos.y; // Get y difference
 
-    // Goal has been reache: Stop
-    if (abs(dx) <= threshold && abs(dy) <= threshold) {
+    // Goal has been reached: Stop
+    if ((abs(dx) <= threshold && abs(dy) <= threshold)
+        || color == "yellow") {
       break;
     }
-    
+
     get_rgb_value(); // Get color from RGB sensor
     lidar_dist = get_lidar_distance(num_readings); // Get distance value from lidar
     current_degree = compass_logic(); // Get compass value
-    
+
     send_info_to_web(); // Send sensor values to webpage
 
     if (color == "red") {
@@ -554,7 +556,7 @@ void setup() {
   lidar.configure(0); //change to 1 for short range, high speed
 
   compass_offset = compass_logic(); // Get compass reading on start-up
-   EEPROM.get(ENC_ADDR, saved_enc_value);
+  EEPROM.get(ENC_ADDR, saved_enc_value);
 }
 
 /**
@@ -578,13 +580,13 @@ void setup() {
  *    -✓ Button to calibrate encoder
  * ❌ Finish maze function
  */
- 
+
 void loop(){
   get_rgb_value();
   display_lcd();
   current_degree = compass_logic();
   lidar_dist = get_lidar_distance(num_readings);
- 
+
   if (presses <= 3 && !calibrated) {
     if (Serial2.available() > 0) Serial2.readStringUntil("/n"); // Eats all commands
     cal_col();  // Store calibration color
