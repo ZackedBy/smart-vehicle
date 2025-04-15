@@ -343,33 +343,30 @@ bool is_turning_blocked() {
 }
 
 // Drives the vehicle from an input distance and speed
-void travel_distance(int distance, int motor_speed){
-  reset_dist_variables();
-  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
-  int var_speed = (int) motor_max_speed * 0.5;
-  while (distance_travelled <= abs(distance)) {
+//void travel_distance(int distance, int motor_speed){
+//  reset_dist_variables();
+//  byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
+//  int var_speed = (int) motor_max_speed * 0.5;
+//  while (distance_travelled <= abs(distance)) {
+//
+//    distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
+//    //Serial.println(distance_travelled);
+//
+//    // Checks if path is blocked
+//    if (lidar_dist < 10 && distance > 0) {
+//      check_path_and_turn();
+//    }
+//
+//    get_rgb_value();
+//    lidar_dist = get_lidar_distance(num_readings);
+//    send_info_to_web();
+//    display_lcd();
+//    move_motor(motor_direction, motor_direction, var_speed, var_speed);
+//  }
+//  move_motor(0, 0, 0, 0);
+//}
 
-    distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
-    //Serial.println(distance_travelled);
-
-    // Checks if path is blocked
-    if (lidar_dist < 10 && distance > 0) {
-      check_path_and_turn();
-    }
-
-    // Breaks out if color detected
-
-
-    get_rgb_value();
-    lidar_dist = get_lidar_distance(num_readings);
-    send_info_to_web();
-    display_lcd();
-    move_motor(motor_direction, motor_direction, var_speed, var_speed);
-  }
-  move_motor(0, 0, 0, 0);
-}
-
-void check_path_and_turn(){
+void check_path_and_turn(Position current){
   move_motor(0, 0, 0, 0);
   // Detach interrupts so encoders don't increase distance_travelled
   detachInterrupt(digitalPinToInterrupt(ENC_A_R));
@@ -380,9 +377,9 @@ void check_path_and_turn(){
     if (current_degree <= 180) {
       rotate_vehicle(270);
     } else if (current_degree > 180 && current_degree <= 270) {
-      rotate_vehicle(current_degree + 45);
+      rotate_vehicle(0);
     } else {
-      rotate_vehicle(current_degree - 45);
+      rotate_vehicle(180);
     }
 
     // If a path is clear after turning, restore initial distance values
@@ -436,7 +433,7 @@ void drive(int distance, byte dir) {
   reset_dist_variables();
   while (distance_travelled <= abs(distance)) {
     distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
-    Serial.println(distance_travelled);
+    //Serial.println(distance_travelled);
     display_lcd();
     move_motor(dir, dir, motor_max_speed, motor_max_speed);
   }
@@ -488,23 +485,20 @@ Position get_start_pos() {
   return pos;
 }
 
-int last_check_deg = 0;
-Position update_pos(Position curr, int left_pulse, int right_pulse, int deg) {
-  // Account for moving in same direction with threshold)
-  if (deg == last_check_deg) {
-    deg = 180;
-  }
+Position update_pos(Position start, Position curr, int left_pulse, int right_pulse, int deg) {
+
   float left_dist = left_pulse * saved_enc_value;
   float right_dist = right_pulse * saved_enc_value;
 
   float dist = (left_dist + right_dist) / 2;
-  float unit_circle = 90.0 - deg;
-  if (unit_circle < 0) unit_circle += 360;
 
-  float rad = unit_circle * (3.1416) / 180.0;
+  float theta = 450.0 - deg;
+  if (theta >= 360.0) theta -= 360.0;
 
-  curr.x += -1 * dist * cos(rad); // currently going minus?
-  curr.y += dist * sin(rad); // currently going too far by 10?
+  float rad = theta * (3.1416 / 180.0);
+
+  curr.x = (-1 * dist * cos(rad)) + start.x;
+  curr.y = (dist * sin(rad)) + start.y;
 
   return curr;
 }
@@ -529,15 +523,10 @@ void doMaze() {
   reset_dist_variables();
   
   while(true) {
-
     move_motor(Motor_forward, Motor_forward, var_speed, var_speed);
     
     current_degree = compass_logic(); // Get compass value
-    current_pos = update_pos(current_pos, pulse_count_L, pulse_count_R, current_degree);
-    //current_pos.x += start_pos.x;
-    //current_pos.y -= start_pos.y;
-    //current_pos.x = lidar_dist * sin((current_degree * 3.1416)/180);
-    //current_pos.x = lidar_dist * cos((current_degree * 3.1416)/180);
+    current_pos = update_pos(start_pos, current_pos, pulse_count_L, pulse_count_R, current_degree);
     
     float dx = final_pos.x - current_pos.x; // Get x difference
     float dy = final_pos.y - current_pos.y; // Get y difference
@@ -565,8 +554,12 @@ void doMaze() {
 
     if (color == "red") {
       drive(5, Motor_backward); // Reverse back from red-line
-      rotate_vehicle(current_degree - 45);
-      
+
+      if (current_pos.y > 60) {
+        rotate_vehicle(current_degree + 45);
+      } else {
+        rotate_vehicle(current_degree - 45);
+      }
       // ADD CHECK_PATH_AND_TURN HERE
 //       if (current_degree >= 270 || current_degree <= 90) {
 //         rotate_vehicle(current_degree - 45);
@@ -584,7 +577,7 @@ void doMaze() {
     lidar_dist = get_lidar_distance(num_readings); // Get distance value from lidar
 
     if (lidar_dist <= 10) {
-      check_path_and_turn();
+      check_path_and_turn(current_pos);
     }
     send_info_to_web(); // Send sensor values to webpage
   }
