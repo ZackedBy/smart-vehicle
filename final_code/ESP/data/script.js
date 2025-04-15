@@ -127,9 +127,9 @@ async function move() {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: `distance=${20}`
+      body: `distance=${10}`
     });
-    console.log(`Move: ${20}; `, response.status);
+    console.log(`Move: ${10}; `, response.status);
   } catch (error) {
     console.error("Error sending move command:", error);
   }
@@ -191,6 +191,14 @@ setInterval(fetchEspThenUpdate, 100);
 async function startCalibrate() {
   try {
     const response = fetch("/enc", { method: "GET" });
+  } catch (error) {
+    console.error("Huh?")
+  }
+}
+
+async function doMaze() {
+  try {
+    const response = fetch("/maze", { method: "GET" });
   } catch (error) {
     console.error("Huh?")
   }

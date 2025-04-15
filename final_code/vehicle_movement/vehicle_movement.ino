@@ -5,13 +5,12 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 #include <LIDARLite.h>
-//#include "lidar.h"
 #include "Adafruit_TCS34725.h"
 #include <EEPROM.h>
 
 // JoyStick Press Variables
 #define joy_key 18
-const int debounce_time = 50;
+const int debounce_time = 500;
 volatile unsigned long last_button_press_time = 0;
 
 // Motor Variables
@@ -33,12 +32,18 @@ const byte ENC_ADDR = 0x00;
 float saved_enc_value;
 
 // LCD Variables
-#define rs 32
-#define en 30
-#define d4 28
-#define d5 26
-#define d6 24
-#define d7 22
+//#define rs 32
+//#define en 30
+//#define d4 28
+//#define d5 26
+//#define d6 24
+//#define d7 22
+#define rs 43
+#define en 39
+#define d4 29
+#define d5 27
+#define d6 25
+#define d7 23
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 unsigned long prev_millis_lcd = 0;
 
@@ -64,8 +69,8 @@ String message; //whole message sent from website
 
 
 struct Position {
-  int x;
-  int y;
+  float x;
+  float y;
 };
 
 //==================================================================LiDAR Functions=============================================
@@ -108,7 +113,7 @@ void cal_col() {
   }
 }
 
-bool isColorMatch(Color target, int threshold = 30) {
+bool isColorMatch(Color target, int threshold = 15) {
   return (abs(int(r) - target.r) <= threshold) &&
          (abs(int(g) - target.g) <= threshold) &&
          (abs(int(b) - target.b) <= threshold);
@@ -123,19 +128,13 @@ void get_rgb_value() {
     color = "green";
   } else if (isColorMatch(calibratedColors[2])) {
     color = "blue";
+  } else if (isColorMatch(calibratedColors[3])) {
+    color = "white";
   } else {
     color = "black";
   }
 }
 
-int color_speed() {
-  if (color == "blue") {
-    return (int) motor_max_speed * 0.35;
-  } else if (color == "green") {
-    return (int) motor_max_speed * 0.75;
-  }
-  return 0;
-}
 
 //==================================================================LCD Specific Functions=============================================
 
@@ -146,7 +145,7 @@ void display_lcd(){
     lcd.clear();
 
     lcd.setCursor(0,0);
-    lcd.print("Ehh");
+    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
 
    // lcd.setCursor(0,1);
 //    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
@@ -189,7 +188,7 @@ void get_commands_from_web() {
     message.toLowerCase();
     Serial.println(message);
 
-    if (message.startsWith("go")) {
+    if (message.startsWith("maze")) {
       doMaze();
     } else if (message.startsWith("calibrate")) {
       cal_enc(); // DO THIS YES
@@ -347,24 +346,19 @@ bool is_turning_blocked() {
 void travel_distance(int distance, int motor_speed){
   reset_dist_variables();
   byte motor_direction = distance > 0 ? Motor_forward : Motor_backward;
-
+  int var_speed = (int) motor_max_speed * 0.5;
   while (distance_travelled <= abs(distance)) {
 
     distance_travelled = ((pulse_count_R + pulse_count_L) / 2) * saved_enc_value;
-    Serial.println(distance_travelled);
+    //Serial.println(distance_travelled);
 
     // Checks if path is blocked
     if (lidar_dist < 10 && distance > 0) {
       check_path_and_turn();
     }
 
-    // Adjust speed based on lidar readings
-    int var_speed = (lidar_dist >= 10 && lidar_dist < 30) ? (0.6 * motor_speed) : motor_speed;
-
     // Breaks out if color detected
-    if (color != "black") {
-      break;
-    }
+
 
     get_rgb_value();
     lidar_dist = get_lidar_distance(num_readings);
@@ -383,7 +377,14 @@ void check_path_and_turn(){
 
   //i = 0, i <= 360; i + 90
   for (int i = 0; i < 3; i++) {
-    rotate_vehicle(current_degree + 90);
+    if (current_degree <= 180) {
+      rotate_vehicle(270);
+    } else if (current_degree > 180 && current_degree <= 270) {
+      rotate_vehicle(current_degree + 45);
+    } else {
+      rotate_vehicle(current_degree - 45);
+    }
+
     // If a path is clear after turning, restore initial distance values
     if (get_lidar_distance(num_readings) >= 10) {
       break;
@@ -470,26 +471,53 @@ void cal_enc() {
 }
 
 
-Position getStartingPosition() {
+Position get_start_pos() {
   Position pos = {0, 0};
 
   rotate_vehicle(0); // turn to North
-  pos.y = get_lidar_distance(20); // Set y position from lidar
+  pos.y = get_lidar_distance(100); // Set y position from lidar
+  Serial.println("Y: " + String(pos.y));
+  //delay(500);
   rotate_vehicle(90); // Turn to East
-  pos.x = get_lidar_distance(20);// Set x position from lidar
+  pos.x = get_lidar_distance(100);// Set x position from lidar
+  Serial.println("X: " + String(pos.x));
+  //delay(500);
 
   rotate_vehicle(270); // Turn to West to begin maze traversal
 
   return pos;
 }
 
+int last_check_deg = 0;
+Position update_pos(Position curr, int left_pulse, int right_pulse, int deg) {
+  // Account for moving in same direction with threshold)
+  if (deg == last_check_deg) {
+    deg = 180;
+  }
+  float left_dist = left_pulse * saved_enc_value;
+  float right_dist = right_pulse * saved_enc_value;
+
+  float dist = (left_dist + right_dist) / 2;
+  float unit_circle = 90.0 - deg;
+  if (unit_circle < 0) unit_circle += 360;
+
+  float rad = unit_circle * (3.1416) / 180.0;
+
+  curr.x += -1 * dist * cos(rad); // currently going minus?
+  curr.y += dist * sin(rad); // currently going too far by 10?
+
+  return curr;
+}
+
 // Make top right origin (0,0)
 void doMaze() {
-  const int maze_length = 202; // Internal length (↔) of maze
+  
+  const int maze_length = 200; // Internal length (↔) of maze
   const int maze_width = 120; // Internal width (↕) of maze
 
-  Position final_pos = {100, 180}; // Update when known
-  Position current_pos = getStartingPosition();
+  Position final_pos = {100.0, 28.0}; // Update when known
+  Position start_pos = get_start_pos();
+  Position current_pos = start_pos;
 
   int start_speed = (int) motor_max_speed * 0.5;
   int blue_speed = (int) motor_max_speed * 0.35;
@@ -498,44 +526,76 @@ void doMaze() {
 
   const int threshold = 2; // allow for final position to be off by 2 cm
 
+  reset_dist_variables();
+  
   while(true) {
-    int dx = final_pos.x - current_pos.x; // Get x difference
-    int dy = final_pos.y - current_pos.y; // Get y difference
 
-    // Goal has been reached: Stop
-    if ((abs(dx) <= threshold && abs(dy) <= threshold)
-        || color == "yellow") {
+    move_motor(Motor_forward, Motor_forward, var_speed, var_speed);
+    
+    current_degree = compass_logic(); // Get compass value
+    current_pos = update_pos(current_pos, pulse_count_L, pulse_count_R, current_degree);
+    //current_pos.x += start_pos.x;
+    //current_pos.y -= start_pos.y;
+    //current_pos.x = lidar_dist * sin((current_degree * 3.1416)/180);
+    //current_pos.x = lidar_dist * cos((current_degree * 3.1416)/180);
+    
+    float dx = final_pos.x - current_pos.x; // Get x difference
+    float dy = final_pos.y - current_pos.y; // Get y difference
+    
+//    Serial.print("dx: ");
+//    Serial.print(dx);
+//    Serial.print("\tdy: ");
+//    Serial.print(dy);
+    Serial.print("\tx: ");
+    Serial.print(current_pos.x);
+    Serial.print("\ty: ");
+    Serial.print(current_pos.y);
+    Serial.print("\tR: ");
+    Serial.print(pulse_count_R);
+    Serial.print("\tL: ");
+    Serial.print(pulse_count_L);
+    Serial.print("\tD: ");
+    Serial.println(current_degree);
+
+    if (abs(dx) <= threshold && abs(dy) <= threshold) {
       break;
     }
-
+    
     get_rgb_value(); // Get color from RGB sensor
-    lidar_dist = get_lidar_distance(num_readings); // Get distance value from lidar
-    current_degree = compass_logic(); // Get compass value
-
-    send_info_to_web(); // Send sensor values to webpage
 
     if (color == "red") {
-      drive(1, Motor_backward); // Reverse back from red-line
-      if (current_degree >= 270 || current_degree <= 90) {
-        rotate_vehicle(current_degree - 45);
-      } else {
-        rotate_vehicle(current_degree + 45);
-      }
+      drive(5, Motor_backward); // Reverse back from red-line
+      rotate_vehicle(current_degree - 45);
+      
+      // ADD CHECK_PATH_AND_TURN HERE
+//       if (current_degree >= 270 || current_degree <= 90) {
+//         rotate_vehicle(current_degree - 45);
+//       } else {
+//         rotate_vehicle(current_degree + 45);
+//       }
     } else if (color == "blue") {
+      //drive(5, Motor_forward);
       var_speed = blue_speed;
     } else if (color == "green") {
       var_speed = green_speed;
     }
 
-    travel_distance(50, var_speed);
 
+    lidar_dist = get_lidar_distance(num_readings); // Get distance value from lidar
+
+    if (lidar_dist <= 10) {
+      check_path_and_turn();
+    }
+    send_info_to_web(); // Send sensor values to webpage
   }
   move_motor(0,0,0,0);
 }
 
 //===========================================================Entry========================================
 void setup() {
+//  pinMode(joy_key, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(joy_key), joystick_interrupt, FALLING);
+
   attachInterrupt(digitalPinToInterrupt(ENC_A_R), encoder_pulse_R, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_A_L), encoder_pulse_L, RISING);
 

@@ -61,7 +61,7 @@ void logout() {
 // Gets move command from webpage ("/forward?value=10", "backward?value=20", etc.)
 void getMoveCommand() {
   if (server.hasArg("distance")) {                  // Check if there is a "distance" argument in the request URL
-    String distance = server.arg("distance");    
+    String distance = server.arg("distance");
     Serial.println("Move:" + distance);             // Send command back to Arduino
     server.send(200);
     return;
@@ -82,6 +82,11 @@ void getCompassCommand() {
 
 void startCalibrate() {
   Serial.println("Calibrate");
+  server.send(200);
+}
+
+void doMaze() {
+  Serial.println("Maze");
   server.send(200);
 }
 
@@ -115,7 +120,7 @@ void setup() {
 
   // Connect to the Wi-Fi network using the provided SSID and password
   Serial.print("\nConnecting to " + (String)ssid);
-  
+
   WiFi.begin(ssid, password);               // Begin connecting to Wi-Fi
   while (WiFi.status() != WL_CONNECTED) {   // Wait in a loop until the connection is successful
     delay(500);
@@ -133,50 +138,48 @@ void setup() {
    * -----END CERTIFICATE-----
    * )EOF";
     */
-    
+
 //  BearSSL::X509List cert(SERVER_CERT);
 //  BearSSL::PrivateKey key(SERVER_PRIVATE_KEY);
 //  server.getServer().setRSACert(&cert, &key);
 //  server.client().setClientRSACert(&cert, &key);
 //  server.client().allowSelfSignedCerts();
-  
+
 //  server.getServer().setCache(&serverCache);
-  
-  server.serveStatic("/", SPIFFS, "/login.html");  
-//server.on("/", HTTP_GET, []() {
-//    server.send(200, "text/plain", "Hello from ESP8266!");
-//});
+
+  server.serveStatic("/", SPIFFS, "/login.html");
   server.on("/login", HTTP_POST, checkCredentials);
   server.on("/logout", HTTP_GET, logout);
   server.on("/index", HTTP_GET, serveIndex);
   server.serveStatic("/script.js", SPIFFS, "/script.js");
-  server.serveStatic("/style.css", 
-                      SPIFFS, 
+  server.serveStatic("/style.css",
+                      SPIFFS,
                       "/style.css",
-                      "max-age=86400, must-revalidate");   
-  // Cache images for quicker load   
-  server.serveStatic("/assets/logo.jpg", 
-                      SPIFFS, 
-                      "/assets/logo.jpg", 
                       "max-age=86400, must-revalidate");
-  server.serveStatic("/assets/favicon.ico", 
-                      SPIFFS, 
+  // Cache images for quicker load
+  server.serveStatic("/assets/logo.jpg",
+                      SPIFFS,
+                      "/assets/logo.jpg",
+                      "max-age=86400, must-revalidate");
+  server.serveStatic("/assets/favicon.ico",
+                      SPIFFS,
                       "/assets/favicon.png",
                       "max-age=86400, must-revalidate");
-  server.serveStatic("/assets/steering-wheel.svg", 
-                      SPIFFS, 
+  server.serveStatic("/assets/steering-wheel.svg",
+                      SPIFFS,
                       "/assets/steering-wheel.svg",
                       "max-age=86400, must-revalidate");
-  server.serveStatic("/assets/road.svg", 
-                      SPIFFS, 
+  server.serveStatic("/assets/road.svg",
+                      SPIFFS,
                       "/assets/road.svg",
                       "max-age=86400, must-revalidate");
-  
+
   // Receiving commands from webpage
   server.on("/move", HTTP_POST, getMoveCommand);
   server.on("/compass", HTTP_POST, getCompassCommand);
   server.on("/enc", HTTP_GET, startCalibrate);
-  
+  server.on("/maze", HTTP_GET, doMaze);
+
   // Sending info to webpage
   server.on("/getData", HTTP_GET, sendAllData);
 
@@ -189,7 +192,7 @@ void setup() {
 
 void loop() {
   server.handleClient();  // Listen for incoming HTTP requests and respond to them
- 
+
   // Check if data is available from the Arduino Mega
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n');
