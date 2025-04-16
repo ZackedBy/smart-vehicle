@@ -1,14 +1,8 @@
 #include <ESP8266WiFi.h>        // Library for Wi-Fi functionality
 #include <ESP8266WebServerSecure.h>   // Library to create and manage a web server
 #include <FS.h>                 // Library for working with file systems (FS)
-//#include <LittleFS.h>           // Library for faster loading
 #include <ArduinoJson.h>        // Library for safe JSON formatting
 #include "HiddenInfo.h"         // Holds self-signed certs & Wifi settings
-
-//#define CACHE_SIZE 5
-//ServerSession store[CACHE_SIZE];
-//BearSSL::ServerSessions serverCache(store, CACHE_SIZE);
-//ESP8266WebServerSecure server(443);
 
 const char* ssid = WIFI_NAME;           // Wi-Fi network name (SSID)
 const char* password = WIFI_PASS;       // Wi-Fi network password
@@ -18,13 +12,12 @@ const char* auth_pass = AUTH_PASS;      // Authentication password
 
 bool isAuthenticated = false;
 
-String lidarData = "0 cm";              // Variable to store LIDAR data
-String compassData = "0";
+String lidarData = "0 cm";
+String compassData = "0";       
 String color = "black";
-String enc_val = "0";
+String encVal = "0";
 
 ESP8266WebServer server(80);    // Create an instance of the WebServer on port 80 (default HTTP port)
-
 
 void checkCredentials() {
   if (server.hasArg("username") && server.hasArg("password")) {
@@ -96,7 +89,7 @@ void sendAllData() {
   doc["compass"] = compassData;
   doc["lidar"] = lidarData;
   doc["color"] = color;
-  doc["enc"] = enc_val;
+  doc["enc"] = encVal;
 
   String jsonData;
   serializeJson(doc, jsonData);
@@ -127,25 +120,6 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("\nIP: " + WiFi.localIP().toString()); // Print the IP address of the ESP8266 when connected
-
-  /**
-   * Load SSL certificate and private key
-   * Dump contents of below key/cert into respective varaibles.
-   * openssl req -x509 -newkey rsa:4096 -keyout esp_key.pem -out esp_cert.pem -sha256 -days 365 -nodes
-   * Format like so: const char SERVER_CERT[] PROGMEM = R"EOF(
-   * -----BEGIN CERTIFICATE-----
-   * .......
-   * -----END CERTIFICATE-----
-   * )EOF";
-    */
-
-//  BearSSL::X509List cert(SERVER_CERT);
-//  BearSSL::PrivateKey key(SERVER_PRIVATE_KEY);
-//  server.getServer().setRSACert(&cert, &key);
-//  server.client().setClientRSACert(&cert, &key);
-//  server.client().allowSelfSignedCerts();
-
-//  server.getServer().setCache(&serverCache);
 
   server.serveStatic("/", SPIFFS, "/login.html");
   server.on("/login", HTTP_POST, checkCredentials);
@@ -203,7 +177,7 @@ void loop() {
     } else if (data.startsWith("RGB:")) {
       color = data.substring(4);
     } else if (data.startsWith("ENC:")) {
-      enc_val = data.substring(4);
+      encVal   = data.substring(4);
     } else {
       Serial.println("Command not found:" + String(data));
     }

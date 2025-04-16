@@ -93,17 +93,13 @@ h1 {
   background: rgb(0, 0, 255);
 }
 
+.button-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 @media (orientation: landscape) and (max-width: 1024px) {
-  .container {
-    width: 100%;
-    flex-direction: row-reverse;
-    max-width: 100%;
-  }
-  .controls {
-    flex-direction: column !important;
-    width: 50%;
-  }
   #logout-button {
     top: 5px;
     left: 5px;

@@ -12,9 +12,15 @@
 	<body>
 		<button class="button" id="logout-button" onclick="logout()">Logout</button>
 		<div class="container center-flex">
-			<button class="button" id="maze-button" onclick="doMaze()">
-				GO
-			</button>
+			<div class="button-container">
+				<button class="button" id="maze-button" onclick="doMaze()">
+					GO
+				</button>
+				<button class="button" id="calibrate-button" onclick="startCalibrate()">
+					Calibrate encoder
+				</button>
+			</div>
+
 			<div class="container center-flex controls">
 				<div class="center-flex wood" style="justify-content: space-evenly;">
 
@@ -44,10 +50,7 @@
 					</div>
 
 				</div>
-				<button onclick="move()">test </button>
-				<button class="button" id="calibrate-button" onclick="startCalibrate()">
-					Calibrate encoder
-				</button>
+
 
 			</div>
 
