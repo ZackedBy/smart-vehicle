@@ -23,17 +23,10 @@ const int motor_max_speed = 255;
 #define ENC_B_R 11
 #define ENC_B_L 12
 volatile int pulse_count_R = 0, pulse_count_L = 0;
-float distance_travelled = 0; // average distance travelled of both motors
 const byte ENC_ADDR = 0x00;
 float saved_enc_value;
 
 // LCD Variables
-//#define rs 32
-//#define en 30
-//#define d4 28
-//#define d5 26
-//#define d6 24
-//#define d7 22
 #define rs 43
 #define en 39
 #define d4 29
@@ -45,8 +38,8 @@ unsigned long prev_millis_lcd = 0;
 
 // Compass Variables
 const uint8_t CMPS14_address = 0x60;
-int current_degree = 0, target_degreeree = 0, last_used_degree = 0, prev_checked_degree = 0;
-int direction_difference, compass_offset;
+int current_degree = 0, prev_checked_degree = 0;
+int compass_offset;
 unsigned long prev_error_check = 0;
 
 // LiDAR Variables
@@ -58,14 +51,12 @@ const int num_readings = 20;  // X amount of readings
 Adafruit_TCS34725 rgb_sens = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_4X);
 float r, g, b;
 String color = "black";
-
 struct Color {
   int r,g,b;
   String toString() {
     return "R: " + String(r) + ", G: " + String(g) + ", B: " + String(b);
   }
 };
-
 Color calibratedColors[3];
 volatile int presses = 0;
 volatile boolean calibrated = true;
@@ -76,7 +67,7 @@ String message; //whole message sent from website
 
 //==================================================================LiDAR Functions=============================================
 
-// TO-DO: Change for loop to boolean and counter
+// Reads the distance from Lidar
 int get_lidar_distance(int readings) {
   int lidar_dist_sum = 0;
   for (int i = 0; i < readings; i++) {
@@ -92,6 +83,7 @@ int get_lidar_distance(int readings) {
 
 //========================================================================RGB Functions================================================
 
+// Enables user to calibrate the RGB sensor
 void cal_col() {
   rgb_sens.getRGB(&r, &g, &b);
   if (presses >= 1 && presses <= NUM_COLORS) {
@@ -104,43 +96,14 @@ void cal_col() {
   }
 }
 
+// Checks stored values against colors calibrated with threshold
 bool isColorMatch(Color target, int threshold = 10) {
   return (abs(int(r) - target.r) <= threshold) &&
          (abs(int(g) - target.g) <= threshold) &&
          (abs(int(b) - target.b) <= threshold);
 }
 
-//void Adafruit_TCS34725::getRawData(uint16_t *r, uint16_t *g, uint16_t *b,
-//                                   uint16_t *c) {
-//  if (!_tcs34725Initialised)
-//    begin();
-//
-//  *c = read16(TCS34725_CDATAL);
-//  *r = read16(TCS34725_RDATAL);
-//  *g = read16(TCS34725_GDATAL);
-//  *b = read16(TCS34725_BDATAL);
-//
-//  /* Set a delay for the integration time */
-//  /* 12/5 = 2.4, add 1 to account for integer truncation */
-//  delay((256 - _tcs34725IntegrationTime) * 12 / 5 + 1);
-//}
-
-//void Adafruit_TCS34725::getRGB(float *r, float *g, float *b) {
-//  uint16_t red, green, blue, clear;
-//  getRawData(&red, &green, &blue, &clear);
-//  uint32_t sum = clear;
-//
-//  // Avoid divide by zero errors ... if clear = 0 return black
-//  if (clear == 0) {
-//    *r = *g = *b = 0;
-//    return;
-//  }
-//
-//  *r = (float)red / sum * 255.0;
-//  *g = (float)green / sum * 255.0;
-//  *b = (float)blue / sum * 255.0;
-//}
-
+// Gets each color value in range of 0-255 and then assigns color based on them
 void get_rgb_value() {
   rgb_sens.getRGB(&r, &g, &b);
   color = "black";
@@ -150,83 +113,12 @@ void get_rgb_value() {
     color = "green";
   } else if (isColorMatch(calibratedColors[2])) {
     color = "blue";
-  } 
-//  else if (isColorMatch(calibratedColors[3])) {
-//    color = "white";
-//  } 
-  else {
+  } else {
     color = "black";
   }
 }
 
 
-//==================================================================LCD Specific Functions=============================================
-
-// Displays and refreshes LCD with non-disruptive delay
-void display_lcd(){
-  if (millis() - prev_millis_lcd >= 500) {
-    prev_millis_lcd = millis();
-    lcd.clear();
-
-    lcd.setCursor(0,0);
-    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
-
-    lcd.setCursor(0,1);
-    lcd.print("D: "); lcd.print(lidar_dist);
-    lcd.print(" | ");
-    lcd.print(int(r)); lcd.print(" ");
-    lcd.print(int(g)); lcd.print(" ");
-    lcd.print(int(b));
-
-    lcd.setCursor(0,2);
-    lcd.print("R: ");
-    lcd.print(pulse_count_R);
-    lcd.print(", L: ");
-    lcd.print(pulse_count_L);
-
-    lcd.setCursor(0,3);
-    lcd.print("mm/p: ");
-    lcd.print(saved_enc_value, 4);
-  }
-}
-
-// Converts current direction to cardinal point
-String get_direction(int heading) {
-    const String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
-    return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
-}
-
-//========================================================================Website Functions========================================================
-
-// Controls vehicle with serial inputs
-// Available commands: dist, drive, move; deg, turn
-void get_commands_from_web() {
-  if(Serial2.available() > 0) {
-
-    message = Serial2.readStringUntil('\n');
-    message.trim();
-    message.toLowerCase();
-    Serial.println(message);
-
-    if (message.startsWith("maze")) {
-      doMaze();
-    } else if (message.startsWith("calibrate")) {
-      cal_enc(); // DO THIS YES
-    } else if (message.startsWith("move")) {
-      int delim = message.indexOf(":");
-      int value = message.substring(delim + 1).toInt();
-      drive(value, Motor_forward);
-    } else {
-      Serial.println("Command not found: " + message);
-    }
-  }
-}
-
-void send_info_to_web(){
-  Serial2.println("LIDAR:" + String(lidar_dist));
-  Serial2.println("COMP:" + String(current_degree));
-  Serial2.println("RGB:" + color);
-}
 //========================================================================Compass Functions========================================================
 
 // Sets starting direction as 0 degrees and updates degree value if turning
@@ -254,6 +146,103 @@ int compass_logic() {
   }
   return 0;
 }
+
+
+//==================================================================LCD Specific Functions=============================================
+
+// Displays and refreshes LCD with non-disruptive delay
+void display_lcd(){
+  if (millis() - prev_millis_lcd >= 500) {
+    prev_millis_lcd = millis();
+    lcd.clear();
+
+    lcd.setCursor(0,0);
+    lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
+    lcd.print("| Lidar: "); lcd.print(lidar_dist);
+    
+    
+    lcd.setCursor(0,1);
+    lcd.print(color);
+    lcd.print(" | ");
+    lcd.print(int(r)); lcd.print(" ");
+    lcd.print(int(g)); lcd.print(" ");
+    lcd.print(int(b));
+
+    lcd.setCursor(0,2);
+    lcd.print("8==================D");
+
+    lcd.setCursor(0,3);
+    lcd.print("mm/p: ");
+    lcd.print(saved_enc_value, 4);
+  }
+}
+
+// Converts current direction to cardinal point
+String get_direction(int heading) {
+    const String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+    return directions[((heading + 23) % 360) / 45]; // Map to nearest direction
+}
+
+//========================================================================Website Functions========================================================
+
+// Controls vehicle with serial inputs
+
+void get_commands_from_web() {
+  if(Serial2.available() > 0) {
+
+    message = Serial2.readStringUntil('\n');
+    message.trim();
+    message.toLowerCase();
+    Serial.println(message);
+
+    if (message.startsWith("maze")) {
+      doMaze();
+    } else if (message.startsWith("calibrate")) {
+      cal_enc();
+    } else {
+      Serial.println("Command not found: " + message);
+    }
+  }
+}
+
+// Sends necessary data to ESP
+void send_info_to_ESP(){
+  Serial2.println("LIDAR:" + String(lidar_dist));
+  Serial2.println("COMP:" + String(current_degree));
+  Serial2.println("RGB:" + color);
+}
+
+// Calibrates the encoder
+void cal_enc() {
+  //rotate_vehicle(0);
+  reset_dist_variables();
+
+  //float cm_per_enc_pulse = 0.0;
+  volatile int pulse_avg = 0;
+  int start_lidar_dist = get_lidar_distance(20);
+  int curr_lidar_dist = start_lidar_dist;
+  const int distance_to_travel = 20;
+  Serial.println("Start: " + String(start_lidar_dist));
+  move_motor(Motor_forward, Motor_forward, 122, 122);
+  while(true) {
+    curr_lidar_dist = get_lidar_distance(5);
+    Serial.println("Curry dist: " + String(curr_lidar_dist));
+    if (abs(start_lidar_dist - curr_lidar_dist) >= distance_to_travel) {
+      //save to EEPROM
+      pulse_avg = (pulse_count_L + pulse_count_R) / 2;
+      Serial.println("Pulse avg: " + String(pulse_avg));
+      saved_enc_value = (float(distance_to_travel) / pulse_avg) * 100;
+      Serial.print("MM PERRY PULSY: ");
+      Serial.println(saved_enc_value, 4);
+      EEPROM.put(ENC_ADDR, saved_enc_value);
+      break;
+    }
+  }
+  EEPROM.get(ENC_ADDR, saved_enc_value);
+  Serial2.println("ENC:" + String(saved_enc_value));
+  move_motor(0, 0, 0, 0);
+}
+
 
 //==================================================================Motor Movement Functions========================================
 
@@ -303,16 +292,8 @@ void rotate_vehicle(int target_degree) {
       : (int)motor_max_speed / 4;
 
     // lidar_dist = get_lidar_distance(1);  // update lidar reading
-    send_info_to_web();
+    send_info_to_ESP();
     display_lcd();
-
-//    // Check if turning is blocked
-//    if (is_turning_blocked()) {
-//      //drives without checking lidar
-//      drive(10, Motor_backward);
-//      //updates error so as not to trigger is_turning_blocked
-//      prev_error_check = millis();
-//    }
 
     // Rotate vehicle in the new direction
     if (rotating_clockwise) {
@@ -326,31 +307,7 @@ void rotate_vehicle(int target_degree) {
   message = "Turn:" + String(target_degree); // Reset message
 }
 
-
-bool is_turning_blocked() {
-  const unsigned long error_timeout = 500; // 500ms timeout
-  const int degree_threshold = 2;
-
-  // Store initial degree to compare later
-  if (prev_error_check == 0) {
-    prev_error_check = millis();
-    prev_checked_degree = current_degree;
-  }
-
-  // Checks progress every timeout
-  if (millis() - prev_error_check >= error_timeout) {
-    prev_error_check = millis();
-    if (abs(current_degree - prev_checked_degree) <= degree_threshold ) {
-      // No progress detected -> blockage
-      return true;
-    } else {
-      prev_checked_degree = current_degree;
-    }
-  }
-  return false;
-}
-
-
+// Activates if lidar detects blockage
 boolean check_path_and_turn(){
   move_motor(0, 0, 0, 0);
 
@@ -358,7 +315,7 @@ boolean check_path_and_turn(){
   int w = get_lidar_distance(num_readings);
   Serial.print("W: ");
   Serial.print(w);
-  rotate_vehicle(0);
+  rotate_vehicle(0); // change to 180 if end point is in south
   int n = get_lidar_distance(num_readings);
   Serial.print("\tN: ");
   Serial.println(n);
@@ -413,39 +370,9 @@ void joystick_interrupt() {
 void reset_dist_variables() {
   pulse_count_R = 0;
   pulse_count_L = 0;
-  distance_travelled = 0;
 }
 
-void cal_enc() {
-  //rotate_vehicle(0);
-  reset_dist_variables();
-
-  //float cm_per_enc_pulse = 0.0;
-  volatile int pulse_avg = 0;
-  int start_lidar_dist = get_lidar_distance(20);
-  int curr_lidar_dist = start_lidar_dist;
-  const int distance_to_travel = 20;
-  Serial.println("Start: " + String(start_lidar_dist));
-  move_motor(Motor_forward, Motor_forward, 122, 122);
-  while(true) {
-    curr_lidar_dist = get_lidar_distance(5);
-    Serial.println("Curry dist: " + String(curr_lidar_dist));
-    if (abs(start_lidar_dist - curr_lidar_dist) >= distance_to_travel) {
-      //save to EEPROM
-      pulse_avg = (pulse_count_L + pulse_count_R) / 2;
-      Serial.println("Pulse avg: " + String(pulse_avg));
-      saved_enc_value = (float(distance_to_travel) / pulse_avg) * 100;
-      Serial.print("MM PERRY PULSY: ");
-      Serial.println(saved_enc_value, 4);
-      EEPROM.put(ENC_ADDR, saved_enc_value);
-      break;
-    }
-  }
-  EEPROM.get(ENC_ADDR, saved_enc_value);
-  Serial2.println("ENC:" + String(saved_enc_value));
-  move_motor(0, 0, 0, 0);
-}
-
+// Have a guess ya dope xoxo ;)
 void doMaze() {
   int start_speed = (int) motor_max_speed * 0.5;
   int blue_speed = (int) motor_max_speed * 0.35;
@@ -494,7 +421,7 @@ void doMaze() {
       if (finish) break;
     } 
     display_lcd();
-    send_info_to_web(); // Send sensor values to webpage
+    send_info_to_ESP(); // Send sensor values to webpage
   }
   move_motor(0,0,0,0);
 }
@@ -525,28 +452,6 @@ void setup() {
   Serial2.println("ENC:" + String(saved_enc_value));
 }
 
-/**
- * TO-DO:
- * ❌ Create maze function
- *    -✓ Start speed at 50% (if not r,g,b: var_speed  = motor_max_speed * 0.5)
- *    -✓ b: var_speed = motor_max_speed * 0.35
- *    -✓ g: var_speed = motor_max_speed * 0.75
- *    -✓ r: avoid (reverse 1cm -> rotate +- 90?)
- * ✓ Compass calibration at startup
- * ✓ Color calibration done with joystick button
- * ✓ Encoder calibration done from site
- * ✓ Use enc calibration in travel functions
- * ✓ Update webpage to only include:
- *    -✓ Security (login)
- *    -✓ Button "Go" to trigger maze start
- *    -✓ LiDar data
- *    -✓ Compass data
- *    -✓ Color data
- *    -✓ Encoder data (mm/pulse)
- *    -✓ Button to calibrate encoder
- * ❌ Finish maze function
- */
-
 void loop(){
   get_rgb_value();
   display_lcd();
@@ -562,5 +467,5 @@ void loop(){
     presses = 0;
   }
 
-  send_info_to_web();
+  send_info_to_ESP();
 }
