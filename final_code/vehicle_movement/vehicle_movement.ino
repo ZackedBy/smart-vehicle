@@ -159,8 +159,8 @@ void display_lcd(){
     lcd.setCursor(0,0);
     lcd.print(get_direction(current_degree)); lcd.print(": "); lcd.print(current_degree);
     lcd.print("| Lidar: "); lcd.print(lidar_dist);
-    
-    
+
+
     lcd.setCursor(0,1);
     lcd.print(color);
     lcd.print(" | ");
@@ -214,16 +214,15 @@ void send_info_to_ESP(){
 
 // Calibrates the encoder
 void cal_enc() {
-  //rotate_vehicle(0);
   reset_dist_variables();
 
-  //float cm_per_enc_pulse = 0.0;
   volatile int pulse_avg = 0;
   int start_lidar_dist = get_lidar_distance(20);
   int curr_lidar_dist = start_lidar_dist;
   const int distance_to_travel = 20;
+
   Serial.println("Start: " + String(start_lidar_dist));
-  move_motor(Motor_forward, Motor_forward, 122, 122);
+  move_motor(Motor_forward, Motor_forward, 255, 255);
   while(true) {
     curr_lidar_dist = get_lidar_distance(5);
     Serial.println("Curry dist: " + String(curr_lidar_dist));
@@ -239,7 +238,7 @@ void cal_enc() {
     }
   }
   EEPROM.get(ENC_ADDR, saved_enc_value);
-  Serial2.println("ENC:" + String(saved_enc_value));
+  Serial2.println("ENC:" + String(saved_enc_value)); // Sends data to ESP
   move_motor(0, 0, 0, 0);
 }
 
@@ -311,24 +310,45 @@ void rotate_vehicle(int target_degree) {
 boolean check_path_and_turn(){
   move_motor(0, 0, 0, 0);
 
+  int lim = 20;
+  boolean finish = false;
+  // int s=0, w=0, n=0;
+  // const int n_pos = 18, w_pos = 26, s_pos = 100;
+  // if (current_degree < 270) {
+  //   rotate_vehicle(180); s = get_lidar_distance(num_readings);
+  //   rotate_vehicle(270); w = get_lidar_distance(num_readings);
+  //   rotate_vehicle(0); n = get_lidar_distance(num_readings);
+  // } else {
+  //   rotate_vehicle(0); n = get_lidar_distance(num_readings);
+  //   rotate_vehicle(270); w = get_lidar_distance(num_readings);
+  //   rotate_vehicle(180); s = get_lidar_distance(num_readings);
+  // }
+
   rotate_vehicle(270);
   int w = get_lidar_distance(num_readings);
-  Serial.print("W: ");
+  Serial.print("\tW: ");
   Serial.print(w);
   rotate_vehicle(0); // change to 180 if end point is in south
   int n = get_lidar_distance(num_readings);
   Serial.print("\tN: ");
   Serial.println(n);
-  int lim = 20;
 
-  boolean finish = false;
-  
   if (w < lim && n > lim) rotate_vehicle(0);
   else if (w < lim && n < lim) {
         rotate_vehicle(90);
         drive(10, Motor_forward);
-        finish = true;    
-  } else rotate_vehicle(270); 
+        finish = true;
+  } else rotate_vehicle(270);
+
+  // if (n <= n_pos && s >= s_pos && w <= w_pos) {
+  //   rotate_vehicle(90);
+  //   drive(10, Motor_forward);
+  //   return true;
+  // }
+  // else if (w < lim) rotate_vehicle((s < lim && n > lim) ? 0 : 180);
+  // else if (n < lim) rotate_vehicle((s < lim) ? 270 : 0);
+  // else rotate_vehicle((w < lim) ? 0 : 270);
+  // return false;
 
   return finish;
 }
@@ -372,16 +392,44 @@ void reset_dist_variables() {
   pulse_count_L = 0;
 }
 
+// void handleRed() {
+//   if (current_degree < 180) {
+//     rotate_vehicle(270);
+//   } else {
+//     int nw = 0, sw = 0;
+//     bool first_nw = current_degree > 270;
+
+//     // Determine scan order based on current heading
+//     int first_angle = first_nw ? 315 : 225;
+//     int second_angle = first_nw ? 225 : 315;
+
+//     rotate_vehicle(first_angle);
+//     int first_dist = get_lidar_distance(num_readings);
+
+//     rotate_vehicle(second_angle);
+//     int second_dist = get_lidar_distance(num_readings);
+
+//     nw = first_nw ? first_dist : second_dist;
+//     sw = first_nw ? second_dist : first_dist;
+
+//     // Decide direction based on better distance
+//     int turn_direction = (nw > sw) ? 0 : 90;
+//     rotate_vehicle(turn_direction);
+//     drive(5, Motor_forward);
+//     rotate_vehicle(270);
+//   }
+// }
+
 // Have a guess ya dope xoxo ;)
 void doMaze() {
-  int start_speed = (int) motor_max_speed * 0.5;
-  int blue_speed = (int) motor_max_speed * 0.35;
-  int green_speed = (int) motor_max_speed * 0.75;
+  const int start_speed = (int) motor_max_speed * 0.5;
+  const int blue_speed = (int) motor_max_speed * 0.35;
+  const int green_speed = (int) motor_max_speed * 0.75;
   int var_speed = start_speed;
 
   reset_dist_variables();
   rotate_vehicle(270);
-  
+
   while(true) {
     move_motor(Motor_forward, Motor_forward, var_speed, var_speed);
     current_degree = compass_logic(); // Get compass value
@@ -389,21 +437,27 @@ void doMaze() {
     Serial.print(current_degree);
     Serial.print("\tLidar: ");
     Serial.println(lidar_dist);
-    
+
     get_rgb_value(); // Get color from RGB sensor
-  
+
     if (color == "red") {
       drive(8, Motor_backward); // Reverse back from red-line
       Serial.println("Rotating on red");
+      //handleRed();
       if (current_degree < 180) {
         rotate_vehicle(270);
       } else {
-         rotate_vehicle(315);
-         int nw = get_lidar_distance(num_readings);
-         rotate_vehicle(225);
-         int sw = get_lidar_distance(num_readings);
-         if (nw > sw) rotate_vehicle(325);
-         else rotate_vehicle(215);
+
+        rotate_vehicle(315);
+        int nw = get_lidar_distance(num_readings);
+        rotate_vehicle(225);
+        int sw = get_lidar_distance(num_readings);
+        if (nw > sw) {
+          rotate_vehicle(325);
+        }
+        else {
+          rotate_vehicle(215);
+        }
       }
 
     } else if (color == "blue") {
@@ -419,7 +473,7 @@ void doMaze() {
       Serial.println("Rotating on LIDAR");
       bool finish = check_path_and_turn();
       if (finish) break;
-    } 
+    }
     display_lcd();
     send_info_to_ESP(); // Send sensor values to webpage
   }
