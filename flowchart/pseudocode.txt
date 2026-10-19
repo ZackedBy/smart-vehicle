@@ -1,34 +1,15 @@
-BEGIN
+loop:
+  poll compass, RGB, and LIDAR
+  if a UART line arrived, parse one command: maze, calibrate, stop, turn:<deg>, move:<cm>
+  advance the current motion by one step
+  refresh the LCD and send LIDAR, COMP, RGB, ENC
 
-CarInESPMode = True
+turn:
+  choose the short direction once
+  stop on +/- 2 degrees, on 8 s, or if the heading does not change for 1.5 s
+  a missing compass aborts the turn
 
-WHILE CarInESPMode:
-
-    IF TURN_Command_Given:
-        IF Object_Blocking_Turn:
-            Attempt_Turn_Opposite_Direction()
-            IF Can_Complete_Turn:
-                Complete_Turn()
-		Stop()
-            ELSE:
-                Stop()
-        ELSE:
-            Complete_Turn()
-	    Stop()
-
-    IF MOVE_Command_Given:
-        IF Object_Distance < 10cm:
-            Display_Warning_Webpage()
-            Car_Stops_And_Turns_90_Degrees()
-            IF Path_Blocked:
-                Stop()
-            ELSE:
-                Car_Drives_Until_Given_Distance()
-        ELSE IF Object_Distance BETWEEN 10cm AND 30cm:
-            Car_Drives_At_30_Percent_Speed()
-        ELSE:
-            Car_Drives_At_Full_Speed()
-        
-	Car_Drives_Until_Given_Distance()
-
-END
+encoder calibration:
+  drive until LIDAR changes by 20 cm, or 15 s
+  mm/pulse = (20 / average pulses) * 100
+  zero pulses are not written to EEPROM

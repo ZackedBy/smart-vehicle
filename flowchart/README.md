@@ -1,11 +1,5 @@
-# **_NB_: Deadline is _18/02/2025_ for FlowChart + PseudoCode**
+# Control flow
 
-## Flowchart
-To work on the flowcahrt:
+`flowchart.png` is the lab planning sketch. The program that runs on the vehicle is `firmware/mega`.
 
-- Download the file: [flowchart_wip.drawio](https://github.com/YaKnee/embedded-jit/tree/main/flowchart/flowchart_wip.drawio),
-- Open it in: [draw.io](https://app.diagrams.net),
-- BadaBingBadaBoom
-
-## PseudoCode
-Thing does thing which does thing which affects thing by doing thing
+`loop()` reads the compass, the RGB sensor, and the LIDAR, takes one UART line, then advances a single motion: idle, turn, timed drive, distance drive, encoder calibration, or maze. A turn stops when the heading is inside tolerance, when the vehicle stops making progress, or when the turn times out. A failed compass read is not treated as north.

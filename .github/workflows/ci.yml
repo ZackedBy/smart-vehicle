@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: make -C tests test
+
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install PlatformIO
+        run: pip install platformio
+      - name: Compile Mega firmware
+        run: pio run -d firmware/mega
+      - name: Compile ESP8266 firmware
+        run: |
+          cp firmware/esp8266/include/secrets.example.h firmware/esp8266/include/secrets.h
+          pio run -d firmware/esp8266

@@ -1,0 +1,11 @@
+{
+  "name": "vehicle_core",
+  "version": "1.0.0",
+  "description": "Host-testable Smart Vehicle logic shared by the Mega and ESP8266 firmware.",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "includeDir": "include",
+    "srcDir": "src"
+  }
+}

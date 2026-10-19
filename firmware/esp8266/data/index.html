@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Vehicle</title>
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <button class="button" id="logout-button" type="button">Logout</button>
+  <div class="container center-flex">
+    <div class="button-container">
+      <button class="button" id="maze-button" type="button">Go</button>
+      <button class="button" id="stop-button" type="button">Stop</button>
+      <div class="drive-row">
+        <label for="distance-input">cm</label>
+        <input id="distance-input" type="number" min="1" max="500" value="20">
+        <button class="button" id="move-button" type="button">Drive</button>
+      </div>
+      <button class="button" id="calibrate-button" type="button">Calibrate encoder</button>
+    </div>
+
+    <p id="hint">Calibrate color with the joystick button: red, then green, then blue.</p>
+    <p id="status"></p>
+
+    <div class="container center-flex controls">
+      <div class="center-flex wood">
+        <div class="center-flex gauge-border">
+          <div class="gauge" id="color-swatch"></div>
+        </div>
+        <div class="center-flex gauge-border">
+          <div class="center-flex gauge">
+            <p id="enc-val">--</p>
+          </div>
+        </div>
+        <div class="center-flex gauge-border">
+          <div class="center-flex gauge" id="compass-value">
+            <span id="compass-text">--</span>
+            <form id="compass-form">
+              <input type="number" id="compass-input" min="0" max="360" value="0">
+            </form>
+          </div>
+        </div>
+        <div class="center-flex gauge-border">
+          <div class="center-flex gauge">
+            <span id="lidar-val">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

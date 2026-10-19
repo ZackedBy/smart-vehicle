@@ -1,2 +1,9 @@
 *.pem
 HiddenInfo.h
+firmware/esp8266/include/secrets.h
+**/.pio/
+.pioenvs/
+.piolibdeps/
+build/
+.DS_Store
+tests/test_vehicle_core

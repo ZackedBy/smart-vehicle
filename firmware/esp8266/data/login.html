@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/favicon.ico">
+  <title>Smart Vehicle</title>
+  <style>
+    html, body {
+      font-family: Helvetica, Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      background: rgb(30, 24, 18);
+      color: white;
+    }
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    img { width: min(400px, 90vw); height: auto; }
+    form { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    input { border-radius: 10px; padding: 8px; }
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      color: white;
+      background: #BBA56B;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .error { color: #ff6b6b; font-weight: bold; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="assets/logo.jpg" alt="Smart Vehicle">
+    <form id="login-form">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Login</button>
+      <div id="error-message" class="error">Invalid username or password.</div>
+    </form>
+  </div>
+  <script>
+    const form = document.getElementById("login-form");
+    const errorMessage = document.getElementById("error-message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorMessage.style.display = "none";
+      const body = new URLSearchParams({
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      });
+      try {
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body
+        });
+        if (response.ok) {
+          window.location.href = "/index";
+          return;
+        }
+        if (response.status === 401) {
+          errorMessage.style.display = "block";
+          return;
+        }
+        errorMessage.textContent = "Login failed.";
+        errorMessage.style.display = "block";
+      } catch (err) {
+        errorMessage.textContent = "Cannot reach the vehicle.";
+        errorMessage.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
